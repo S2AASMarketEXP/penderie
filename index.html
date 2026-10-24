@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.">
-<meta name="theme-color" content="#F2F3F6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0E1020" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#06070F">
 <meta property="og:type" content="website">
 <meta property="og:title" content="DressIn">
 <meta property="og:description" content="Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.">
@@ -17,49 +16,41 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>DressIn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
-/* Layout : l'atelier est une planche de coupe (rangées de la tête aux pieds) + un panneau de réglages collant ;
-   la penderie et les tenues sont des grilles d'étiquettes. */
+/* Layout : l'atelier est une planche (rangées de la tête aux pieds) + un panneau de réglages collant ;
+   le dressing et les tenues sont des grilles de cartes.
+   Habillage : bleu nuit avec une lueur en haut, cartes en verre fumé, boutons lumineux.
+   Un seul univers sombre par défaut ; « Indigo » et « Clair » se choisissent dans l'onglet Compte. */
 :root {
-  --bg: #F2F3F6;
-  --surface: #FFFFFF;
-  --surface-2: #F7F8FA;
-  --tile: #F0F1F4;
-  --ink: #14172A;
-  --muted: #4F5468;
-  --line: #DADDE5;
-  --accent: #2B45F5;
+  --bg: #06070F;
+  --bg-glow: rgba(76, 92, 255, .30);
+  --surface: #0C0E1B;
+  --surface-2: #111427;
+  --tile: #151931;
+  --card: linear-gradient(180deg, rgba(255, 255, 255, .035), rgba(255, 255, 255, 0) 55%), #0C0E1B;
+  --ink: #E9ECF8;
+  --muted: #8E94B0;
+  --line: rgba(255, 255, 255, .08);
+  --hi: rgba(255, 255, 255, .05);
+  --accent: #4C5CFF;
+  --accent-hi: #6A78FF;
   --accent-ink: #FFFFFF;
-  --accent-soft: #E3E7FF;
-  --tag: #E6CFA9;
-  --tag-ink: #3F311C;
-  --danger: #C2352B;
-  --ok: #1F7A4D;
-  --scrim: rgba(10, 12, 24, .45);
-  --shadow: 0 0 0 1px var(--line);
-  --font-display: "Archivo", "Arial Black", system-ui, sans-serif;
-  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0E1020; --surface: #171A2D; --surface-2: #1E2238; --tile: #252A44; --ink: #ECEEF7; --muted: #A3A8BC;
-    --line: #2C3152; --accent: #7488FF; --accent-ink: #0B0D1A; --accent-soft: #232A57;
-    --tag: #D9C29B; --tag-ink: #2E2414; --danger: #FF7B6E; --ok: #5FD39A; --scrim: rgba(0, 0, 0, .6);
-    --shadow: 0 0 0 1px var(--line);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0E1020; --surface: #171A2D; --surface-2: #1E2238; --tile: #252A44; --ink: #ECEEF7; --muted: #A3A8BC;
-  --line: #2C3152; --accent: #7488FF; --accent-ink: #0B0D1A; --accent-soft: #232A57;
-  --tag: #D9C29B; --tag-ink: #2E2414; --danger: #FF7B6E; --ok: #5FD39A; --scrim: rgba(0, 0, 0, .6);
-  --shadow: 0 0 0 1px var(--line);
+  --accent-soft: rgba(76, 92, 255, .16);
+  --glow: rgba(76, 92, 255, .5);
+  --tag: rgba(255, 255, 255, .045);
+  --tag-ink: #CDD2EA;
+  --danger: #FF6B6B;
+  --ok: #2EE59D;
+  --scrim: rgba(2, 3, 10, .72);
+  --shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 var(--hi);
+  --font-display: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: dark;
 }
 
@@ -369,6 +360,69 @@ html.no-motion *, html.no-motion *::before, html.no-motion *::after { animation:
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 @media (max-width: 880px) { body.has-bar .toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* ---------- habillage : bleu nuit, verre fumé, boutons lumineux ---------- */
+body { background: radial-gradient(ellipse 72% 560px at 50% -230px, var(--bg-glow), transparent 72%) no-repeat, var(--bg); }
+.top { background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.brand { font-weight: 800; letter-spacing: -.03em; }
+.tab { border: 1px solid transparent; border-radius: 12px; }
+.tab[aria-selected="true"] { background: var(--tag); color: var(--ink); border-color: var(--line); box-shadow: inset 0 1px 0 var(--hi); }
+.intro-title { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.intro-ico { flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: var(--tag); box-shadow: var(--shadow); color: var(--accent-hi); }
+.intro-ico svg { width: 26px; height: 26px; }
+.intro h1, .page-head h2 { font-weight: 700; letter-spacing: -.03em; }
+.label { font-size: 11.5px; letter-spacing: .12em; }
+.card, .board, .item-card, .look { background: var(--card); box-shadow: var(--shadow); }
+.card.hl { box-shadow: var(--shadow), inset 0 1px 0 color-mix(in srgb, var(--accent-hi) 75%, transparent), 0 -14px 44px -26px var(--glow); }
+.item-card:hover { box-shadow: var(--shadow), 0 14px 34px -20px var(--glow); }
+.board-head { letter-spacing: .1em; }
+.slot { border-top-style: solid; }
+.btn, .chip, .lock, .arrow, .seg, .icon-btn { background: var(--tag); border-color: var(--line); }
+.btn:hover, .chip:hover, .lock:hover { border-color: color-mix(in srgb, var(--accent-hi) 55%, var(--line)); }
+.arrow:hover:not(:disabled) { color: var(--accent-hi); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.btn.primary, .btn-shuffle, .chip[aria-pressed="true"], .seg button[aria-pressed="true"], .lock[aria-pressed="true"],
+.toggle input:checked, .avatar, .mini-av, .item-card.add .plus, .steps li.ok i {
+  background: linear-gradient(180deg, var(--accent-hi), var(--accent)); color: var(--accent-ink); border-color: transparent;
+}
+.btn.primary, .btn-shuffle { box-shadow: 0 12px 30px -10px var(--glow), inset 0 1px 0 rgba(255, 255, 255, .28); }
+.btn.primary:hover { background: linear-gradient(180deg, var(--accent-hi), var(--accent)); filter: brightness(1.08); }
+.btn-shuffle { font-weight: 700; letter-spacing: 0; }
+.chip[aria-pressed="true"], .seg button[aria-pressed="true"], .lock[aria-pressed="true"] { box-shadow: 0 6px 16px -6px var(--glow), inset 0 1px 0 rgba(255, 255, 255, .22); }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-hi); }
+input.text, select.text { background: var(--surface-2); border-color: var(--line); }
+input.text:focus, select.text:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.current { background: var(--tile); box-shadow: inset 0 0 0 1px var(--line); }
+.current.is-none { box-shadow: none; }
+.tag { clip-path: none; border-radius: 999px; border: 1px solid var(--line); padding: 5px 12px 5px 23px; }
+.tag::before { left: 10px; width: 6px; height: 6px; margin-top: -3px; background: var(--accent-hi); box-shadow: 0 0 8px var(--glow); }
+.tag.ghost { border-style: dashed; }
+.swatch .lbl { background: rgba(6, 8, 18, .74); color: #F1F3FA; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.combos-num { color: var(--ink); font-weight: 800; letter-spacing: -.04em; text-shadow: 0 0 34px var(--glow); }
+.slot-empty, .steps li { background: var(--tag); border-color: var(--line); }
+.steps li { border-style: solid; }
+.item-card.add { border-color: var(--line); }
+.item-card.add .plus { box-shadow: 0 10px 24px -10px var(--glow); }
+.drop { background: var(--tile); border-color: var(--line); }
+.drop-hint { background: var(--surface-2); }
+.sheet { background: var(--surface); box-shadow: 0 0 0 1px var(--line), 0 30px 80px rgba(0, 0, 0, .55); }
+.sheet-backdrop { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.sheet-foot { background: var(--surface); }
+.toast { background: var(--surface-2); color: var(--ink); box-shadow: 0 0 0 1px var(--line), 0 18px 40px -12px rgba(0, 0, 0, .6); }
+.stat { background: var(--surface-2); }
+.toggle input { background: var(--line); }
+.toggle input:checked { box-shadow: 0 0 16px -2px var(--glow); }
+.bg-opt .sw-bg { box-shadow: inset 0 0 0 1px var(--line); }
+.bg-opt .sw-bg::after { box-shadow: inset 0 0 0 1px var(--line); }
+.bg-opt[aria-pressed="true"] .sw-bg { box-shadow: inset 0 0 0 1px var(--line), 0 0 0 2px var(--bg), 0 0 0 4px var(--accent), 0 0 22px -2px var(--glow); }
+.acc-opt i { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+.acc-opt[aria-pressed="true"] i { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--c), 0 0 20px var(--c); }
+.mobile-bar:not([hidden]) { background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+@media (max-width: 540px) { .intro-ico { width: 46px; height: 46px; } .intro-ico svg { width: 22px; height: 22px; } }
+@media (max-width: 760px) {
+  .tabs { justify-content: space-between; gap: 2px; }
+  .tab { padding: 8px 9px; font-size: 13.5px; }
+  .tab .mini-av { display: none; }
+}
 </style>
 </head>
 <body>
@@ -391,14 +445,17 @@ html.no-motion *, html.no-motion *::before, html.no-motion *::after { animation:
   <!-- ATELIER -->
   <section id="view-atelier" class="view wrap" role="tabpanel" aria-labelledby="tab-atelier">
     <div class="intro">
-      <h1 id="hello">Qu'est-ce que je mets aujourd'hui&nbsp;?</h1>
+      <div class="intro-title">
+        <span class="intro-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.2a2.1 2.1 0 1 1 2.1 2.1c-1.1.4-2.1 1-2.1 2.2v.6l8.6 5.6c.8.5.4 1.8-.5 1.8H3.9c-.9 0-1.3-1.3-.5-1.8L12 12.1"/></svg></span>
+        <h1 id="hello">Qu'est-ce que je mets aujourd'hui&nbsp;?</h1>
+      </div>
       <p>Fais défiler tes vêtements, garde ceux qui te plaisent et mélange le reste. Tout vient de ton dressing.</p>
     </div>
-    <div class="card onboard" id="onboard" hidden></div>
+    <div class="card hl onboard" id="onboard" hidden></div>
     <div class="studio">
       <div class="board" id="board" aria-label="Tenue en cours"></div>
       <aside class="panel" aria-label="Réglages de la tenue">
-        <div class="card">
+        <div class="card hl">
           <div>
             <div class="combos-num" id="combos-num">0</div>
             <div class="combos-label" id="combos-label">tenues possibles</div>
@@ -634,18 +691,24 @@ const SLOTS = {
 };
 const ORDER = { separates: ['outer', 'top', 'bottom', 'feet', 'acc'], piece: ['outer', 'piece', 'feet', 'acc'] };
 const VIEWS = ['atelier', 'penderie', 'tenues', 'compte'];
-const DEFAULT_SETTINGS = { bg: 'auto', accent: 'cobalt', name: '', avatar: null, sizes: {}, styles: [], avoidRecent: true, motion: true };
+const DEFAULT_SETTINGS = { bg: 'nuit', accent: 'electrique', name: '', avatar: null, sizes: {}, styles: [], avoidRecent: true, motion: true };
 const inClaude = !!(window.claude && typeof window.claude.use === 'function');
+/* « nuit » reprend les valeurs du :root ; les deux autres fonds les remplacent */
 const BGS = [
-  { id: 'auto', name: 'Auto', hint: 'Suit ton appareil' },
-  { id: 'perle', name: 'Clair', hex: '#F2F3F6' },
-  { id: 'sable', name: 'Sable', hex: '#EEE7DC' },
-  { id: 'encre', name: 'Sombre', hex: '#10121C', dark: true },
+  { id: 'nuit', name: 'Nuit', hint: 'Bleu nuit', c: '#06070F', s: '#0C0E1B', vars: null },
+  { id: 'indigo', name: 'Indigo', hint: 'Violet profond', c: '#0A0A22', s: '#121337', vars: {
+    '--bg': '#0A0A22', '--bg-glow': 'rgba(124, 92, 255, .34)', '--surface': '#121337', '--surface-2': '#17193F', '--tile': '#1C1E4A',
+    '--card': 'linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, 0) 55%), #121337',
+    '--ink': '#ECEBFA', '--muted': '#9C9AC4', '--line': 'rgba(255, 255, 255, .09)', '--hi': 'rgba(255, 255, 255, .06)', '--tag-ink': '#D5D3F0', 'color-scheme': 'dark' } },
+  { id: 'clair', name: 'Clair', hint: 'Pour la journée', c: '#EEF1F8', s: '#FFFFFF', vars: {
+    '--bg': '#EEF1F8', '--bg-glow': 'rgba(76, 92, 255, .20)', '--surface': '#FFFFFF', '--surface-2': '#F4F6FB', '--tile': '#EDF0F8', '--card': '#FFFFFF',
+    '--ink': '#0C1024', '--muted': '#596081', '--line': 'rgba(18, 28, 80, .11)', '--hi': 'rgba(255, 255, 255, .9)', '--tag': 'rgba(18, 28, 80, .04)', '--tag-ink': '#3A4166',
+    '--scrim': 'rgba(10, 14, 40, .4)', 'color-scheme': 'light' } },
 ];
 const ACCENTS = [
-  { id: 'cobalt', name: 'Cobalt', hex: '#2B45F5' },
-  { id: 'corail', name: 'Corail', hex: '#DE5139' },
-  { id: 'noir', name: 'Noir', hex: '#16181F' },
+  { id: 'electrique', name: 'Électrique', hex: '#4C5CFF', hi: '#6A78FF', ink: '#FFFFFF' },
+  { id: 'violet', name: 'Violet', hex: '#8B5CF6', hi: '#A47BFF', ink: '#FFFFFF' },
+  { id: 'emeraude', name: 'Émeraude', hex: '#12C48B', hi: '#3BE0AA', ink: '#04140E' },
 ];
 const SIZES = {
   top: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
@@ -1343,35 +1406,23 @@ async function initStorage() {
 }
 
 /* ================= compte : apparence, profil, données ================= */
-const LOOK_VARS = ['--bg', '--surface', '--surface-2', '--tile', '--ink', '--muted', '--line', '--accent', '--accent-ink', '--accent-soft', 'color-scheme'];
-const darkMQ = matchMedia('(prefers-color-scheme: dark)');
-function systemDark() {
-  const t = document.documentElement.dataset.theme;
-  return t ? t === 'dark' : darkMQ.matches;
-}
+const LOOK_VARS = ['--bg', '--bg-glow', '--surface', '--surface-2', '--tile', '--card', '--ink', '--muted', '--line', '--hi', '--tag', '--tag-ink', '--scrim',
+  '--accent', '--accent-hi', '--accent-ink', '--accent-soft', '--glow', 'color-scheme'];
+const rgba = (hex, a) => { const [r, g, b] = P.hexToRgb(hex); return `rgba(${r}, ${g}, ${b}, ${a})`; };
 let lookKey = '';
 function applyLook(s) {
   const css = document.documentElement.style;
   LOOK_VARS.forEach(v => css.removeProperty(v));
-  const bg = BGS.find(b => b.id === s.bg && b.hex);
-  const dark = bg ? !!bg.dark : systemDark();
-  let surface = dark ? '#171A2D' : '#FFFFFF';
-  if (bg) {
-    const h = bg.hex;
-    surface = dark ? P.mix(h, '#ffffff', 0.06) : P.mix(h, '#ffffff', 0.72);
-    const v = dark
-      ? { '--bg': h, '--surface': surface, '--surface-2': P.mix(h, '#ffffff', 0.1), '--tile': P.mix(h, '#ffffff', 0.13), '--ink': '#EEF0F6', '--muted': '#A6ABBE', '--line': P.mix(h, '#ffffff', 0.18) }
-      : { '--bg': h, '--surface': surface, '--surface-2': P.mix(h, '#ffffff', 0.45), '--tile': P.mix(h, '#ffffff', 0.25), '--ink': '#14172A', '--muted': '#4F5468', '--line': P.mix(h, '#000000', 0.11) };
-    Object.entries(v).forEach(([k, x]) => css.setProperty(k, x));
-    css.setProperty('color-scheme', dark ? 'dark' : 'light');
-  }
+  const bg = BGS.find(b => b.id === s.bg);
+  if (bg && bg.vars) Object.entries(bg.vars).forEach(([k, v]) => css.setProperty(k, v));
   const ac = ACCENTS.find(a => a.id === s.accent);
-  if (ac && (ac.id !== 'cobalt' || bg)) {
-    let a = ac.hex;
-    if (dark) a = P.lum(a) < 0.05 ? '#EEF0F6' : P.mix(a, '#ffffff', 0.3);
-    css.setProperty('--accent', a);
-    css.setProperty('--accent-ink', P.lum(a) > 0.36 ? '#14172A' : '#FFFFFF');
-    css.setProperty('--accent-soft', P.mix(a, surface, 0.86));
+  if (ac && ac.id !== 'electrique') {
+    css.setProperty('--accent', ac.hex);
+    css.setProperty('--accent-hi', ac.hi);
+    css.setProperty('--accent-ink', ac.ink);
+    css.setProperty('--accent-soft', rgba(ac.hex, 0.16));
+    css.setProperty('--glow', rgba(ac.hex, 0.5));
+    if (s.bg === 'nuit' || !bg) css.setProperty('--bg-glow', rgba(ac.hex, 0.3));
   }
   try { localStorage.setItem('dressin.look', JSON.stringify({ bg: s.bg, accent: s.accent })); } catch (e) { /* stockage bloqué */ }
 }
@@ -1381,8 +1432,6 @@ function syncLook() {
   const k = `${state.settings.bg}|${state.settings.accent}`;
   if (k !== lookKey) { lookKey = k; applyLook(state.settings); }
 }
-darkMQ.addEventListener('change', () => applyLook(state.settings));
-new MutationObserver(() => applyLook(state.settings)).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 const PERSON = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"/></svg>';
 function avatarInner(s) {
@@ -1437,13 +1486,9 @@ function renderAccount() {
   const styles = s.styles || [];
   $('#style-chips').innerHTML = STYLES.map(x => `<button type="button" class="chip" data-style="${x}" aria-pressed="${styles.includes(x)}">${x}</button>`).join('');
 
-  const curBg = BGS.some(b => b.id === s.bg) ? s.bg : 'auto';
-  $('#bg-grid').innerHTML = BGS.map(b => {
-    const c = b.hex || 'linear-gradient(135deg, #F2F3F6 50%, #10121C 50%)';
-    const sfc = b.hex ? (b.dark ? P.mix(b.hex, '#ffffff', 0.06) : P.mix(b.hex, '#ffffff', 0.72)) : 'linear-gradient(135deg, #FFFFFF 50%, #1E2238 50%)';
-    return `<button type="button" class="bg-opt" data-bg="${b.id}" aria-pressed="${curBg === b.id}"><span class="sw-bg" style="--c:${c};--s:${sfc}"></span><span>${b.name}<small>${b.hint || (b.dark ? 'Sombre' : 'Clair')}</small></span></button>`;
-  }).join('');
-  const curAc = ACCENTS.some(a => a.id === s.accent) ? s.accent : 'cobalt';
+  const curBg = BGS.some(b => b.id === s.bg) ? s.bg : 'nuit';
+  $('#bg-grid').innerHTML = BGS.map(b => `<button type="button" class="bg-opt" data-bg="${b.id}" aria-pressed="${curBg === b.id}"><span class="sw-bg" style="--c:${b.c};--s:${b.s}"></span><span>${b.name}<small>${b.hint}</small></span></button>`).join('');
+  const curAc = ACCENTS.some(a => a.id === s.accent) ? s.accent : 'electrique';
   $('#acc-pick').innerHTML = ACCENTS.map(a => `<button type="button" class="acc-opt" data-accent="${a.id}" aria-pressed="${curAc === a.id}"><i style="--c:${a.hex}"></i>${a.name}</button>`).join('');
   $('#pref-recent').checked = s.avoidRecent !== false;
   $('#pref-motion').checked = s.motion !== false;
@@ -1730,7 +1775,7 @@ window.addEventListener('hashchange', () => { const v = location.hash.slice(1); 
 /* ================= démarrage ================= */
 try {
   const cached = JSON.parse(localStorage.getItem('dressin.look') || 'null');
-  if (cached) state.settings = { ...state.settings, bg: cached.bg || 'auto', accent: cached.accent || 'cobalt' };
+  if (cached) state.settings = { ...state.settings, bg: cached.bg || 'nuit', accent: cached.accent || 'electrique' };
 } catch (e) { /* stockage bloqué */ }
 syncLook();
 setStatus('pending');
