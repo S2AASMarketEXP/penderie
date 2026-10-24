@@ -423,6 +423,87 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
   .tab { padding: 8px 9px; font-size: 13.5px; }
   .tab .mini-av { display: none; }
 }
+
+/* ---------- mannequin ---------- */
+.board-head { align-items: center; flex-wrap: wrap; }
+.board-head .seg { padding: 2px; }
+.board-head .seg button { padding: 6px 12px; font-size: 12.5px; letter-spacing: 0; text-transform: none; }
+.mq-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 20px; align-items: center; padding-block: 8px 14px; }
+.mq-figure { display: grid; place-items: center; min-height: 500px; border-radius: 18px; background: radial-gradient(closest-side at 50% 46%, var(--accent-soft), transparent 100%); }
+.mq-figure svg { display: block; height: 480px; width: auto; max-width: 100%; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .35)); }
+.mq-figure.pop svg { animation: mqpop .42s cubic-bezier(.3, 1.5, .5, 1); }
+@keyframes mqpop { from { transform: scale(.94); opacity: .45; } }
+.mq-list { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.mq-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto auto auto; align-items: center; gap: 8px; padding: 8px; border-radius: 14px; background: var(--tag); box-shadow: inset 0 0 0 1px var(--line); }
+.mq-row.empty { grid-template-columns: minmax(0, 1fr) auto; padding-left: 14px; }
+.mq-thumb { width: 46px; height: 46px; border-radius: 10px; overflow: hidden; background: var(--tile); }
+.mq-thumb .none { border-radius: 10px; font-size: 0; }
+.mq-info { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mq-info .label { font-size: 10.5px; }
+.mq-info b { font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mq-row .arrow { width: 34px; height: 34px; }
+.mq-row .lock { padding: 8px; }
+@media (max-width: 640px) {
+  .mq-wrap { grid-template-columns: minmax(0, 1fr); }
+  .mq-figure { min-height: 400px; }
+  .mq-figure svg { height: 390px; }
+}
+
+/* ---------- recherche, crédits photo ---------- */
+.search-open { margin-top: 10px; width: 100%; }
+.photo-credit { margin: 8px 0 0; font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.photo-credit:empty { display: none; }
+.photo-credit a { color: var(--accent-hi); }
+.search-backdrop { z-index: 56; }
+.search-body { padding: 6px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
+.search-row { display: flex; gap: 8px; }
+.search-row .text { flex: 1; }
+.search-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.search-grid:empty { display: none; }
+.search-grid button { position: relative; appearance: none; padding: 0; border: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 1; max-width: 100%; background: var(--tile); cursor: pointer; box-shadow: inset 0 0 0 1px var(--line); }
+.search-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.search-grid button:hover, .search-grid button:focus-visible { box-shadow: 0 0 0 2px var(--accent), 0 10px 24px -12px var(--glow); }
+.search-grid span { position: absolute; left: 6px; right: 6px; bottom: 6px; padding: 3px 6px; border-radius: 6px; background: rgba(6, 8, 18, .72); color: #fff; font-size: 11px; font-weight: 600; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-body .faq details { border-top: 1px solid var(--line); padding-top: 12px; }
+.search-body .faq form { margin-top: 10px; }
+
+/* ---------- politique de confidentialité ---------- */
+.privacy-backdrop { z-index: 80; }
+.policy { display: flex; flex-direction: column; gap: 10px; padding: 4px 22px 20px; font-size: 14.5px; line-height: 1.6; }
+.policy h3 { margin: 8px 0 0; font-size: 16px; }
+.policy p, .policy ul { margin: 0; max-width: 68ch; color: var(--muted); }
+.policy ul { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.policy b { color: var(--ink); }
+.sheet-foot .grow { margin-right: auto; }
+
+/* ---------- connexion ---------- */
+.auth { position: fixed; inset: 0; z-index: 70; overflow-y: auto; display: flex; justify-content: center; background: radial-gradient(ellipse 80% 560px at 50% -200px, var(--bg-glow), transparent 72%) no-repeat, var(--bg); padding: max(28px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(28px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.auth-card { width: min(460px, 100%); margin-block: auto; gap: 18px; padding: 28px; }
+.auth-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; letter-spacing: -.03em; }
+.auth-brand svg { width: 28px; height: 28px; color: var(--accent-hi); }
+.auth-brand .in { color: var(--accent-hi); }
+.auth h1 { margin: 0; font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -.03em; }
+.auth h1 + .hint { margin-top: 6px; }
+.auth-tabs { align-self: stretch; display: grid; grid-template-columns: 1fr 1fr; }
+.auth form { display: flex; flex-direction: column; gap: 14px; }
+.pass-row { display: flex; gap: 8px; }
+.pass-row .btn { flex: none; }
+.gender-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gender-pick button { appearance: none; display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 14px; background: var(--tag); border: 1px solid var(--line); color: var(--ink); font-weight: 650; font-size: 15px; cursor: pointer; }
+.gender-pick button svg { flex: none; height: 64px; width: auto; }
+.gender-pick button[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft), 0 10px 24px -14px var(--glow); }
+.check { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.45; cursor: pointer; }
+.check input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--accent); }
+.linkish { appearance: none; border: 0; background: none; padding: 0; color: var(--accent-hi); font: inherit; font-weight: 650; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.auth-error { margin: 0; min-height: 1.3em; color: var(--danger); font-size: 14px; font-weight: 600; }
+.auth-error:empty { min-height: 0; }
+.auth-submit { padding: 14px 18px; font-size: 16px; border-radius: 14px; }
+.auth-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 12px; font-size: 13.5px; }
+.forgot-box { flex-direction: column; align-items: stretch; margin: 0; }
+.acct-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+.danger-zone { flex-direction: column; align-items: stretch; }
+.dz-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.dz-row + .dz-row { border-top: 1px solid var(--line); padding-top: 12px; }
 </style>
 </head>
 <body>
@@ -508,9 +589,14 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
         <h2>Mon dressing</h2>
         <p id="wardrobe-sub"></p>
       </div>
-      <button class="btn primary" type="button" data-add>
-        <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter un vêtement
-      </button>
+      <div class="data-actions">
+        <button class="btn" type="button" data-open-search id="head-search">
+          <svg class="i" viewBox="0 0 24 24"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>Chercher en ligne
+        </button>
+        <button class="btn primary" type="button" data-add>
+          <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter un vêtement
+        </button>
+      </div>
     </div>
     <div class="chips cat-filter" id="cat-filter" aria-label="Filtrer par catégorie"></div>
     <div class="grid-items" id="grid-items"></div>
@@ -551,6 +637,14 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
             <span class="hint" id="member-since"></span>
             <span id="avatar-actions"></span>
           </div>
+          <div class="field">
+            <span class="label">Silhouette du mannequin</span>
+            <div class="seg" id="body-seg" role="group" aria-label="Silhouette du mannequin">
+              <button type="button" data-body="femme" aria-pressed="true">Femme</button>
+              <button type="button" data-body="homme" aria-pressed="false">Homme</button>
+            </div>
+          </div>
+          <div class="acct-line" id="acct-line" hidden></div>
         </div>
       </section>
       <section class="card wide">
@@ -601,7 +695,7 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
           <details><summary>Où sont enregistrées mes données&nbsp;?</summary><p id="faq-data"></p></details>
           <details><summary>Je change de téléphone, je fais comment&nbsp;?</summary><p id="faq-phone"></p></details>
         </div>
-        <div class="about"><span>DressIn · version 1.2</span><span id="share-zone"></span></div>
+        <div class="about"><span>DressIn · version 1.3</span><span class="data-actions" id="share-zone"></span></div>
       </section>
     </div>
   </section>
@@ -634,6 +728,10 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
             <span id="photo-note">Sans photo, le vêtement s'affiche avec sa couleur et son nom.</span>
             <button type="button" class="btn sm ghost" id="photo-remove" hidden>Retirer la photo</button>
           </div>
+          <button type="button" class="btn sm search-open" id="open-search" data-open-search>
+            <svg class="i" viewBox="0 0 24 24"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>Rechercher l'image en ligne
+          </button>
+          <p class="photo-credit" id="photo-credit"></p>
         </div>
         <div class="fields">
           <div class="field"><span class="label">Catégorie</span><div class="chips" id="f-cat"></div></div>
@@ -650,6 +748,133 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
         <button type="submit" class="btn primary" id="sheet-save">Ajouter à mon dressing</button>
       </div>
     </form>
+  </div>
+</div>
+
+<div class="sheet-backdrop search-backdrop" id="search" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="search-title">
+    <div class="sheet-head">
+      <h2 id="search-title">Rechercher en ligne</h2>
+      <button type="button" class="icon-btn" data-close-search aria-label="Fermer la recherche">
+        <svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-body">
+      <form class="search-row" id="search-form" role="search">
+        <label class="sr-only" for="search-q">Vêtement à chercher</label>
+        <input class="text" id="search-q" type="search" placeholder="Ex. jean brut, pull beige, baskets blanches" autocomplete="off">
+        <button class="btn primary" type="submit">Rechercher</button>
+      </form>
+      <p class="hint" id="search-status">Tape le vêtement que tu cherches, puis touche une image pour l'ajouter.</p>
+      <div class="search-grid" id="search-grid"></div>
+      <div class="faq">
+        <details>
+          <summary>Coller le lien d'une image</summary>
+          <form class="search-row" id="url-form">
+            <label class="sr-only" for="url-q">Lien de l'image</label>
+            <input class="text" id="url-q" type="url" placeholder="https://…" autocomplete="off">
+            <button class="btn" type="submit">Utiliser</button>
+          </form>
+          <p>Sur le site d'une marque ou d'une boutique, fais un clic droit (ou un appui long) sur la photo, puis « Copier l'adresse de l'image ».</p>
+        </details>
+      </div>
+      <p class="hint">Les images de la recherche viennent d'Openverse et sont sous licence libre. Le nom de l'auteur reste attaché au vêtement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-backdrop privacy-backdrop" id="privacy" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+    <div class="sheet-head">
+      <h2 id="privacy-title">Politique de confidentialité</h2>
+      <button type="button" class="icon-btn" data-close-privacy aria-label="Fermer">
+        <svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="policy">
+      <p>DressIn t'aide à composer des tenues avec tes propres vêtements. Cette page explique quelles données l'appli utilise, où elles vont et comment les supprimer.</p>
+      <h3>Quelles données ?</h3>
+      <ul>
+        <li><b>Ton compte</b> : ton adresse e-mail, ton mot de passe et la silhouette choisie (femme ou homme). Le mot de passe n'est jamais gardé en clair : seule une empreinte chiffrée (PBKDF2) est conservée.</li>
+        <li><b>Ton dressing</b> : tes vêtements, leurs photos, tes tenues, ton prénom, ta photo de profil, tes tailles, ton style et tes préférences d'affichage.</li>
+      </ul>
+      <h3>Où sont-elles enregistrées ?</h3>
+      <p id="pp-storage"></p>
+      <h3>À quoi servent-elles ?</h3>
+      <p>Uniquement à faire fonctionner l'appli : t'identifier, afficher ton dressing, composer tes tenues et habiller ton mannequin. Pas de publicité, pas de revente, pas de profilage.</p>
+      <h3>Services extérieurs</h3>
+      <ul>
+        <li><b>Google Fonts</b> fournit la police d'écriture : ton navigateur contacte les serveurs de Google, qui voient ton adresse IP.</li>
+        <li><b>L'hébergeur du site</b> (GitHub Pages pour la version publique) peut garder des journaux techniques de visite.</li>
+        <li><b>Openverse</b> reçoit les mots que tu tapes quand tu utilises « Rechercher en ligne ». Les images viennent de sites tiers (Flickr, Wikimedia…) sous licences libres Creative Commons.</li>
+      </ul>
+      <h3>Cookies</h3>
+      <p>DressIn n'utilise ni cookies publicitaires ni mesure d'audience. Le stockage du navigateur sert seulement à garder ta session et ton dressing.</p>
+      <h3>Tes droits</h3>
+      <p>Tout se gère dans l'onglet Compte : modifier ton profil, exporter une sauvegarde, « Effacer toutes mes données » ou « Supprimer mon compte ». Tu peux aussi contacter la CNIL (cnil.fr). Pour toute question, écris à l'éditeur de DressIn via le contact indiqué sur ses réseaux.</p>
+      <h3>Durée et sécurité</h3>
+      <p>Tes données restent tant que tu ne les supprimes pas. Ton mot de passe protège l'accès à DressIn dans ce navigateur, mais une personne qui utilise ton appareil pourrait techniquement lire les données qui y sont stockées. Choisis un mot de passe que tu n'utilises nulle part ailleurs.</p>
+      <h3>Moins de 15 ans</h3>
+      <p>Si tu as moins de 15 ans, demande l'accord d'un parent avant de créer un compte.</p>
+      <h3>Changements</h3>
+      <p>Si cette politique change, DressIn te demandera de l'accepter à nouveau à ta prochaine connexion.</p>
+    </div>
+    <div class="sheet-foot">
+      <span class="hint grow">Version du 25 octobre 2026</span>
+      <button type="button" class="btn primary" data-close-privacy>J'ai compris</button>
+    </div>
+  </div>
+</div>
+
+<div class="auth" id="auth" hidden>
+  <div class="card hl auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="auth-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7.2a2.1 2.1 0 1 1 2.1 2.1c-1.1.4-2.1 1-2.1 2.2v.6l8.6 5.6c.8.5.4 1.8-.5 1.8H3.9c-.9 0-1.3-1.3-.5-1.8L12 12.1"/></svg>
+      <span>Dress<span class="in">In</span></span>
+    </div>
+    <div>
+      <h1 id="auth-title">Crée ton compte</h1>
+      <p class="hint" id="auth-sub">Ton dressing et tes tenues, toujours sous la main.</p>
+    </div>
+    <div class="seg auth-tabs" role="group" aria-label="Créer un compte ou se connecter">
+      <button type="button" data-auth-mode="signup" aria-pressed="true">Créer un compte</button>
+      <button type="button" data-auth-mode="login" aria-pressed="false">Se connecter</button>
+    </div>
+    <form id="auth-form" novalidate>
+      <div class="field">
+        <label class="label" for="a-email">Adresse e-mail</label>
+        <input class="text" id="a-email" type="email" inputmode="email" autocomplete="email" placeholder="prenom@mail.com" required>
+      </div>
+      <div class="field">
+        <label class="label" for="a-pass">Mot de passe</label>
+        <div class="pass-row">
+          <input class="text" id="a-pass" type="password" autocomplete="new-password" required>
+          <button type="button" class="btn sm" id="a-show" aria-pressed="false">Afficher</button>
+        </div>
+        <span class="hint" id="a-pass-hint">8 caractères minimum.</span>
+      </div>
+      <div class="field" id="a-gender-field">
+        <span class="label">Silhouette de ton mannequin</span>
+        <div class="gender-pick" id="a-gender"></div>
+      </div>
+      <label class="check" id="a-privacy-row" for="a-privacy">
+        <input type="checkbox" id="a-privacy">
+        <span>J'ai lu et j'accepte la <button type="button" class="linkish" data-open-privacy>politique de confidentialité</button>.</span>
+      </label>
+      <p class="auth-error" id="auth-error" role="alert"></p>
+      <button type="submit" class="btn primary auth-submit" id="auth-submit">Créer mon compte</button>
+    </form>
+    <div class="auth-foot">
+      <button type="button" class="linkish" id="a-forgot" hidden>Mot de passe oublié ?</button>
+      <span class="hint">Ton compte et ton dressing restent sur cet appareil.</span>
+    </div>
+    <div class="note forgot-box" id="forgot-box" hidden>
+      <p>DressIn n'a pas de serveur : impossible de t'envoyer un e-mail pour changer de mot de passe. Tu peux supprimer de cet appareil le compte lié à l'adresse saisie (ses vêtements et ses tenues seront effacés), puis en créer un nouveau.</p>
+      <div class="data-actions">
+        <button type="button" class="btn sm danger-solid" id="a-reset">Supprimer ce compte de l'appareil</button>
+        <button type="button" class="btn sm" id="a-reset-cancel">Annuler</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -691,7 +916,7 @@ const SLOTS = {
 };
 const ORDER = { separates: ['outer', 'top', 'bottom', 'feet', 'acc'], piece: ['outer', 'piece', 'feet', 'acc'] };
 const VIEWS = ['atelier', 'penderie', 'tenues', 'compte'];
-const DEFAULT_SETTINGS = { bg: 'nuit', accent: 'electrique', name: '', avatar: null, sizes: {}, styles: [], avoidRecent: true, motion: true };
+const DEFAULT_SETTINGS = { bg: 'nuit', accent: 'electrique', name: '', avatar: null, sizes: {}, styles: [], avoidRecent: true, motion: true, body: null };
 const inClaude = !!(window.claude && typeof window.claude.use === 'function');
 /* « nuit » reprend les valeurs du :root ; les deux autres fonds les remplacent */
 const BGS = [
@@ -868,22 +1093,51 @@ function slotHTML(slot, anim = '') {
   </section>`;
 }
 
+let boardView = (() => { try { return localStorage.getItem('dressin.boardView') || 'mannequin'; } catch (e) { return 'mannequin'; } })();
 function boardHead() {
   const d = new Date().toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
   const n = ORDER[st.mode].filter(s => st.sel[s]).length;
-  return `<div class="board-head"><span>Tenue du jour · ${plural(n, 'pièce', 'pièces')}</span><span>${esc(d)}</span></div>`;
+  return `<div class="board-head"><span>Tenue du jour · ${plural(n, 'pièce', 'pièces')}</span>
+    <div class="seg" role="group" aria-label="Affichage de la tenue"><button type="button" data-board-view="mannequin" aria-pressed="${boardView === 'mannequin'}">Mannequin</button><button type="button" data-board-view="pieces" aria-pressed="${boardView === 'pieces'}">Pièces</button></div>
+    <span>${esc(d)}</span></div>`;
 }
 function withFocus(fn) {
   const fk = document.activeElement?.dataset?.fk;
   fn();
   if (fk) board.querySelector(`[data-fk="${fk}"]`)?.focus();
 }
+function mqRowHTML(slot) {
+  const def = SLOTS[slot];
+  const curId = st.sel[slot];
+  const cur = curId ? itemById(curId) : null;
+  if (!pool(slot).length && !cur) {
+    return `<div class="mq-row empty" data-slot="${slot}"><div class="mq-info"><span class="label">${def.label}</span><b>${def.empty}</b></div><button type="button" class="btn sm" data-add-cat="${def.cat}">${ICON.plus}Ajouter</button></div>`;
+  }
+  const ids = options(slot).map(o => (o ? o.id : null));
+  const canStep = ids.length >= 2 || (ids.length >= 1 && !ids.includes(curId ?? null));
+  const locked = !!st.locks[slot];
+  return `<div class="mq-row" data-slot="${slot}">
+    <div class="mq-thumb">${cur ? art(cur) : '<div class="none"></div>'}</div>
+    <div class="mq-info"><span class="label">${def.label}</span><b>${cur ? esc(cur.name) : (def.none || def.empty)}</b></div>
+    <button type="button" class="arrow" data-step="-1" data-slot="${slot}" data-fk="${slot}:prev" aria-label="${def.label} précédent" ${canStep ? '' : 'disabled'}>${ICON.left}</button>
+    <button type="button" class="arrow" data-step="1" data-slot="${slot}" data-fk="${slot}:next" aria-label="${def.label} suivant" ${canStep ? '' : 'disabled'}>${ICON.right}</button>
+    <button type="button" class="lock" data-lock="${slot}" data-fk="${slot}:lock" aria-pressed="${locked}" aria-label="${locked ? 'Ne plus garder' : 'Garder'} : ${def.label.toLowerCase()}" title="${locked ? 'Gardé quand tu mélanges' : 'Garder quand tu mélanges'}">${locked ? ICON.lock : ICON.unlock}</button>
+  </div>`;
+}
+function mannequinView(pop) {
+  const sel = {};
+  ORDER[st.mode].forEach(s => { sel[s] = st.sel[s] ?? null; });
+  return `<div class="mq-wrap"><div class="mq-figure${pop ? ' pop' : ''}">${mannequinSVG(bodyOf(), sel, st.mode)}</div><div class="mq-list">${ORDER[st.mode].map(mqRowHTML).join('')}</div></div>`;
+}
 function renderBoard(landed) {
   withFocus(() => {
-    board.innerHTML = boardHead() + ORDER[st.mode].map(s => slotHTML(s, landed && landed.includes(s) ? 'landed' : '')).join('');
+    board.innerHTML = boardHead() + (boardView === 'mannequin'
+      ? mannequinView(landed)
+      : ORDER[st.mode].map(s => slotHTML(s, landed && landed.includes(s) ? 'landed' : '')).join(''));
   });
 }
 function renderSlot(slot, anim) {
+  if (boardView === 'mannequin') { renderBoard(anim === 'landed' ? ORDER[st.mode] : null); return; }
   withFocus(() => {
     const el = board.querySelector(`.slot[data-slot="${slot}"]`);
     if (el) el.outerHTML = slotHTML(slot, anim);
@@ -916,7 +1170,7 @@ function shuffle() {
   }
   const slots = Object.keys(targets);
   if (!slots.length) { toast('Tout est gardé. Libère une pièce pour mélanger.'); return; }
-  if (reduceMotion()) { Object.assign(st.sel, targets); renderBoard(); renderPanel(); return; }
+  if (reduceMotion() || boardView === 'mannequin') { Object.assign(st.sel, targets); renderBoard(reduceMotion() ? null : slots); renderPanel(); return; }
   spinning = true;
   let done = 0;
   slots.forEach((slot, k) => {
@@ -1135,21 +1389,27 @@ function openSheet(item, presetCat) {
   const cat = item?.cat || presetCat || (state.wardrobeCat !== 'all' ? state.wardrobeCat : 'haut');
   draft = item
     ? { ...item, occasions: [...(item.occasions || [])], seasons: [...(item.seasons || [])], nameTouched: true, confirmDel: false }
-    : { id: null, cat, shape: P.SHAPES_BY_CAT[cat][0], color: 'noir', name: '', nameTouched: false, occasions: ['quotidien'], seasons: [], photo: null, confirmDel: false };
+    : { id: null, cat, shape: P.SHAPES_BY_CAT[cat][0], color: 'noir', name: '', nameTouched: false, occasions: ['quotidien'], seasons: [], photo: null, credit: null, confirmDel: false };
   if (!draft.nameTouched) draft.name = autoName();
   $('#sheet-title').textContent = item ? 'Modifier le vêtement' : 'Ajouter un vêtement';
   $('#sheet-save').textContent = item ? 'Enregistrer' : 'Ajouter à mon dressing';
   $('#f-name').value = draft.name;
   renderSheet();
   sheet.hidden = false;
-  document.documentElement.classList.add('locked');
+  syncLock();
   setTimeout(() => $('#drop').focus(), 30);
 }
 function closeSheet() {
   sheet.hidden = true;
+  $('#search').hidden = true;
   draft = null;
-  document.documentElement.classList.remove('locked');
+  syncLock();
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+/* bloque le défilement de la page tant qu'une fenêtre est ouverte */
+function syncLock() {
+  const open = ['#auth', '#sheet', '#search', '#privacy'].some(s => !$(s).hidden);
+  document.documentElement.classList.toggle('locked', open);
 }
 function renderSheet(busy) {
   $('#drop-art').innerHTML = draft.photo ? `<img src="${esc(draft.photo)}" alt="Photo du vêtement">` : art({ ...draft, name: $('#f-name').value.trim() || autoName() });
@@ -1158,6 +1418,9 @@ function renderSheet(busy) {
     : `${ICON.camera}<span>${draft.photo ? 'Changer la photo' : 'Ajouter une photo'}<small>Clique, glisse une image ou colle-la</small></span>`;
   $('#photo-remove').hidden = !draft.photo;
   $('#photo-note').textContent = draft.photo ? 'Photo réduite et gardée avec le vêtement.' : "Sans photo, le vêtement s'affiche avec sa couleur et son nom.";
+  const cr = draft.photo && draft.credit;
+  $('#photo-credit').innerHTML = !cr ? '' : `Image : ${cr.title ? `« ${esc(cr.title)} »` : 'en ligne'}${cr.creator ? ` par ${esc(cr.creator)}` : ''}${cr.license ? ` · ${esc(cr.license)}` : ''}${/^https:\/\//.test(cr.url || '') ? ` · <a href="${esc(cr.url)}" target="_blank" rel="noopener">source</a>` : ''}`;
+  $('#open-search').hidden = inClaude;
   $('#f-cat').innerHTML = P.CATS.map(c => `<button type="button" class="chip" data-fcat="${c.id}" aria-pressed="${draft.cat === c.id}">${c.one}</button>`).join('');
   $('#f-shape').innerHTML = P.SHAPES_BY_CAT[draft.cat].map(s => `<button type="button" class="chip" data-fshape="${s}" aria-pressed="${draft.shape === s}">${P.SHAPES[s].label}</button>`).join('');
   $('#f-color').innerHTML = P.COLORS.map(c => `<button type="button" style="--c:${c.hex}" data-fcolor="${c.id}" aria-pressed="${draft.color === c.id}" aria-label="${c.name}" title="${c.name}"></button>`).join('');
@@ -1197,7 +1460,7 @@ function suggestColor(ctx, w, h) {
   const top = Object.entries(score).sort((a, b) => b[1] - a[1])[0];
   return top ? top[0] : null;
 }
-async function processPhoto(file) {
+async function processPhoto(file, credit = null) {
   if (!file || !/^image\//.test(file.type)) { toast("Ce fichier n'est pas une image. Choisis une photo JPG ou PNG."); return; }
   renderSheet(true);
   const url = URL.createObjectURL(file);
@@ -1216,6 +1479,7 @@ async function processPhoto(file) {
     while (data.length > 170000 && q > 0.45) { q -= 0.1; data = c.toDataURL('image/jpeg', q); }
     if (!draft) return;
     draft.photo = data;
+    draft.credit = credit;
     const col = suggestColor(ctx, w, h);
     if (col) draft.color = col;
     refreshAutoName();
@@ -1234,7 +1498,7 @@ function submitItem() {
   const item = {
     id: draft.id || newId('i_'), name, cat: draft.cat, shape: draft.shape, color: draft.color,
     occasions: draft.occasions.slice(), seasons: draft.seasons.slice(), photo: draft.photo || null,
-    createdAt: draft.createdAt || Date.now(), updatedAt: Date.now(),
+    credit: (draft.photo && draft.credit) || null, createdAt: draft.createdAt || Date.now(), updatedAt: Date.now(),
   };
   state.items = isNew ? [item, ...state.items] : state.items.map(i => (i.id === item.id ? item : i));
   persist({ kind: 'item', action: 'put', data: item });
@@ -1258,7 +1522,7 @@ function setSettings(patch) {
 }
 
 /* ================= enregistrement ================= */
-const store = { mode: 'pending', queue: [], unsub: [], refs: null, idb: null };
+const store = { mode: 'pending', queue: [], unsub: [], refs: null, idb: null, dbName: 'penderie' };
 const chains = new Map();
 const STATUS = {
   pending: ['Chargement…', 'On cherche où enregistrer tes vêtements.'],
@@ -1304,26 +1568,29 @@ function onWriteError(err, op) {
   toast("L'enregistrement n'a pas marché. Réessaie dans un instant.");
 }
 
-function idbOpen() {
+const DATA_STORES = { items: 'id', outfits: 'id', meta: 'id' };
+function openDb(name, stores) {
   return new Promise((res, rej) => {
     const timer = setTimeout(() => rej(new Error('timeout')), 4000);
     let r;
-    try { r = indexedDB.open('penderie', 1); } catch (e) { clearTimeout(timer); rej(e); return; }
-    r.onupgradeneeded = () => { const d = r.result; for (const n of ['items', 'outfits', 'meta']) if (!d.objectStoreNames.contains(n)) d.createObjectStore(n, { keyPath: 'id' }); };
+    try { r = indexedDB.open(name, 1); } catch (e) { clearTimeout(timer); rej(e); return; }
+    r.onupgradeneeded = () => { const d = r.result; for (const [n, key] of Object.entries(stores)) if (!d.objectStoreNames.contains(n)) d.createObjectStore(n, { keyPath: key }); };
     r.onsuccess = () => { clearTimeout(timer); res(r.result); };
     r.onerror = () => { clearTimeout(timer); rej(r.error); };
     r.onblocked = () => { clearTimeout(timer); rej(new Error('blocked')); };
   });
 }
-function idbTx(name, mode, fn) {
+function dbTx(db, name, mode, fn) {
   return new Promise((res, rej) => {
-    const tx = store.idb.transaction(name, mode);
+    const tx = db.transaction(name, mode);
     const req = fn(tx.objectStore(name));
     tx.oncomplete = () => res(req ? req.result : undefined);
     tx.onerror = () => rej(tx.error);
     tx.onabort = () => rej(tx.error);
   });
 }
+function idbOpen() { return openDb(store.dbName, DATA_STORES); }
+function idbTx(name, mode, fn) { return dbTx(store.idb, name, mode, fn); }
 function flushQueue() { const q = store.queue; store.queue = []; q.forEach(persist); }
 function rememberLocal(on) { try { on ? localStorage.setItem('penderie.storage', 'local') : localStorage.removeItem('penderie.storage'); } catch (e) { /* stockage bloqué */ } }
 function prefersLocal() { try { return localStorage.getItem('penderie.storage') === 'local'; } catch (e) { return false; } }
@@ -1391,6 +1658,7 @@ async function switchToLocal() {
   switching = false;
 }
 async function initStorage() {
+  if (!inClaude) { await startAuth(); return; }
   let db = null, uid = null, canWrite = null;
   if (!prefersLocal() && window.claude && typeof window.claude.use === 'function') {
     try {
@@ -1497,15 +1765,24 @@ function renderAccount() {
   $('#data-stats').textContent = `${plural(state.items.length, 'vêtement', 'vêtements')} · ${plural(state.outfits.length, 'tenue', 'tenues')} · ${plural(photos, 'photo', 'photos')}`;
   $('#data-actions').innerHTML = (inClaude ? '' : '<button type="button" class="btn sm" data-export>Exporter une sauvegarde</button>')
     + '<label class="btn sm" for="import-input">Importer une sauvegarde</label>';
-  $('#danger-zone').innerHTML = confirmWipe
+  const wipeRow = confirmWipe
     ? `<span>Tout effacer ? Tes vêtements, tes tenues et ton profil seront supprimés pour de bon.</span><span class="data-actions"><button type="button" class="btn sm danger-solid" data-wipe>Oui, tout effacer</button><button type="button" class="btn sm" data-wipe-cancel>Annuler</button></span>`
     : `<span class="hint">Repartir de zéro, avec un dressing vide.</span><button type="button" class="btn sm ghost danger" data-wipe-ask>${ICON.trash}Effacer toutes mes données</button>`;
+  const accRow = !account ? '' : confirmDelAcc
+    ? `<span>Supprimer le compte ${esc(account.email)} et tout son contenu de cet appareil ?</span><span class="data-actions"><button type="button" class="btn sm danger-solid" data-del-account>Oui, supprimer</button><button type="button" class="btn sm" data-del-account-cancel>Annuler</button></span>`
+    : `<span class="hint">Supprimer ton compte et son contenu de cet appareil.</span><button type="button" class="btn sm ghost danger" data-del-account-ask>${ICON.trash}Supprimer mon compte</button>`;
+  $('#danger-zone').innerHTML = `<div class="dz-row">${wipeRow}</div>${accRow ? `<div class="dz-row">${accRow}</div>` : ''}`;
+  $$('#body-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.body === bodyOf())));
+  const al = $('#acct-line');
+  al.hidden = !account;
+  al.innerHTML = account ? `<span class="hint">Connecté avec <b>${esc(account.email)}</b></span><button type="button" class="btn sm" data-logout>Se déconnecter</button>` : '';
 
   $('#faq-data').textContent = STATUS[store.mode][1];
   $('#faq-phone').textContent = inClaude
     ? 'Ouvre DressIn depuis ton nouveau téléphone avec le même compte : tes vêtements et tes tenues y sont déjà.'
     : 'Exporte une sauvegarde depuis cet onglet, envoie-toi le fichier, puis importe-le sur ton nouveau téléphone.';
-  $('#share-zone').innerHTML = inClaude ? '' : '<button type="button" class="btn sm" data-share>Partager DressIn</button>';
+  $('#share-zone').innerHTML = '<button type="button" class="btn sm" data-open-privacy>Politique de confidentialité</button>'
+    + (inClaude ? '' : '<button type="button" class="btn sm" data-share>Partager DressIn</button>');
 }
 
 function processAvatar(file) {
@@ -1559,7 +1836,10 @@ const cleanImportedItem = i => ({
   color: P.COLOR_BY_ID[i.color] ? i.color : 'gris',
   occasions: Array.isArray(i.occasions) ? i.occasions.filter(x => OCC_LABEL[x]) : [],
   seasons: Array.isArray(i.seasons) ? i.seasons.filter(x => SEASONS.some(s => s.id === x)) : [],
-  photo: typeof i.photo === 'string' && i.photo.startsWith('data:image/') ? i.photo : null,
+  photo: typeof i.photo === 'string' && /^(data:image\/|https:\/\/)/.test(i.photo) ? i.photo : null,
+  credit: i.credit && typeof i.credit === 'object'
+    ? Object.fromEntries(['title', 'creator', 'license', 'url'].map(k => [k, String(i.credit[k] || '').slice(0, 300)]))
+    : null,
   createdAt: Number(i.createdAt) || Date.now(), updatedAt: Date.now(),
 });
 const cleanImportedOutfit = o => ({
@@ -1583,6 +1863,409 @@ async function importData(file) {
     toast(`Importé : ${plural(items.length, 'vêtement', 'vêtements')} et ${plural(outfits.length, 'tenue', 'tenues')}.`);
   } catch (e) { toast('Impossible de lire ce fichier. Choisis une sauvegarde DressIn en .json.'); }
 }
+
+/* ================= mannequin (silhouette femme ou homme, habillée de la tenue) ================= */
+/* repères en demi-largeurs depuis l'axe x = 100, dans un repère 200 × 500 */
+const BODY = {
+  femme: { hr: 17.5, nw: 7.5, sh: 43, ch: 37, wa: 27, hi: 43, lx: 20, th: 21, kn: 11.5, an: 6 },
+  homme: { hr: 19, nw: 9, sh: 52, ch: 45, wa: 36, hi: 39, lx: 19, th: 19, kn: 12, an: 7 },
+};
+const bodyOf = () => state.settings.body || (account && account.gender) || 'femme';
+const fx = n => Math.round(n * 10) / 10;
+const RX = pts => pts.map(([x, y]) => [100 + x, y]);
+const LX = pts => pts.slice().reverse().map(([x, y]) => [100 - x, y]);
+const MX = pts => pts.map(([x, y]) => [200 - x, y]);
+const sym = (right, top) => [...(top ? [[100, top]] : []), ...RX(right), ...LX(right)];
+const legsShape = list => [...RX(list), ...LX(list.slice(0, -1))];
+const ellPts = (cx, cy, rx, ry, n = 18) => Array.from({ length: n }, (_, i) => [cx + rx * Math.cos((i / n) * Math.PI * 2), cy + ry * Math.sin((i / n) * Math.PI * 2)]);
+function pathOf(pts, smooth) {
+  if (!smooth) return 'M' + pts.map(([x, y]) => `${fx(x)} ${fx(y)}`).join('L') + 'Z';
+  const n = pts.length, t = 0.17;
+  let d = `M${fx(pts[0][0])} ${fx(pts[0][1])}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    d += `C${fx(p1[0] + (p2[0] - p0[0]) * t)} ${fx(p1[1] + (p2[1] - p0[1]) * t)} ${fx(p2[0] - (p3[0] - p1[0]) * t)} ${fx(p2[1] - (p3[1] - p1[1]) * t)} ${fx(p2[0])} ${fx(p2[1])}`;
+  }
+  return d + 'Z';
+}
+function bodyPaths(d) {
+  const torso = [[d.nw, 84], [d.nw + 9, 89], [d.sh - 6, 94], [d.sh, 104], [d.ch, 138], [d.wa, 190], [d.hi, 240], [d.lx + d.th, 282], [d.lx + d.kn + 1, 360], [d.lx + d.an + 1, 448], [d.lx - d.an - 1, 448], [d.lx - d.kn, 362], [d.lx - d.th + 5, 292], [2, 268]];
+  const arm = RX([[d.sh - 9, 96], [d.sh + 2, 101], [d.sh + 7, 140], [d.sh + 10, 192], [d.sh + 12, 258], [d.sh + 3, 260], [d.sh, 196], [d.ch - 1, 152], [d.ch - 3, 134]]);
+  const foot = RX([[d.lx - d.an - 1, 444], [d.lx + d.an + 1, 444], [d.lx + d.an + 3, 464], [d.lx + d.an, 473], [d.lx - d.an - 1, 473], [d.lx - d.an - 3, 464]]);
+  return [
+    pathOf(arm, 1), pathOf(MX(arm), 1), pathOf(sym(torso), 1), pathOf(foot, 1), pathOf(MX(foot), 1),
+    pathOf(ellPts(100 + d.sh + 7.5, 272, 5.5, 11), 1), pathOf(ellPts(100 - d.sh - 7.5, 272, 5.5, 11), 1),
+    `M${fx(100 - d.nw)} 60h${fx(2 * d.nw)}v32h${fx(-2 * d.nw)}Z`,
+    pathOf(ellPts(100, 42, d.hr, d.hr * 1.28, 24), 1),
+  ];
+}
+/* formes d'un vêtement posées sur la silhouette ; tone : main (couleur ou photo), dark, light, white */
+function garmentParts(it, d) {
+  const out = [];
+  const add = (pts, tone = 'main', smooth = 1) => out.push({ pts, tone, smooth });
+  const line = (path, w) => out.push({ line: path, w });
+  const band = (y1, y2, w1, w2) => [[100 - w1, y1], [100 + w1, y1], [100 + w2, y2], [100 - w2, y2]];
+  const sleeve = long => RX(long
+    ? [[d.sh - 7, 94], [d.sh + 4, 101], [d.sh + 10, 140], [d.sh + 13, 192], [d.sh + 15, 254], [d.sh + 1, 256], [d.sh - 2, 196], [d.ch - 3, 152], [d.ch - 4, 132]]
+    : [[d.sh - 7, 94], [d.sh + 5, 101], [d.sh + 11, 152], [d.ch - 1, 156], [d.ch - 4, 132]]);
+  const sleeves = long => { const s = sleeve(long); add(s); add(MX(s)); };
+  const topBody = hem => sym([[d.nw + 4, 87], [d.sh - 4, 94], [d.sh + 1, 104], [d.ch + 2, 138], [d.wa + 3, 192], [d.hi + 3, hem]], 97);
+  const trousers = [[d.wa + 3, 204], [d.hi + 3, 240], [d.lx + d.th + 2, 282], [d.lx + d.kn + 3, 360], [d.lx + d.an + 4, 446], [d.lx - d.an - 4, 446], [d.lx - d.kn - 2, 362], [d.lx - d.th + 3, 292], [0, 272]];
+  switch (it.shape) {
+    case 'tshirt': sleeves(false); add(topBody(250)); break;
+    case 'chemise':
+      sleeves(true); add(topBody(256));
+      add([[100, 101], [100 + d.nw + 6, 86], [100 + d.nw + 3, 98]], 'light', 0);
+      add([[100, 101], [100 - d.nw - 6, 86], [100 - d.nw - 3, 98]], 'light', 0);
+      line('M100 101V256'); break;
+    case 'pull': sleeves(true); add(topBody(252)); add(band(243, 252, d.hi + 2.6, d.hi + 3), 'dark', 0); break;
+    case 'sweat':
+      add(ellPts(100, 90, d.nw + 13, 10), 'dark');
+      sleeves(true); add(topBody(252)); add(band(243, 252, d.hi + 2.6, d.hi + 3), 'dark', 0);
+      line(`M84 214H116L120 236H80Z M96 98L95 128 M104 98L105 128`); break;
+    case 'debardeur': add(sym([[d.nw + 3, 90], [d.nw + 8, 92], [d.ch - 6, 112], [d.ch + 1, 138], [d.wa + 3, 192], [d.hi + 3, 250]], 112)); break;
+    case 'jean': case 'pantalon':
+      add(legsShape(trousers)); add(band(204, 212, d.wa + 3, d.wa + 4.2), 'dark', 0);
+      line(it.shape === 'jean'
+        ? `M${100 + d.wa - 8} 212Q${100 + d.wa - 4} 226 ${100 + d.hi + 2} 228 M${100 - d.wa + 8} 212Q${100 - d.wa + 4} 226 ${100 - d.hi - 2} 228 M100 212V254`
+        : `M${100 + d.lx} 226V444 M${100 - d.lx} 226V444`); break;
+    case 'short': add(legsShape([[d.wa + 3, 204], [d.hi + 3, 240], [d.lx + d.th + 3, 312], [d.lx - d.th + 1, 316], [0, 274]])); add(band(204, 212, d.wa + 3, d.wa + 4.2), 'dark', 0); break;
+    case 'jupe':
+      add(sym([[d.wa + 3, 204], [d.hi + 3, 244], [d.hi + 13, 336]])); add(band(204, 212, d.wa + 3, d.wa + 4.2), 'dark', 0);
+      line(`M100 212V338 M${100 + d.wa - 6} 212L${100 + d.hi} 336 M${100 - d.wa + 6} 212L${100 - d.hi} 336`); break;
+    case 'robe':
+      add(sym([[d.nw + 6, 90], [d.sh - 12, 95], [d.ch - 2, 132], [d.wa + 1, 192], [d.hi + 5, 246], [d.hi + 18, 350]], 106));
+      add(band(187, 197, d.wa + 1.3, d.wa + 1.8), 'dark', 0); break;
+    case 'combi': {
+      const l = [[d.nw + 5, 90], [d.sh - 12, 95], [d.ch - 2, 132], [d.wa + 2, 194], [d.hi + 4, 240], [d.lx + d.th + 3, 282], [d.lx + d.kn + 4, 360], [d.lx + d.an + 6, 446], [d.lx - d.an - 5, 446], [d.lx - d.kn - 2, 362], [d.lx - d.th + 3, 292], [0, 272]];
+      add([[100, 106], ...legsShape(l)]); add(band(189, 199, d.wa + 2.2, d.wa + 2.8), 'dark', 0); break;
+    }
+    case 'veste': case 'manteau': {
+      const hem = it.shape === 'manteau' ? 352 : 262;
+      const panel = RX([[d.nw + 2, 85], [d.sh, 94], [d.sh + 6, 106], [d.ch + 6, 140], [d.wa + 7, 192], [d.hi + 8, hem], [6, hem], [6, 152], [d.nw + 1, 98]]);
+      add(panel, 'main', 0); add(MX(panel), 'main', 0);
+      const sl = RX([[d.sh - 5, 94], [d.sh + 7, 102], [d.sh + 13, 140], [d.sh + 16, 192], [d.sh + 18, 254], [d.sh + 1, 256], [d.sh - 2, 196], [d.ch, 152], [d.ch + 1, 134]]);
+      add(sl); add(MX(sl));
+      line(`M${100 + d.nw + 1} 98L106 152M${100 - d.nw - 1} 98L94 152`);
+      if (it.shape === 'manteau') add(band(186, 196, d.wa + 8, d.wa + 8), 'dark', 0);
+      break;
+    }
+    case 'baskets': case 'bottines': case 'escarpins': {
+      const a = d.an;
+      const shoe = it.shape === 'baskets' ? [[-a - 5, 444], [a + 5, 444], [a + 7, 466], [-a - 7, 466]]
+        : it.shape === 'bottines' ? [[-a - 4, 424], [a + 4, 424], [a + 6, 467], [-a - 6, 467]]
+        : [[-a - 3, 452], [a + 3, 452], [a + 5, 468], [a + 1, 474], [-a - 4, 474], [-a - 5, 466]];
+      const sole = it.shape === 'baskets' ? [[-a - 7.5, 465], [a + 7.5, 465], [a + 7.5, 474], [-a - 7.5, 474]]
+        : it.shape === 'bottines' ? [[-a - 6.5, 466], [a + 6.5, 466], [a + 6.5, 475], [-a - 6.5, 475]] : null;
+      for (const sx of [1, -1]) {
+        const at = ([x, y]) => [100 + sx * d.lx + x, y];
+        add(shoe.map(at), 'main', 1);
+        if (sole) add(sole.map(at), it.shape === 'baskets' ? 'white' : 'dark', 0);
+      }
+      break;
+    }
+    case 'sac': {
+      const cx = 100 + d.sh + 9;
+      line(`M${cx - 10} 279Q${cx} 252 ${cx + 10} 279`, 3);
+      add([[cx - 17, 278], [cx + 17, 278], [cx + 19, 314], [cx - 19, 314]], 'main', 0);
+      add([[cx - 17, 278], [cx + 17, 278], [cx + 17.6, 290], [cx - 17.6, 290]], 'dark', 0); break;
+    }
+    case 'casquette':
+      add([[100 - d.hr - 1, 38], [100 - d.hr + 2, 24], [100, 17], [100 + d.hr - 2, 24], [100 + d.hr + 1, 38]], 'main', 1);
+      add(ellPts(100, 40, d.hr + 7, 4.5), 'dark', 1); break;
+    case 'bonnet':
+      add([[100 - d.hr - 1.5, 45], [100 - d.hr, 27], [100, 16], [100 + d.hr, 27], [100 + d.hr + 1.5, 45]], 'main', 1);
+      add(band(37, 47, d.hr + 1.5, d.hr + 1.8), 'dark', 0); add(ellPts(100, 14, 5, 5), 'light', 1); break;
+    case 'echarpe':
+      add([[100 - d.nw - 7, 80], [100 + d.nw + 7, 80], [100 + d.nw + 8, 95], [100 - d.nw - 8, 95]], 'main', 1);
+      add([[103, 90], [115, 90], [116, 170], [104, 170]], 'main', 0);
+      add([[103.4, 120], [115.4, 120], [115.5, 126], [103.5, 126]], 'dark', 0); break;
+  }
+  return out;
+}
+let mqSeq = 0;
+function mannequinSVG(gender, sel, mode, bare) {
+  const d = BODY[gender] || BODY.femme;
+  const u = 'mq' + (++mqSeq);
+  const defs = [];
+  const body = bodyPaths(d).map(p => `<path d="${p}" fill="url(#${u}s)" stroke="#C3C7D2" stroke-width=".7"/>`).join('');
+  const layers = [];
+  if (!bare) {
+    const order = mode === 'piece' ? ['piece', 'feet', 'outer', 'acc'] : ['bottom', 'top', 'feet', 'outer', 'acc'];
+    for (const slot of order) {
+      const it = itemById(sel[slot]);
+      if (!it) continue;
+      const hex = colorOf(it.color).hex, L = P.lum(hex);
+      const tones = { dark: L < 0.06 ? P.mix(hex, '#ffffff', 0.18) : P.mix(hex, '#000000', 0.22), light: L > 0.7 ? P.mix(hex, '#000000', 0.08) : P.mix(hex, '#ffffff', 0.35), white: '#F4F4F1' };
+      const stroke = L < 0.1 ? P.mix(hex, '#ffffff', 0.35) : P.mix(hex, '#000000', 0.35);
+      garmentParts(it, d).forEach((p, k) => {
+        if (p.line) { layers.push(`<path d="${p.line}" fill="none" stroke="${stroke}" stroke-width="${p.w || 0.9}" stroke-linecap="round" opacity=".85"/>`); return; }
+        const path = pathOf(p.pts, p.smooth);
+        let fill = tones[p.tone] || hex;
+        if (p.tone === 'main' && it.photo) {
+          const xs = p.pts.map(q => q[0]), ys = p.pts.map(q => q[1]);
+          const x = Math.min(...xs), y = Math.min(...ys), w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+          const pid = `${u}${slot}${k}`;
+          defs.push(`<pattern id="${pid}" patternUnits="userSpaceOnUse" x="${fx(x)}" y="${fx(y)}" width="${fx(w)}" height="${fx(h)}"><image href="${esc(it.photo)}" width="${fx(w)}" height="${fx(h)}" preserveAspectRatio="xMidYMid slice"/></pattern>`);
+          fill = `url(#${pid})`;
+        }
+        layers.push(`<path d="${path}" fill="${fill}" stroke="${stroke}" stroke-width=".7" stroke-linejoin="round"/>`);
+        if (p.tone === 'main') layers.push(`<path d="${path}" fill="url(#${u}h)"/>`);
+      });
+    }
+  }
+  return `<svg viewBox="0 0 200 500" ${bare ? 'aria-hidden="true"' : `role="img" aria-label="Mannequin ${gender === 'homme' ? 'homme' : 'femme'} habillé avec la tenue"`}><defs>
+    <linearGradient id="${u}s" x1="0" x2="1"><stop offset="0" stop-color="#D7DAE3"/><stop offset=".38" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C2C6D1"/></linearGradient>
+    <linearGradient id="${u}h" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".24"/></linearGradient>
+    ${defs.join('')}</defs>
+    <ellipse cx="100" cy="478" rx="62" ry="7" fill="rgba(0,0,0,.3)"/><g>${body}</g><g>${layers.join('')}</g></svg>`;
+}
+
+/* ================= politique de confidentialité ================= */
+const PRIVACY_VERSION = '2026-10-25';
+function openPrivacy() {
+  $('#pp-storage').textContent = inClaude
+    ? "Dans cette version, tes vêtements, tes tenues et ton profil sont enregistrés sur ton compte Claude, dans un espace privé que toi seul peux lire."
+    : "Uniquement dans ton navigateur, sur ton appareil (stockage local du navigateur). DressIn n'a pas de serveur : nous ne recevons pas tes données et nous ne pouvons ni les lire ni les récupérer. Si tu effaces les données de ton navigateur, ton dressing disparaît : pense à exporter une sauvegarde depuis l'onglet Compte.";
+  $('#privacy').hidden = false;
+  syncLock();
+  setTimeout(() => $('#privacy .icon-btn').focus(), 30);
+}
+function closePrivacy() { $('#privacy').hidden = true; syncLock(); }
+$('#privacy').addEventListener('click', e => {
+  if (e.target === $('#privacy') || e.target.closest('[data-close-privacy]')) closePrivacy();
+});
+
+/* ================= compte e-mail + mot de passe (version publique, sur l'appareil) ================= */
+let authDb = null;
+let account = null;
+let authMode = 'signup';
+let authGender = null;
+let authNeedsPrivacy = true;
+let confirmDelAcc = false;
+const b64e = u8 => btoa(String.fromCharCode(...u8));
+const b64d = s => Uint8Array.from(atob(s), ch => ch.charCodeAt(0));
+async function derive(pw, salt) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' }, key, 256);
+  return b64e(new Uint8Array(bits));
+}
+const getAccount = email => dbTx(authDb, 'accounts', 'readonly', os => os.get(email));
+const putAccount = acc => dbTx(authDb, 'accounts', 'readwrite', os => os.put(acc));
+
+async function startAuth() {
+  try {
+    if (!(window.crypto && crypto.subtle)) throw new Error('crypto');
+    authDb = await openDb('dressin-auth', { accounts: 'email' });
+  } catch (e) { authDb = null; await startLocal(); return; }
+  let email = null;
+  try { email = localStorage.getItem('dressin.session'); } catch (e) { /* stockage bloqué */ }
+  const acc = email ? await getAccount(email).catch(() => null) : null;
+  if (acc && acc.privacyVersion === PRIVACY_VERSION) { await enterAccount(acc); return; }
+  const n = await dbTx(authDb, 'accounts', 'readonly', os => os.count()).catch(() => 0);
+  authNeedsPrivacy = !!acc;
+  showAuth(acc || n ? 'login' : 'signup', acc ? acc.email : '');
+}
+function showAuth(mode, email) {
+  authMode = mode;
+  $('#a-email').value = email || '';
+  renderAuth();
+  $('#auth').hidden = false;
+  syncLock();
+  setTimeout(() => (email ? $('#a-pass') : $('#a-email')).focus(), 60);
+}
+function renderAuth(err = '') {
+  const signup = authMode === 'signup';
+  $$('[data-auth-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.authMode === authMode)));
+  $('#auth-title').textContent = signup ? 'Crée ton compte' : 'Content de te revoir';
+  $('#auth-sub').textContent = signup ? 'Ton dressing et tes tenues, toujours sous la main.' : 'Connecte-toi pour retrouver ton dressing.';
+  $('#a-pass').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+  $('#a-pass-hint').hidden = !signup;
+  $('#a-gender-field').hidden = !signup;
+  $('#a-privacy-row').hidden = !signup && !authNeedsPrivacy;
+  $('#auth-submit').textContent = signup ? 'Créer mon compte' : 'Se connecter';
+  $('#a-forgot').hidden = signup;
+  $('#auth-error').textContent = err;
+  $('#a-gender').innerHTML = ['femme', 'homme'].map(g => `<button type="button" data-gender="${g}" aria-pressed="${authGender === g}">${mannequinSVG(g, {}, 'separates', true)}<span>${g === 'femme' ? 'Femme' : 'Homme'}</span></button>`).join('');
+}
+async function enterAccount(acc) {
+  account = acc;
+  store.dbName = 'dressin-u-' + acc.id;
+  try { localStorage.setItem('dressin.session', acc.email); } catch (e) { /* stockage bloqué */ }
+  $('#auth').hidden = true;
+  syncLock();
+  await startLocal();
+}
+/* le premier compte créé sur l'appareil récupère le dressing déjà enregistré avant les comptes */
+async function migrateLegacy(acc) {
+  try { if (localStorage.getItem('dressin.legacyDone')) return; } catch (e) { return; }
+  try {
+    const old = await openDb('penderie', DATA_STORES);
+    const rows = await Promise.all(Object.keys(DATA_STORES).map(n => dbTx(old, n, 'readonly', os => os.getAll())));
+    old.close();
+    if (rows[0].length || rows[1].length) {
+      const nw = await openDb('dressin-u-' + acc.id, DATA_STORES);
+      const names = Object.keys(DATA_STORES);
+      for (let k = 0; k < names.length; k++) for (const r of rows[k]) await dbTx(nw, names[k], 'readwrite', os => os.put(r));
+      nw.close();
+    }
+    localStorage.setItem('dressin.legacyDone', '1');
+  } catch (e) { /* rien à reprendre */ }
+}
+async function signUp(email, pw, gender) {
+  if (await getAccount(email)) throw new Error('Un compte existe déjà avec cette adresse sur cet appareil. Connecte-toi.');
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const acc = { email, id: newId('u_'), salt: b64e(salt), hash: await derive(pw, salt), gender, createdAt: Date.now(), privacyVersion: PRIVACY_VERSION, privacyAt: Date.now() };
+  await putAccount(acc);
+  await migrateLegacy(acc);
+  await enterAccount(acc);
+  setSettings({ body: gender });
+  toast('Compte créé. Bienvenue sur DressIn !');
+}
+async function logIn(email, pw, accepted) {
+  const acc = await getAccount(email);
+  if (!acc) throw new Error("Aucun compte avec cette adresse sur cet appareil. Vérifie l'adresse ou crée un compte.");
+  if ((await derive(pw, b64d(acc.salt))) !== acc.hash) throw new Error('Mot de passe incorrect.');
+  if (acc.privacyVersion !== PRIVACY_VERSION) {
+    if (!accepted) { authNeedsPrivacy = true; throw new Error('La politique de confidentialité a changé. Coche la case pour continuer.'); }
+    acc.privacyVersion = PRIVACY_VERSION;
+    acc.privacyAt = Date.now();
+    await putAccount(acc);
+  }
+  await enterAccount(acc);
+  toast('Connecté. Content de te revoir !');
+}
+function logOut() {
+  try { localStorage.removeItem('dressin.session'); } catch (e) { /* stockage bloqué */ }
+  location.reload();
+}
+async function deleteAccount(acc) {
+  try { if (store.idb && account && account.id === acc.id) store.idb.close(); } catch (e) { /* déjà fermée */ }
+  await new Promise(res => { const r = indexedDB.deleteDatabase('dressin-u-' + acc.id); r.onsuccess = r.onerror = r.onblocked = () => res(); });
+  await dbTx(authDb, 'accounts', 'readwrite', os => os.delete(acc.email));
+  try { localStorage.removeItem('dressin.session'); } catch (e) { /* stockage bloqué */ }
+  location.reload();
+}
+$('#auth').addEventListener('click', async e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.authMode) { authMode = b.dataset.authMode; $('#forgot-box').hidden = true; renderAuth(); }
+  else if (b.dataset.gender) { authGender = b.dataset.gender; renderAuth($('#auth-error').textContent); }
+  else if (b.id === 'a-show') {
+    const show = $('#a-pass').type === 'password';
+    $('#a-pass').type = show ? 'text' : 'password';
+    b.textContent = show ? 'Masquer' : 'Afficher';
+    b.setAttribute('aria-pressed', String(show));
+  } else if (b.id === 'a-forgot') $('#forgot-box').hidden = false;
+  else if (b.id === 'a-reset-cancel') $('#forgot-box').hidden = true;
+  else if (b.id === 'a-reset') {
+    const acc = await getAccount($('#a-email').value.trim().toLowerCase()).catch(() => null);
+    if (!acc) { $('#forgot-box').hidden = true; renderAuth("Entre d'abord l'adresse e-mail du compte à supprimer."); return; }
+    deleteAccount(acc);
+  }
+});
+$('#auth-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('#a-email').value.trim().toLowerCase();
+  const pw = $('#a-pass').value;
+  const accepted = $('#a-privacy').checked;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { renderAuth('Entre une adresse e-mail valide, par exemple prenom@mail.com.'); return; }
+  if (authMode === 'signup') {
+    if (pw.length < 8) { renderAuth('Le mot de passe doit faire au moins 8 caractères.'); return; }
+    if (!authGender) { renderAuth('Choisis la silhouette de ton mannequin : femme ou homme.'); return; }
+    if (!accepted) { renderAuth('Coche la case pour accepter la politique de confidentialité.'); return; }
+  } else if (!pw) { renderAuth('Entre ton mot de passe.'); return; }
+  const btn = $('#auth-submit');
+  btn.disabled = true;
+  btn.textContent = 'Un instant…';
+  try {
+    if (authMode === 'signup') await signUp(email, pw, authGender);
+    else await logIn(email, pw, accepted);
+  } catch (err) { renderAuth(err.message || "Ça n'a pas marché. Réessaie."); }
+  btn.disabled = false;
+  if (!$('#auth').hidden) btn.textContent = authMode === 'signup' ? 'Créer mon compte' : 'Se connecter';
+});
+
+/* ================= recherche d'images en ligne (Openverse, images sous licence libre) ================= */
+const EN = {
+  jean: 'jeans', jeans: 'jeans', pull: 'sweater', chemise: 'shirt', veste: 'jacket', blazer: 'blazer', manteau: 'coat', baskets: 'sneakers', basket: 'sneakers',
+  bottines: 'ankle boots', bottine: 'ankle boots', escarpins: 'heels', robe: 'dress', jupe: 'skirt', 't-shirt': 't-shirt', tshirt: 't-shirt', sac: 'handbag',
+  casquette: 'cap', bonnet: 'beanie', écharpe: 'scarf', echarpe: 'scarf', short: 'shorts', pantalon: 'trousers', sweat: 'hoodie', débardeur: 'tank top',
+  combinaison: 'jumpsuit', noir: 'black', noire: 'black', blanc: 'white', blanche: 'white', gris: 'grey', grise: 'grey', beige: 'beige', marron: 'brown',
+  marine: 'navy', bleu: 'blue', bleue: 'blue', vert: 'green', verte: 'green', kaki: 'khaki', jaune: 'yellow', rouge: 'red', rose: 'pink', violet: 'purple',
+  bordeaux: 'burgundy', cuir: 'leather', laine: 'wool', lin: 'linen', coton: 'cotton', brut: 'raw',
+};
+const toEnglish = q => q.toLowerCase().split(/\s+/).filter(Boolean).map(w => EN[w] || w).join(' ');
+const searchEl = $('#search');
+let searchResults = [];
+let searchCtl = null;
+function openSearch() {
+  searchEl.hidden = false;
+  syncLock();
+  setTimeout(() => $('#search-q').focus(), 40);
+}
+function closeSearch() { searchEl.hidden = true; syncLock(); }
+$('#search-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const q = $('#search-q').value.trim();
+  if (!q) return;
+  if (searchCtl) searchCtl.abort();
+  searchCtl = new AbortController();
+  $('#search-status').textContent = 'Recherche en cours…';
+  $('#search-grid').innerHTML = '';
+  try {
+    const res = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(toEnglish(q))}&page_size=20&mature=false`, { signal: searchCtl.signal });
+    if (!res.ok) throw new Error(String(res.status));
+    const data = await res.json();
+    searchResults = (data.results || []).filter(r => r.thumbnail);
+    $('#search-status').textContent = searchResults.length
+      ? `${searchResults.length} images trouvées. Touche celle qui ressemble à ton vêtement.`
+      : 'Aucune image trouvée. Essaie un autre mot, ou en anglais (denim jacket, white sneakers).';
+    $('#search-grid').innerHTML = searchResults.map((r, i) => `<button type="button" data-result="${i}" aria-label="Utiliser : ${esc(r.title || 'image')}"><img src="${esc(r.thumbnail)}" alt="" loading="lazy"><span>${esc(r.title || 'Sans titre')}</span></button>`).join('');
+    $$('#search-grid img').forEach(img => img.addEventListener('error', () => img.closest('button').remove()));
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    $('#search-status').textContent = "La recherche n'a pas marché. Vérifie ta connexion et réessaie.";
+  }
+});
+searchEl.addEventListener('click', e => {
+  if (e.target === searchEl) { closeSearch(); return; }
+  const b = e.target.closest('button');
+  if (!b) return;
+  if ('closeSearch' in b.dataset) closeSearch();
+  else if (b.dataset.result) pickResult(searchResults[Number(b.dataset.result)]);
+});
+async function useRemoteImage(src, credit) {
+  closeSearch();
+  try {
+    const res = await fetch(src);
+    if (!res.ok) throw new Error('http');
+    const blob = await res.blob();
+    if (!/^image\//.test(blob.type)) throw new Error('type');
+    await processPhoto(blob, credit);
+  } catch (err) {
+    if (!draft) return;
+    draft.photo = src;
+    draft.credit = credit;
+    refreshAutoName();
+    renderSheet();
+    toast("Image ajoutée depuis son lien. Si le site d'origine la retire, elle ne s'affichera plus.");
+  }
+}
+function pickResult(r) {
+  if (!r || !draft) return;
+  useRemoteImage(r.thumbnail, {
+    title: String(r.title || '').slice(0, 80), creator: String(r.creator || '').slice(0, 60),
+    license: `CC ${String(r.license || '').toUpperCase()} ${r.license_version || ''}`.trim(), url: r.foreign_landing_url || '',
+  });
+}
+$('#url-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const u = $('#url-q').value.trim();
+  if (!/^https:\/\/\S+$/i.test(u)) { $('#search-status').textContent = 'Colle une adresse qui commence par https://'; return; }
+  $('#url-q').value = '';
+  useRemoteImage(u, { title: '', creator: '', license: '', url: u });
+});
 
 /* ================= rendu général ================= */
 function renderOnboard() {
@@ -1677,6 +2360,13 @@ document.addEventListener('click', e => {
   if ('wipeAsk' in d) { confirmWipe = true; renderAccount(); return; }
   if ('wipeCancel' in d) { confirmWipe = false; renderAccount(); return; }
   if ('wipe' in d) { wipeAll(); return; }
+  if (d.body) { setSettings({ body: d.body }); return; }
+  if ('openPrivacy' in d) { openPrivacy(); return; }
+  if ('openSearch' in d) { if (!draft) openSheet(null); openSearch(); return; }
+  if ('logout' in d) { logOut(); return; }
+  if ('delAccountAsk' in d) { confirmDelAcc = true; renderAccount(); return; }
+  if ('delAccountCancel' in d) { confirmDelAcc = false; renderAccount(); return; }
+  if ('delAccount' in d) { if (account) deleteAccount(account); return; }
   if (t.id === 'save-status') { toast(STATUS[$('#save-status').dataset.mode][1]); return; }
   if (t.id === 'mobile-save') { saveOutfit(); return; }
 });
@@ -1689,6 +2379,10 @@ board.addEventListener('click', e => {
     const s = b.dataset.lock;
     st.locks[s] = !st.locks[s];
     renderSlot(s);
+  } else if (b.dataset.boardView) {
+    boardView = b.dataset.boardView;
+    try { localStorage.setItem('dressin.boardView', boardView); } catch (err) { /* stockage bloqué */ }
+    renderBoard();
   }
 });
 let swipe = null;
@@ -1714,10 +2408,13 @@ $('.panel').addEventListener('click', e => {
 $('#save-form').addEventListener('submit', e => { e.preventDefault(); saveOutfit(); });
 
 document.addEventListener('keydown', e => {
+  if (!$('#privacy').hidden) { if (e.key === 'Escape') closePrivacy(); return; }
+  if (!$('#auth').hidden) return;
+  if (!$('#search').hidden) { if (e.key === 'Escape') closeSearch(); return; }
   if (!sheet.hidden) { if (e.key === 'Escape') closeSheet(); return; }
   if (state.view !== 'atelier' || e.target.closest('input, textarea, select, [contenteditable]')) return;
   if (e.code === 'Space' && !e.target.closest('button, a')) { e.preventDefault(); shuffle(); return; }
-  const slotEl = e.target.closest('.slot');
+  const slotEl = e.target.closest('.slot, .mq-row');
   if (slotEl && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); step(slotEl.dataset.slot, e.key === 'ArrowRight' ? 1 : -1); }
 });
 
@@ -1736,7 +2433,7 @@ sheet.addEventListener('click', e => {
   else if ('askDelItem' in d) { draft.confirmDel = true; renderSheet(); }
   else if ('keepItem' in d) { draft.confirmDel = false; renderSheet(); }
   else if ('delItem' in d) deleteItem();
-  else if (b.id === 'photo-remove') { draft.photo = null; renderSheet(); }
+  else if (b.id === 'photo-remove') { draft.photo = null; draft.credit = null; renderSheet(); }
 });
 $('#f-name').addEventListener('input', e => {
   if (!draft) return;
@@ -1778,6 +2475,7 @@ try {
   if (cached) state.settings = { ...state.settings, bg: cached.bg || 'nuit', accent: cached.accent || 'electrique' };
 } catch (e) { /* stockage bloqué */ }
 syncLook();
+$('#head-search').hidden = inClaude;
 setStatus('pending');
 go(VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'atelier', false);
 updateCounts();
