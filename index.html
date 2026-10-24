@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.">
+<meta name="theme-color" content="#ECEEF3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1020" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Penderie">
+<meta property="og:description" content="Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.">
+<meta property="og:url" content="https://s2aasmarketexp.github.io/penderie/">
+<meta property="og:image" content="https://s2aasmarketexp.github.io/penderie/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Penderie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout : l'atelier est une planche de coupe (rangées de la tête aux pieds) + un panneau de réglages collant ;
+   la penderie et les tenues sont des grilles d'étiquettes. */
+:root {
+  --bg: #ECEEF3;
+  --surface: #FFFFFF;
+  --surface-2: #F5F6F9;
+  --tile: #F1F2F6;
+  --ink: #14172A;
+  --muted: #5B6075;
+  --line: #D5D9E3;
+  --grid: rgba(43, 69, 245, .065);
+  --accent: #2B45F5;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E3E7FF;
+  --tag: #E6CFA9;
+  --tag-ink: #3F311C;
+  --danger: #C2352B;
+  --ok: #1F7A4D;
+  --scrim: rgba(10, 12, 24, .45);
+  --shadow: 0 1px 2px rgba(20, 23, 42, .06), 0 8px 24px rgba(20, 23, 42, .08);
+  --font-display: "Archivo", "Arial Black", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1020; --surface: #171A2D; --surface-2: #1E2238; --tile: #252A44; --ink: #ECEEF7; --muted: #9BA1BA;
+    --line: #2C3152; --grid: rgba(130, 148, 255, .07); --accent: #7488FF; --accent-ink: #0B0D1A; --accent-soft: #232A57;
+    --tag: #D9C29B; --tag-ink: #2E2414; --danger: #FF7B6E; --ok: #5FD39A; --scrim: rgba(0, 0, 0, .6);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1020; --surface: #171A2D; --surface-2: #1E2238; --tile: #252A44; --ink: #ECEEF7; --muted: #9BA1BA;
+  --line: #2C3152; --grid: rgba(130, 148, 255, .07); --accent: #7488FF; --accent-ink: #0B0D1A; --accent-soft: #232A57;
+  --tag: #D9C29B; --tag-ink: #2E2414; --danger: #FF7B6E; --ok: #5FD39A; --scrim: rgba(0, 0, 0, .6);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+html.locked, html.locked body { overflow: hidden; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.mono { font-family: var(--font-mono); }
+.label { display: block; font: 600 11px/1.3 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.label small { text-transform: none; letter-spacing: 0; font-weight: 400; }
+svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ---------- en-tête ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 8px 20px; min-height: 64px; flex-wrap: wrap; padding-block: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-family: var(--font-display); font-stretch: 125%; font-weight: 850; font-size: 19px; letter-spacing: .04em; }
+.brand svg { width: 26px; height: 26px; color: var(--accent); }
+.tabs { display: flex; gap: 4px; margin-left: auto; }
+.tab { appearance: none; border: 0; background: transparent; color: var(--muted); padding: 9px 13px; border-radius: 999px; font-weight: 600; font-size: 14px; line-height: 1; cursor: pointer; display: flex; gap: 7px; align-items: center; white-space: nowrap; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.tab .count { font: 500 11.5px var(--font-mono); opacity: .7; font-variant-numeric: tabular-nums; }
+.save-status { appearance: none; border: 0; background: none; cursor: pointer; display: flex; align-items: center; gap: 7px; font: 500 11.5px var(--font-mono); color: var(--muted); padding: 6px 0; white-space: nowrap; }
+.save-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.save-status[data-mode="cloud"]::before, .save-status[data-mode="local"]::before { background: var(--ok); }
+.save-status[data-mode="memory"]::before { background: var(--danger); }
+@media (max-width: 760px) {
+  .tabs { order: 3; width: 100%; margin-left: 0; overflow-x: auto; scrollbar-width: none; }
+  .save-status { margin-left: auto; }
+}
+
+/* ---------- boutons, puces, champs ---------- */
+.btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 12px; padding: 10px 16px; font-weight: 600; font-size: 14px; line-height: 1.1; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn.primary:hover { background: color-mix(in srgb, var(--ink) 86%, var(--accent)); }
+.btn.sm { padding: 7px 11px; font-size: 13px; border-radius: 10px; }
+.btn.sm svg.i { width: 15px; height: 15px; }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.danger { color: var(--danger); }
+.btn.danger-solid { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 12px; font-weight: 500; font-size: 13px; line-height: 1.2; cursor: pointer; white-space: nowrap; }
+.chip:hover { border-color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip .n { font: 500 11px var(--font-mono); opacity: .7; margin-left: 5px; }
+.chip:disabled { opacity: .4; cursor: default; }
+input.text { width: 100%; min-width: 0; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 500 15px var(--font-body); }
+input.text::placeholder { color: var(--muted); opacity: .8; }
+
+/* ---------- étiquette volante (swing tag) ---------- */
+.tag { position: relative; display: inline-flex; align-items: baseline; gap: 8px; max-width: 100%; min-width: 0; background: var(--tag); color: var(--tag-ink); padding: 5px 12px 5px 25px; border-radius: 3px 10px 10px 3px; font-size: 13px; line-height: 1.3; clip-path: polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 0 50%); }
+.tag::before { content: ""; position: absolute; left: 11px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 1px 1.5px rgba(0, 0, 0, .3); }
+.tag b { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.tag small { font: 500 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; opacity: .72; white-space: nowrap; }
+.tag.ghost { background: transparent; color: var(--muted); border: 1px dashed var(--line); clip-path: none; padding-left: 12px; border-radius: 999px; }
+.tag.ghost::before { display: none; }
+
+/* ---------- illustrations ---------- */
+.art { width: 100%; height: 100%; display: grid; place-items: center; }
+.art svg { width: 84%; height: 84%; display: block; }
+.art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.none { width: 100%; height: 100%; display: grid; place-items: center; text-align: center; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--muted); font: 500 11.5px/1.3 var(--font-mono); padding: 8px; }
+
+/* ---------- atelier ---------- */
+.intro { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 32px; padding-block: 28px 18px; }
+.intro h1 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: clamp(28px, 4.4vw, 46px); line-height: 1.02; letter-spacing: -.01em; text-wrap: balance; max-width: 17ch; }
+.intro p { margin: 0; color: var(--muted); max-width: 40ch; }
+.studio { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); gap: 20px; align-items: start; padding-bottom: 56px; }
+.board { min-width: 0; border-radius: 22px; box-shadow: var(--shadow); padding: 4px 18px 8px; background-color: var(--surface); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; background-position: -1px -1px; }
+.board-head { display: flex; justify-content: space-between; gap: 12px; padding: 14px 2px 6px; font: 600 11px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.slot { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 8px 14px; align-items: center; padding-block: 14px; border-top: 1px dashed var(--line); }
+.board-head + .slot { border-top: 0; }
+.slot-side { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.slot-label { font: 600 11px/1.2 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.slot-pos { font: 400 12px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.lock { appearance: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 5px 10px 5px 8px; font-weight: 600; font-size: 12px; line-height: 1; cursor: pointer; }
+.lock svg.i { width: 14px; height: 14px; }
+.lock:hover { color: var(--ink); border-color: var(--ink); }
+.lock[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.slot-main { display: grid; grid-template-columns: 38px minmax(0, 1fr) 38px; align-items: center; gap: 8px 4px; min-width: 0; }
+.arrow { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.arrow:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.arrow:disabled { opacity: .3; cursor: default; }
+.stage { --h: 132px; height: var(--h); display: flex; align-items: center; justify-content: center; gap: 14px; touch-action: pan-y; user-select: none; -webkit-user-select: none; overflow: hidden; min-width: 0; }
+.slot.small .stage { --h: 96px; }
+.peek { width: calc(var(--h) * .52); height: calc(var(--h) * .52); flex: none; opacity: .3; filter: saturate(.6); border-radius: 10px; overflow: hidden; }
+.peek .none { border-radius: 10px; font-size: 0; }
+.current { width: var(--h); height: var(--h); flex: none; border-radius: 16px; background: var(--tile); overflow: hidden; display: grid; place-items: center; }
+.current.is-none { background: transparent; }
+.current.spin .art { filter: blur(1.4px); transform: translateY(3px); }
+.current.landed { animation: land .34s cubic-bezier(.3, 1.6, .5, 1); }
+.current.from-r { animation: fromR .22s ease-out; }
+.current.from-l { animation: fromL .22s ease-out; }
+@keyframes land { 0% { transform: scale(.9); } 100% { transform: scale(1); } }
+@keyframes fromR { from { transform: translateX(26px); opacity: .25; } }
+@keyframes fromL { from { transform: translateX(-26px); opacity: .25; } }
+.cap { grid-column: 2; display: flex; justify-content: center; min-width: 0; }
+.slot-empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; min-height: 96px; color: var(--muted); border: 1.5px dashed var(--line); border-radius: 16px; padding: 12px; text-align: center; }
+.slot-empty p { margin: 0; }
+@media (max-width: 880px) { .studio { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 540px) {
+  .board { padding-inline: 12px; }
+  .slot { grid-template-columns: minmax(0, 1fr); }
+  .slot-side { flex-direction: row; align-items: center; gap: 10px; }
+  .slot-side .lock { margin-left: auto; }
+  .stage { --h: 116px; gap: 10px; }
+  .slot.small .stage { --h: 84px; }
+  .cap .tag small { display: none; }
+}
+
+/* panneau */
+.panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 84px); display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.combos-num { font-family: var(--font-display); font-stretch: 125%; font-weight: 900; font-size: clamp(48px, 6vw, 68px); line-height: .92; letter-spacing: -.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.combos-label { font-weight: 650; font-size: 16px; margin-top: 6px; }
+.formula { font: 400 11.5px/1.55 var(--font-mono); color: var(--muted); margin: 0; }
+.seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); align-self: flex-start; }
+.seg button { appearance: none; border: 0; background: transparent; padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 13px; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.filter-group { display: flex; flex-direction: column; gap: 8px; }
+.btn-shuffle { appearance: none; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; border: 0; border-radius: 16px; padding: 17px 18px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); font-stretch: 115%; font-weight: 800; font-size: 19px; letter-spacing: .03em; line-height: 1; cursor: pointer; box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 32%, transparent); transition: transform .12s; }
+.btn-shuffle svg.i { width: 22px; height: 22px; stroke-width: 2.3; }
+.btn-shuffle:active { transform: translateY(1px) scale(.985); }
+.btn-shuffle kbd { font: 500 11px var(--font-mono); letter-spacing: 0; background: color-mix(in srgb, var(--accent-ink) 18%, transparent); padding: 3px 7px; border-radius: 6px; }
+@media (hover: none) { .btn-shuffle kbd { display: none; } }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.sw { display: flex; flex-direction: column; align-items: center; gap: 5px; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .22)); }
+.sw i { display: block; width: 40px; height: 46px; background: var(--c); clip-path: polygon(0 0, 100% 0, 100% 86%, 87.5% 100%, 75% 86%, 62.5% 100%, 50% 86%, 37.5% 100%, 25% 86%, 12.5% 100%, 0 86%); }
+.sw span { font: 500 9.5px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); filter: none; }
+.harmony { margin: 0; font-size: 14px; }
+.save-row { display: flex; gap: 8px; }
+.save-row .btn { flex: none; }
+
+/* ---------- penderie ---------- */
+.page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding-block: 28px 16px; }
+.page-head h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: clamp(26px, 3.6vw, 38px); line-height: 1.05; }
+.page-head p { margin: 4px 0 0; color: var(--muted); }
+.note { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; background: var(--accent-soft); color: var(--ink); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; font-size: 14px; }
+.note p { margin: 0; flex: 1 1 280px; min-width: 0; }
+.note.quiet { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+.cat-filter { margin-bottom: 16px; }
+.grid-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; padding-bottom: 56px; }
+.item-card { appearance: none; text-align: left; border: 0; background: var(--surface); border-radius: 18px; padding: 10px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; cursor: pointer; min-width: 0; transition: transform .15s; }
+.item-card:hover { transform: translateY(-2px); }
+.item-card .tile { position: relative; aspect-ratio: 1; max-width: 100%; border-radius: 12px; background: var(--tile); overflow: hidden; display: grid; place-items: center; }
+.item-card .tile .art svg { width: 78%; height: 78%; }
+.item-card .tag { flex-direction: column; align-items: flex-start; gap: 1px; align-self: stretch; padding-block: 6px; }
+.item-card .tag b { max-width: 100%; }
+.item-card .tag small { white-space: normal; }
+.item-card .meta { font: 400 11.5px var(--font-mono); color: var(--muted); padding-inline: 4px; }
+.badge { position: absolute; top: 8px; left: 8px; font: 600 9.5px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; background: var(--surface); color: var(--muted); padding: 3px 7px; border-radius: 999px; }
+.item-card.add { border: 2px dashed var(--line); background: transparent; box-shadow: none; align-items: center; justify-content: center; gap: 10px; min-height: 230px; color: var(--muted); font-weight: 650; text-align: center; }
+.item-card.add .plus { width: 46px; height: 46px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; }
+.item-card.add:hover { border-color: var(--accent); color: var(--accent); }
+.empty { text-align: center; padding: 48px 16px; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 14px; grid-column: 1 / -1; }
+.empty h3 { margin: 0; color: var(--ink); font: 700 19px var(--font-body); }
+.empty p { margin: 0; max-width: 44ch; }
+
+/* ---------- tenues ---------- */
+.grid-looks { display: grid; grid-template-columns: repeat(auto-fill, minmax(262px, 1fr)); gap: 16px; padding-bottom: 56px; }
+.look { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.collage { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: repeat(3, minmax(0, 1fr)); grid-template-areas: "top outer" "bottom acc" "bottom feet"; gap: 6px; padding: 12px; aspect-ratio: 1.15; max-width: 100%; background-color: var(--surface-2); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 18px 18px; }
+.collage.piece { grid-template-areas: "piece outer" "piece acc" "piece feet"; }
+.cell { min-height: 0; min-width: 0; border-radius: 10px; background: var(--tile); overflow: hidden; display: grid; place-items: center; }
+.cell .art svg { width: 82%; height: 82%; }
+.cell.empty { background: transparent; border: 1px dashed var(--line); padding: 0; }
+.cell.top { grid-area: top; } .cell.bottom { grid-area: bottom; } .cell.piece { grid-area: piece; }
+.cell.outer { grid-area: outer; } .cell.acc { grid-area: acc; } .cell.feet { grid-area: feet; }
+.look-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+.look-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.look-title h3 { margin: 0; font: 700 17px/1.25 var(--font-body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.look-title .badge { position: static; background: var(--surface-2); }
+.look-items { margin: 0; font-size: 13px; color: var(--muted); }
+.look-meta { font: 400 11.5px var(--font-mono); color: var(--muted); }
+.look-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.look-actions .push { margin-left: auto; }
+.confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+
+/* ---------- fiche vêtement ---------- */
+.sheet-backdrop { position: fixed; inset: 0; z-index: 50; background: var(--scrim); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.sheet { background: var(--surface); width: min(880px, 100%); max-height: 100%; overflow: auto; border-radius: 22px; box-shadow: 0 24px 64px rgba(0, 0, 0, .3); display: flex; flex-direction: column; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px 6px; }
+.sheet-head h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 22px; }
+.sheet-grid { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 22px; padding: 10px 20px 16px; }
+.drop { position: relative; display: block; aspect-ratio: 1; max-width: 100%; border-radius: 18px; border: 2px dashed var(--line); background: var(--tile); overflow: hidden; cursor: pointer; }
+.drop.over { border-color: var(--accent); }
+.drop-art { position: absolute; inset: 0; display: grid; place-items: center; }
+.drop-art svg { width: 68%; height: 68%; }
+.drop-art img { width: 100%; height: 100%; object-fit: cover; }
+.drop-hint { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; align-items: center; gap: 10px; background: var(--surface); border-radius: 12px; padding: 9px 11px; box-shadow: var(--shadow); font-weight: 650; font-size: 13.5px; line-height: 1.25; }
+.drop-hint small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); }
+.photo-tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+.fields { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.swatch-pick { display: flex; flex-wrap: wrap; gap: 7px; }
+.swatch-pick button { width: 30px; height: 30px; border-radius: 50%; border: 0; padding: 0; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); cursor: pointer; }
+.swatch-pick button[aria-pressed="true"] { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18), 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.sheet-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 14px 20px 18px; border-top: 1px solid var(--line); position: sticky; bottom: 0; background: var(--surface); margin-top: auto; }
+.sheet-foot .del-zone { margin-right: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+.icon-btn { appearance: none; border: 1px solid var(--line); background: var(--surface); width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; padding: 0; color: var(--ink); }
+@media (max-width: 700px) {
+  .sheet-backdrop { align-items: flex-end; padding: max(24px, env(safe-area-inset-top, 0px)) 0 0; }
+  .sheet { border-radius: 22px 22px 0 0; max-height: 100%; }
+  .sheet-grid { grid-template-columns: minmax(0, 1fr); }
+  .drop { width: min(240px, 100%); margin: 0 auto; }
+  .sheet-foot { padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+}
+
+/* ---------- barre mobile et toast ---------- */
+.mobile-bar { display: none; }
+@media (max-width: 880px) {
+  .mobile-bar:not([hidden]) { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; gap: 8px; padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--line); }
+  .mobile-bar .btn-shuffle { flex: 1; padding: 15px; box-shadow: none; }
+  .mobile-bar .btn { border-radius: 16px; padding-inline: 18px; }
+  body.has-bar main { padding-bottom: 84px; }
+  .panel { position: static; }
+  .panel .btn-shuffle { display: none; }
+}
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 16px); opacity: 0; background: var(--ink); color: var(--bg); padding: 11px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; line-height: 1.35; z-index: 60; pointer-events: none; transition: opacity .25s, transform .25s; width: max-content; max-width: calc(100% - 32px); text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (max-width: 880px) { body.has-bar .toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#atelier" data-goto="atelier" aria-label="Penderie, accueil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7.2a2.1 2.1 0 1 1 2.1 2.1c-1.1.4-2.1 1-2.1 2.2v.6l8.6 5.6c.8.5.4 1.8-.5 1.8H3.9c-.9 0-1.3-1.3-.5-1.8L12 12.1"/></svg>
+      <span>PENDERIE</span>
+    </a>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="tab-atelier" data-view="atelier" aria-controls="view-atelier" aria-selected="true">Créer une tenue</button>
+      <button class="tab" role="tab" id="tab-penderie" data-view="penderie" aria-controls="view-penderie" aria-selected="false">Ma penderie <span class="count" id="count-items"></span></button>
+      <button class="tab" role="tab" id="tab-tenues" data-view="tenues" aria-controls="view-tenues" aria-selected="false">Mes tenues <span class="count" id="count-looks"></span></button>
+    </nav>
+    <button class="save-status" id="save-status" data-mode="pending" type="button">Chargement…</button>
+  </div>
+</header>
+
+<main>
+  <!-- ATELIER -->
+  <section id="view-atelier" class="view wrap" role="tabpanel" aria-labelledby="tab-atelier">
+    <div class="intro">
+      <h1>Qu'est-ce que je mets aujourd'hui&nbsp;?</h1>
+      <p>Fais défiler tes vêtements, garde ceux qui te plaisent et mélange le reste. Tout vient de ta penderie.</p>
+    </div>
+    <div class="studio">
+      <div class="board" id="board" aria-label="Tenue en cours"></div>
+      <aside class="panel" aria-label="Réglages de la tenue">
+        <div class="card">
+          <div>
+            <div class="combos-num" id="combos-num">0</div>
+            <div class="combos-label" id="combos-label">tenues possibles</div>
+          </div>
+          <p class="formula" id="combos-formula"></p>
+        </div>
+        <div class="card">
+          <div class="filter-group" id="mode-block">
+            <span class="label">Silhouette</span>
+            <div class="seg" id="mode-seg">
+              <button type="button" data-mode="separates" aria-pressed="true">Haut + bas</button>
+              <button type="button" data-mode="piece" aria-pressed="false">Une-pièce</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <span class="label">Occasion</span>
+            <div class="chips" id="occ-chips"></div>
+          </div>
+          <div class="filter-group">
+            <span class="label">Météo</span>
+            <div class="chips" id="season-chips"></div>
+          </div>
+          <button type="button" class="btn-shuffle" data-shuffle>
+            <svg class="i" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            Mélanger <kbd>Espace</kbd>
+          </button>
+        </div>
+        <div class="card">
+          <div class="filter-group">
+            <span class="label">Palette de la tenue</span>
+            <div class="swatches" id="palette"></div>
+            <p class="harmony" id="harmony"></p>
+          </div>
+          <form class="filter-group" id="save-form" autocomplete="off">
+            <label class="label" for="outfit-name">Nommer et enregistrer</label>
+            <div class="save-row">
+              <input class="text" id="outfit-name" type="text" maxlength="40" placeholder="Ex. Lundi au bureau">
+              <button class="btn primary" type="submit">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PENDERIE -->
+  <section id="view-penderie" class="view wrap" role="tabpanel" aria-labelledby="tab-penderie" hidden>
+    <div class="page-head">
+      <div>
+        <h2>Ma penderie</h2>
+        <p id="wardrobe-sub"></p>
+      </div>
+      <button class="btn primary" type="button" data-add>
+        <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter un vêtement
+      </button>
+    </div>
+    <div id="examples-note"></div>
+    <div class="chips cat-filter" id="cat-filter" aria-label="Filtrer par catégorie"></div>
+    <div class="grid-items" id="grid-items"></div>
+  </section>
+
+  <!-- TENUES -->
+  <section id="view-tenues" class="view wrap" role="tabpanel" aria-labelledby="tab-tenues" hidden>
+    <div class="page-head">
+      <div>
+        <h2>Mes tenues</h2>
+        <p id="looks-sub"></p>
+      </div>
+      <button class="btn" type="button" data-goto="atelier">
+        <svg class="i" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Créer une tenue
+      </button>
+    </div>
+    <div class="grid-looks" id="grid-looks"></div>
+  </section>
+</main>
+
+<div class="mobile-bar" id="mobile-bar">
+  <button type="button" class="btn-shuffle" data-shuffle>
+    <svg class="i" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Mélanger
+  </button>
+  <button type="button" class="btn" id="mobile-save">Enregistrer</button>
+</div>
+
+<div class="sheet-backdrop" id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-head">
+      <h2 id="sheet-title">Ajouter un vêtement</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Fermer">
+        <svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <form id="item-form" autocomplete="off">
+      <div class="sheet-grid">
+        <div>
+          <label class="drop" id="drop" for="photo-input">
+            <span class="drop-art" id="drop-art"></span>
+            <span class="drop-hint" id="drop-hint"></span>
+          </label>
+          <input class="sr-only" type="file" id="photo-input" accept="image/*">
+          <div class="photo-tools">
+            <span id="photo-note">Sans photo, on dessine le vêtement.</span>
+            <button type="button" class="btn sm ghost" id="photo-remove" hidden>Retirer la photo</button>
+          </div>
+        </div>
+        <div class="fields">
+          <div class="field"><span class="label">Catégorie</span><div class="chips" id="f-cat"></div></div>
+          <div class="field"><span class="label">Type</span><div class="chips" id="f-shape"></div></div>
+          <div class="field"><span class="label">Couleur <small id="f-color-name"></small></span><div class="swatch-pick" id="f-color"></div></div>
+          <div class="field"><label class="label" for="f-name">Nom</label><input class="text" id="f-name" type="text" maxlength="40"></div>
+          <div class="field"><span class="label">Occasions</span><div class="chips" id="f-occ"></div></div>
+          <div class="field"><span class="label">Saisons <small>(aucune cochée = toute l'année)</small></span><div class="chips" id="f-season"></div></div>
+        </div>
+      </div>
+      <div class="sheet-foot">
+        <div class="del-zone" id="del-zone"></div>
+        <button type="button" class="btn" data-close>Annuler</button>
+        <button type="submit" class="btn primary" id="sheet-save">Ajouter à ma penderie</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="garments.js"></script>
+<script>
+(() => {
+'use strict';
+const P = window.Penderie;
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const svg = d => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+const ICON = {
+  left: svg('M15 5l-7 7 7 7'),
+  right: svg('M9 5l7 7-7 7'),
+  lock: svg('M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z'),
+  unlock: svg('M7 11V8a5 5 0 0 1 9.6-2M5 11h14v10H5z'),
+  plus: svg('M12 5v14M5 12h14'),
+  trash: svg('M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3'),
+  camera: svg('M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z'),
+  check: svg('M5 12.5l4.5 4.5L19 7'),
+  open: svg('M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5'),
+};
+
+const OCCASIONS = [{ id: 'quotidien', label: 'Quotidien' }, { id: 'travail', label: 'Travail' }, { id: 'soiree', label: 'Soirée' }, { id: 'sport', label: 'Sport' }];
+const SEASONS = [{ id: 'chaud', label: 'Chaud' }, { id: 'mi-saison', label: 'Mi-saison' }, { id: 'froid', label: 'Froid' }];
+const OCC_LABEL = Object.fromEntries(OCCASIONS.map(o => [o.id, o.label]));
+const SLOTS = {
+  outer: { cat: 'veste', label: 'Veste', optional: true, none: 'Sans veste' },
+  top: { cat: 'haut', label: 'Haut', empty: 'Aucun haut' },
+  bottom: { cat: 'bas', label: 'Bas', empty: 'Aucun bas' },
+  piece: { cat: 'piece', label: 'Une-pièce', empty: 'Aucune robe ni combinaison' },
+  feet: { cat: 'chaussures', label: 'Chaussures', empty: 'Aucune paire de chaussures' },
+  acc: { cat: 'accessoire', label: 'Accessoire', optional: true, none: 'Sans accessoire' },
+};
+const ORDER = { separates: ['outer', 'top', 'bottom', 'feet', 'acc'], piece: ['outer', 'piece', 'feet', 'acc'] };
+const VIEWS = ['atelier', 'penderie', 'tenues'];
+const DEFAULT_SETTINGS = { showExamples: true };
+
+const state = {
+  items: [],
+  outfits: [],
+  settings: { ...DEFAULT_SETTINGS },
+  view: 'atelier',
+  wardrobeCat: 'all',
+  studio: { mode: 'separates', sel: {}, locks: {}, occ: null, season: null },
+};
+const st = state.studio;
+
+/* ================= utilitaires ================= */
+const colorOf = id => P.COLOR_BY_ID[id] || P.COLOR_BY_ID.gris;
+const catOf = id => P.CATS.find(c => c.id === id) || P.CATS[0];
+const newId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const plural = (n, one, many) => `${n.toLocaleString('fr-FR')} ${n > 1 ? many : one}`;
+const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const fmtDay = key => {
+  if (key === todayKey()) return "aujourd'hui";
+  const [y, m, d] = key.split('-').map(Number);
+  return 'le ' + new Date(y, m - 1, d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+};
+function visibleItems() { return state.settings.showExamples ? [...state.items, ...P.SAMPLE_ITEMS] : state.items.slice(); }
+function itemById(id) { return id ? (state.items.find(i => i.id === id) || P.SAMPLE_ITEMS.find(i => i.id === id) || null) : null; }
+function art(item) {
+  if (item.photo) return `<div class="art"><img src="${esc(item.photo)}" alt="" draggable="false"></div>`;
+  return `<div class="art">${P.garmentSVG(item.shape, colorOf(item.color).hex)}</div>`;
+}
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ================= atelier ================= */
+const board = $('#board');
+
+function matches(i) {
+  return (!st.occ || !i.occasions?.length || i.occasions.includes(st.occ))
+    && (!st.season || !i.seasons?.length || i.seasons.includes(st.season));
+}
+function pool(slot) { return visibleItems().filter(i => i.cat === SLOTS[slot].cat && matches(i)); }
+function options(slot) { const p = pool(slot); return SLOTS[slot].optional ? [null, ...p] : p; }
+function hasPieces() { return visibleItems().some(i => i.cat === 'piece'); }
+
+function pickRandom(slot, avoid) {
+  const p = pool(slot);
+  if (SLOTS[slot].optional) {
+    const pNone = slot === 'outer' ? (st.season === 'froid' ? 0 : st.season === 'chaud' ? 0.8 : 0.45) : 0.4;
+    if (!p.length || Math.random() < pNone) return null;
+  }
+  if (!p.length) return undefined;
+  const choices = p.length > 1 ? p.filter(i => i.id !== avoid) : p;
+  return choices[Math.floor(Math.random() * choices.length)].id;
+}
+
+function ensureSelection() {
+  if (st.mode === 'piece' && !hasPieces()) st.mode = 'separates';
+  const visible = new Set(visibleItems().map(i => i.id));
+  for (const slot of ORDER[st.mode]) {
+    const ids = options(slot).map(o => (o ? o.id : null));
+    const cur = st.sel[slot];
+    if (cur !== undefined && ids.includes(cur)) continue;
+    if (st.locks[slot] && cur && visible.has(cur)) continue;
+    st.sel[slot] = pickRandom(slot);
+  }
+}
+
+function peekHTML(o) {
+  if (o === undefined) return '<div class="peek" aria-hidden="true"></div>';
+  if (o === null) return '<div class="peek" aria-hidden="true"><div class="none"></div></div>';
+  return `<div class="peek" aria-hidden="true">${art(o)}</div>`;
+}
+function currentInner(o, slot) {
+  if (o === null) return `<div class="none">${SLOTS[slot].none}</div>`;
+  return o ? art(o) : '';
+}
+function tagHTML(o, slot) {
+  if (o === null) return `<span class="tag ghost">${SLOTS[slot].none}</span>`;
+  if (!o) return '';
+  return `<span class="tag"><b>${esc(o.name)}</b><small>${esc(colorOf(o.color).name)}${o.example ? ' · exemple' : ''}</small></span>`;
+}
+
+function slotHTML(slot, anim = '') {
+  const def = SLOTS[slot];
+  const size = slot === 'feet' || slot === 'acc' ? ' small' : '';
+  const opts = options(slot);
+  const ids = opts.map(o => (o ? o.id : null));
+  const p = pool(slot);
+  const curId = st.sel[slot];
+  const locked = !!st.locks[slot];
+  const lockBtn = `<button type="button" class="lock" data-lock="${slot}" data-fk="${slot}:lock" aria-pressed="${locked}" title="${locked ? 'Ce vêtement reste en place quand tu mélanges' : 'Garder ce vêtement quand tu mélanges'}">${locked ? ICON.lock : ICON.unlock}${locked ? 'Gardé' : 'Garder'}</button>`;
+
+  if (curId === undefined || (curId && !itemById(curId))) {
+    if (!def.optional) {
+      const filtered = st.occ || st.season;
+      return `<section class="slot${size}" data-slot="${slot}" aria-label="${def.label}">
+        <div class="slot-side"><span class="slot-label">${def.label}</span><span class="slot-pos">0</span></div>
+        <div class="slot-empty"><p>${def.empty}${filtered ? ' pour ces filtres.' : ' dans ta penderie.'}</p>
+          ${filtered ? '<button type="button" class="btn sm" data-clear-filters>Retirer les filtres</button>' : `<button type="button" class="btn sm" data-add-cat="${def.cat}">${ICON.plus}Ajouter</button>`}</div>
+      </section>`;
+    }
+  }
+  const cur = curId ? itemById(curId) : null;
+  const idx = ids.indexOf(curId ?? null);
+  const n = opts.length;
+  let prev, next;
+  if (idx >= 0) {
+    next = n >= 2 ? opts[(idx + 1) % n] : undefined;
+    prev = n >= 3 ? opts[(idx - 1 + n) % n] : undefined;
+  } else {
+    next = opts[0];
+    prev = n >= 2 ? opts[n - 1] : undefined;
+  }
+  const pos = cur ? `${Math.max(1, p.findIndex(i => i.id === cur.id) + 1)} / ${p.length}` : `– / ${p.length}`;
+  const canStep = n >= 2 || (idx < 0 && n >= 1);
+  const lower = def.label.toLowerCase();
+  return `<section class="slot${size}" data-slot="${slot}" aria-label="${def.label}">
+    <div class="slot-side">
+      <span class="slot-label">${def.label}</span>
+      <span class="slot-pos">${pos}</span>
+      ${lockBtn}
+    </div>
+    <div class="slot-main">
+      <button type="button" class="arrow" data-step="-1" data-slot="${slot}" data-fk="${slot}:prev" aria-label="${def.label} précédent" ${canStep ? '' : 'disabled'}>${ICON.left}</button>
+      <div class="stage" data-slot="${slot}">
+        ${peekHTML(prev)}
+        <div class="current${cur ? '' : ' is-none'}${anim ? ' ' + anim : ''}">${currentInner(cur, slot)}</div>
+        ${peekHTML(next)}
+      </div>
+      <button type="button" class="arrow" data-step="1" data-slot="${slot}" data-fk="${slot}:next" aria-label="${def.label} suivant" ${canStep ? '' : 'disabled'}>${ICON.right}</button>
+      <div class="cap" aria-live="polite">${tagHTML(cur, slot)}<span class="sr-only">${cur ? '' : 'Aucun ' + lower}</span></div>
+    </div>
+  </section>`;
+}
+
+function boardHead() {
+  const d = new Date().toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+  const n = ORDER[st.mode].filter(s => st.sel[s]).length;
+  return `<div class="board-head"><span>Tenue du jour · ${plural(n, 'pièce', 'pièces')}</span><span>${esc(d)}</span></div>`;
+}
+function withFocus(fn) {
+  const fk = document.activeElement?.dataset?.fk;
+  fn();
+  if (fk) board.querySelector(`[data-fk="${fk}"]`)?.focus();
+}
+function renderBoard(landed) {
+  withFocus(() => {
+    board.innerHTML = boardHead() + ORDER[st.mode].map(s => slotHTML(s, landed && landed.includes(s) ? 'landed' : '')).join('');
+  });
+}
+function renderSlot(slot, anim) {
+  withFocus(() => {
+    const el = board.querySelector(`.slot[data-slot="${slot}"]`);
+    if (el) el.outerHTML = slotHTML(slot, anim);
+    const head = board.querySelector('.board-head');
+    if (head) head.outerHTML = boardHead();
+  });
+}
+
+function step(slot, dir) {
+  if (spinning) return;
+  const ids = options(slot).map(o => (o ? o.id : null));
+  if (!ids.length) return;
+  let i = ids.indexOf(st.sel[slot] ?? null);
+  i = i < 0 ? (dir > 0 ? 0 : ids.length - 1) : (i + dir + ids.length) % ids.length;
+  st.sel[slot] = ids[i];
+  renderSlot(slot, dir > 0 ? 'from-r' : 'from-l');
+  renderPanel();
+}
+
+let spinning = false;
+function shuffle() {
+  if (spinning) return;
+  const order = ORDER[st.mode];
+  const targets = {};
+  for (const slot of order) {
+    if (st.locks[slot]) continue;
+    if (!options(slot).length) continue;
+    targets[slot] = pickRandom(slot, st.sel[slot]);
+  }
+  const slots = Object.keys(targets);
+  if (!slots.length) { toast('Tout est gardé. Libère une pièce pour mélanger.'); return; }
+  if (reduceMotion) { Object.assign(st.sel, targets); renderBoard(); renderPanel(); return; }
+  spinning = true;
+  let done = 0;
+  slots.forEach((slot, k) => {
+    const opts = options(slot);
+    const dur = 360 + k * 130;
+    const t0 = performance.now();
+    const cur = () => board.querySelector(`.stage[data-slot="${slot}"] .current`);
+    const tick = () => {
+      const el = cur();
+      if (performance.now() - t0 < dur && opts.length > 1) {
+        const r = opts[Math.floor(Math.random() * opts.length)];
+        if (el) { el.classList.add('spin'); el.classList.toggle('is-none', r === null); el.innerHTML = currentInner(r, slot); }
+        setTimeout(tick, 65);
+      } else {
+        st.sel[slot] = targets[slot];
+        renderSlot(slot, 'landed');
+        if (++done === slots.length) { spinning = false; renderPanel(); }
+      }
+    };
+    tick();
+  });
+}
+
+/* panneau */
+let shownTotal = null;
+function combos() {
+  const items = visibleItems();
+  const c = cat => items.filter(i => i.cat === cat).length;
+  const r = { tops: c('haut'), bottoms: c('bas'), pieces: c('piece'), outer: c('veste'), feet: c('chaussures'), acc: c('accessoire') };
+  const base = r.tops * r.bottoms + r.pieces;
+  r.total = base * Math.max(r.feet, 1) * (r.outer + 1) * (r.acc + 1);
+  r.count = items.length;
+  return r;
+}
+function animateNumber(el, to) {
+  const from = shownTotal;
+  shownTotal = to;
+  const fmt = n => n.toLocaleString('fr-FR');
+  if (from === null || from === to || reduceMotion) { el.textContent = fmt(to); return; }
+  const t0 = performance.now();
+  const f = now => {
+    const k = Math.min(1, (now - t0) / 650);
+    el.textContent = fmt(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))));
+    if (k < 1) requestAnimationFrame(f);
+  };
+  requestAnimationFrame(f);
+}
+function chipsHTML(list, active, attr) {
+  return [`<button type="button" class="chip" data-${attr}="" aria-pressed="${!active}">Toutes</button>`]
+    .concat(list.map(o => `<button type="button" class="chip" data-${attr}="${o.id}" aria-pressed="${active === o.id}">${o.label}</button>`)).join('');
+}
+function selectedItems() { return ORDER[st.mode].map(s => itemById(st.sel[s])).filter(Boolean); }
+
+function renderPanel() {
+  const c = combos();
+  animateNumber($('#combos-num'), c.total);
+  $('#combos-label').textContent = `${c.total > 1 ? 'tenues possibles' : 'tenue possible'} avec ${plural(c.count, 'vêtement', 'vêtements')}`;
+  const parts = [];
+  parts.push(`${plural(c.tops, 'haut', 'hauts')} × ${plural(c.bottoms, 'bas', 'bas')}${c.pieces ? ` + ${plural(c.pieces, 'une-pièce', 'une-pièces')}` : ''}`);
+  if (c.feet) parts.push(`× ${plural(c.feet, 'paire', 'paires')}`);
+  parts.push(`× ${c.outer + 1} options veste`, `× ${c.acc + 1} options accessoire`);
+  $('#combos-formula').textContent = parts.join(' ');
+
+  const mb = $('#mode-block');
+  mb.hidden = !hasPieces();
+  $$('#mode-seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === st.mode));
+  $('#occ-chips').innerHTML = chipsHTML(OCCASIONS, st.occ, 'occ');
+  $('#season-chips').innerHTML = chipsHTML(SEASONS, st.season, 'season');
+
+  const items = selectedItems();
+  const colorIds = [...new Set(items.map(i => i.color))];
+  $('#palette').innerHTML = colorIds.map(id => `<span class="sw" style="--c:${colorOf(id).hex}"><i></i><span>${esc(colorOf(id).name)}</span></span>`).join('');
+  const bright = colorIds.filter(id => !colorOf(id).neutral);
+  let msg;
+  if (!items.length) msg = 'Choisis au moins une pièce.';
+  else if (!bright.length) msg = 'Que des neutres. Sobre et facile à porter.';
+  else if (bright.length === 1) msg = `Des neutres avec une touche de ${colorOf(bright[0]).name.toLowerCase()}. L'équilibre classique.`;
+  else if (bright.length === 2) msg = 'Deux couleurs franches. La tenue se remarque.';
+  else msg = `${bright.length} couleurs vives. Un look audacieux.`;
+  $('#harmony').textContent = msg;
+}
+
+function defaultLookName() {
+  const d = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return `Tenue du ${d}`;
+}
+function saveOutfit() {
+  const sel = {};
+  for (const slot of ORDER[st.mode]) sel[slot] = st.sel[slot] ?? null;
+  const required = st.mode === 'piece' ? ['piece'] : ['top', 'bottom'];
+  if (required.some(s => !sel[s])) { toast(st.mode === 'piece' ? 'Choisis une robe ou une combinaison pour enregistrer.' : 'Il faut un haut et un bas pour enregistrer.'); return; }
+  const same = state.outfits.find(o => o.mode === st.mode && ORDER[st.mode].every(s => (o.sel?.[s] ?? null) === sel[s]));
+  if (same) { toast(`Déjà enregistrée sous « ${same.name} ».`); return; }
+  const input = $('#outfit-name');
+  const name = input.value.trim() || defaultLookName();
+  const o = { id: newId('o_'), name, mode: st.mode, sel, occasion: st.occ || null, createdAt: Date.now(), wornDates: [] };
+  state.outfits = [o, ...state.outfits];
+  persist({ kind: 'outfit', action: 'put', data: o });
+  input.value = '';
+  updateCounts();
+  toast(`« ${name} » est dans Mes tenues.`);
+}
+
+/* ================= penderie ================= */
+function usageMap() {
+  const m = new Map();
+  for (const o of state.outfits) for (const id of Object.values(o.sel || {})) if (id) m.set(id, (m.get(id) || 0) + 1);
+  return m;
+}
+function renderWardrobe() {
+  const all = visibleItems();
+  const own = state.items.length;
+  const ex = state.settings.showExamples ? P.SAMPLE_ITEMS.length : 0;
+  $('#wardrobe-sub').textContent = own || !ex
+    ? `${plural(own, 'vêtement à toi', 'vêtements à toi')}${ex ? ` · ${ex} exemples` : ''}`
+    : `${ex} vêtements d'exemple pour tester`;
+
+  const note = $('#examples-note');
+  if (state.settings.showExamples) {
+    note.innerHTML = `<div class="note"><p>Les pièces marquées <b>Exemple</b> servent à tester l'appli. Elles disparaissent dès que tu ajoutes ton premier vêtement.</p><button type="button" class="btn sm" data-examples="hide">Masquer les exemples</button></div>`;
+  } else if (own) {
+    note.innerHTML = `<div class="note quiet"><p>Les exemples sont masqués. L'atelier ne mélange que tes vêtements.</p><button type="button" class="btn sm ghost" data-examples="show">Réafficher les exemples</button></div>`;
+  } else note.innerHTML = '';
+
+  const counts = Object.fromEntries(P.CATS.map(c => [c.id, all.filter(i => i.cat === c.id).length]));
+  if (state.wardrobeCat !== 'all' && !counts[state.wardrobeCat]) state.wardrobeCat = 'all';
+  $('#cat-filter').innerHTML = [`<button type="button" class="chip" data-wcat="all" aria-pressed="${state.wardrobeCat === 'all'}">Tout<span class="n">${all.length}</span></button>`]
+    .concat(P.CATS.map(c => `<button type="button" class="chip" data-wcat="${c.id}" aria-pressed="${state.wardrobeCat === c.id}" ${counts[c.id] ? '' : 'disabled'}>${c.label}<span class="n">${counts[c.id]}</span></button>`)).join('');
+
+  const grid = $('#grid-items');
+  if (!all.length) {
+    grid.innerHTML = `<div class="empty"><h3>Ta penderie est vide</h3><p>Ajoute tes vêtements un par un, avec une photo ou un simple dessin. Dès qu'il y a un haut, un bas et une paire de chaussures, l'atelier peut composer des tenues.</p>
+      <button type="button" class="btn primary" data-add>${ICON.plus}Ajouter mon premier vêtement</button>
+      <button type="button" class="btn sm ghost" data-examples="show">Réafficher les exemples</button></div>`;
+    return;
+  }
+  const list = state.wardrobeCat === 'all' ? all : all.filter(i => i.cat === state.wardrobeCat);
+  const use = usageMap();
+  grid.innerHTML = `<button type="button" class="item-card add" data-add><span class="plus">${ICON.plus}</span>Ajouter un vêtement</button>`
+    + list.map(i => {
+      const n = use.get(i.id) || 0;
+      const meta = n ? `Dans ${plural(n, 'tenue', 'tenues')}` : (i.occasions || []).map(o => OCC_LABEL[o]).filter(Boolean).join(' · ') || 'Toutes occasions';
+      return `<button type="button" class="item-card" data-item="${esc(i.id)}" aria-label="${esc(i.name)}${i.example ? ', exemple' : ', modifier'}">
+        <div class="tile">${art(i)}${i.example ? '<span class="badge">Exemple</span>' : ''}</div>
+        <span class="tag"><b>${esc(i.name)}</b><small>${esc(catOf(i.cat).one)} · ${esc(colorOf(i.color).name)}</small></span>
+        <span class="meta">${esc(meta)}</span>
+      </button>`;
+    }).join('');
+}
+
+/* ================= tenues ================= */
+function visibleLooks() {
+  const own = state.outfits.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  return state.settings.showExamples ? [...own, ...P.SAMPLE_OUTFITS] : own;
+}
+let confirmLook = null;
+function renderLooks() {
+  const own = state.outfits.length;
+  const list = visibleLooks();
+  $('#looks-sub').textContent = own
+    ? plural(own, 'tenue enregistrée', 'tenues enregistrées')
+    : (list.length ? "Aucune tenue à toi pour l'instant. Voici des exemples." : '');
+  const grid = $('#grid-looks');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty"><h3>Aucune tenue enregistrée</h3><p>Compose une tenue dans l'atelier, donne-lui un nom et enregistre-la. Elle apparaîtra ici.</p><button type="button" class="btn primary" data-goto="atelier">Créer une tenue</button></div>`;
+    return;
+  }
+  const today = todayKey();
+  grid.innerHTML = list.map(o => {
+    const areas = o.mode === 'piece' ? ['piece', 'outer', 'acc', 'feet'] : ['top', 'outer', 'bottom', 'acc', 'feet'];
+    const cells = areas.map(a => {
+      const it = itemById(o.sel?.[a]);
+      return `<div class="cell ${a}${it ? '' : ' empty'}">${it ? art(it) : ''}</div>`;
+    }).join('');
+    const names = areas.map(a => itemById(o.sel?.[a])).filter(Boolean).map(i => i.name);
+    const worn = o.wornDates || [];
+    const meta = o.example ? [o.occasion ? OCC_LABEL[o.occasion] : null, 'Exemple'] : [
+      o.occasion ? OCC_LABEL[o.occasion] : null,
+      worn.length ? `Portée ${worn.length} fois` : 'Pas encore portée',
+      worn.length ? `dernière fois ${fmtDay(worn[worn.length - 1])}` : null,
+    ];
+    const isConfirm = confirmLook === o.id;
+    const actions = o.example
+      ? `<button type="button" class="btn sm" data-open="${esc(o.id)}">${ICON.open}Ouvrir dans l'atelier</button>`
+      : isConfirm
+        ? `<div class="confirm">Supprimer cette tenue ?<button type="button" class="btn sm danger-solid" data-del-look="${esc(o.id)}">Supprimer</button><button type="button" class="btn sm" data-cancel-del>Annuler</button></div>`
+        : `<button type="button" class="btn sm" data-open="${esc(o.id)}">${ICON.open}Ouvrir</button>
+           <button type="button" class="btn sm" data-wear="${esc(o.id)}" aria-pressed="${worn.includes(today)}">${ICON.check}${worn.includes(today) ? "Portée aujourd'hui" : "Je la porte aujourd'hui"}</button>
+           <button type="button" class="btn sm ghost danger push" data-ask-del="${esc(o.id)}" aria-label="Supprimer la tenue">${ICON.trash}</button>`;
+    return `<article class="look">
+      <div class="collage ${o.mode === 'piece' ? 'piece' : ''}">${cells}</div>
+      <div class="look-body">
+        <div class="look-title"><h3>${esc(o.name)}</h3>${o.example ? '<span class="badge">Exemple</span>' : ''}</div>
+        <p class="look-items">${esc(names.join(', ') || 'Vêtements supprimés')}</p>
+        <div class="look-meta">${esc(meta.filter(Boolean).join(' · '))}</div>
+        <div class="look-actions">${actions}</div>
+      </div>
+    </article>`;
+  }).join('');
+}
+function openLook(id) {
+  const o = state.outfits.find(x => x.id === id) || P.SAMPLE_OUTFITS.find(x => x.id === id);
+  if (!o) return;
+  st.mode = o.mode === 'piece' ? 'piece' : 'separates';
+  st.sel = { ...o.sel };
+  st.locks = {};
+  st.occ = null;
+  st.season = null;
+  go('atelier');
+  window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  toast(`« ${o.name} » est sur la planche.`);
+}
+function toggleWorn(id) {
+  const o = state.outfits.find(x => x.id === id);
+  if (!o) return;
+  const t = todayKey();
+  const worn = o.wornDates || [];
+  const upd = { ...o, wornDates: worn.includes(t) ? worn.filter(d => d !== t) : [...worn, t].sort() };
+  state.outfits = state.outfits.map(x => (x.id === id ? upd : x));
+  persist({ kind: 'outfit', action: 'put', data: upd });
+  renderLooks();
+}
+
+/* ================= fiche vêtement ================= */
+const sheet = $('#sheet');
+let draft = null;
+let lastFocus = null;
+function autoName() { return `${P.SHAPES[draft.shape].label} ${P.adj(draft.color, draft.shape)}`; }
+
+function openSheet(item, presetCat) {
+  lastFocus = document.activeElement;
+  const cat = item?.cat || presetCat || (state.wardrobeCat !== 'all' ? state.wardrobeCat : 'haut');
+  draft = item
+    ? { ...item, occasions: [...(item.occasions || [])], seasons: [...(item.seasons || [])], nameTouched: true, confirmDel: false }
+    : { id: null, cat, shape: P.SHAPES_BY_CAT[cat][0], color: 'noir', name: '', nameTouched: false, occasions: ['quotidien'], seasons: [], photo: null, confirmDel: false };
+  if (!draft.nameTouched) draft.name = autoName();
+  $('#sheet-title').textContent = item ? 'Modifier le vêtement' : 'Ajouter un vêtement';
+  $('#sheet-save').textContent = item ? 'Enregistrer' : 'Ajouter à ma penderie';
+  $('#f-name').value = draft.name;
+  renderSheet();
+  sheet.hidden = false;
+  document.documentElement.classList.add('locked');
+  setTimeout(() => $('#drop').focus(), 30);
+}
+function closeSheet() {
+  sheet.hidden = true;
+  draft = null;
+  document.documentElement.classList.remove('locked');
+  if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+function renderSheet(busy) {
+  const hex = colorOf(draft.color).hex;
+  $('#drop-art').innerHTML = draft.photo ? `<img src="${esc(draft.photo)}" alt="Photo du vêtement">` : P.garmentSVG(draft.shape, hex);
+  $('#drop-hint').innerHTML = busy
+    ? `${ICON.camera}<span>Préparation de la photo…</span>`
+    : `${ICON.camera}<span>${draft.photo ? 'Changer la photo' : 'Ajouter une photo'}<small>Clique, glisse une image ou colle-la</small></span>`;
+  $('#photo-remove').hidden = !draft.photo;
+  $('#photo-note').textContent = draft.photo ? 'Photo réduite et gardée avec le vêtement.' : 'Sans photo, on dessine le vêtement.';
+  $('#f-cat').innerHTML = P.CATS.map(c => `<button type="button" class="chip" data-fcat="${c.id}" aria-pressed="${draft.cat === c.id}">${c.one}</button>`).join('');
+  $('#f-shape').innerHTML = P.SHAPES_BY_CAT[draft.cat].map(s => `<button type="button" class="chip" data-fshape="${s}" aria-pressed="${draft.shape === s}">${P.SHAPES[s].label}</button>`).join('');
+  $('#f-color').innerHTML = P.COLORS.map(c => `<button type="button" style="--c:${c.hex}" data-fcolor="${c.id}" aria-pressed="${draft.color === c.id}" aria-label="${c.name}" title="${c.name}"></button>`).join('');
+  $('#f-color-name').textContent = `· ${colorOf(draft.color).name}`;
+  if (document.activeElement !== $('#f-name')) $('#f-name').value = draft.name;
+  $('#f-occ').innerHTML = OCCASIONS.map(o => `<button type="button" class="chip" data-focc="${o.id}" aria-pressed="${draft.occasions.includes(o.id)}">${o.label}</button>`).join('');
+  $('#f-season').innerHTML = SEASONS.map(o => `<button type="button" class="chip" data-fseason="${o.id}" aria-pressed="${draft.seasons.includes(o.id)}">${o.label}</button>`).join('');
+  $('#del-zone').innerHTML = !draft.id ? '' : draft.confirmDel
+    ? `Supprimer pour de bon ?<button type="button" class="btn sm danger-solid" data-del-item>Oui, supprimer</button><button type="button" class="btn sm" data-keep-item>Non</button>`
+    : `<button type="button" class="btn sm ghost danger" data-ask-del-item>${ICON.trash}Supprimer</button>`;
+}
+function refreshAutoName() {
+  if (!draft.nameTouched) { draft.name = autoName(); $('#f-name').value = draft.name; }
+}
+
+function loadImage(src) {
+  return new Promise((res, rej) => { const img = new Image(); img.onload = () => res(img); img.onerror = rej; img.src = src; });
+}
+function suggestColor(ctx, w, h) {
+  const S = 36;
+  const c = document.createElement('canvas');
+  c.width = S; c.height = S;
+  const x = c.getContext('2d');
+  x.drawImage(ctx.canvas, 0, 0, S, S);
+  const d = x.getImageData(0, 0, S, S).data;
+  const pal = P.COLORS.map(col => ({ id: col.id, rgb: P.hexToRgb(col.hex) }));
+  const score = {};
+  for (let yy = 4; yy < S - 4; yy++) for (let xx = 4; xx < S - 4; xx++) {
+    const k = (yy * S + xx) * 4;
+    const r = d[k], g = d[k + 1], b = d[k + 2];
+    if (r > 228 && g > 228 && b > 228) continue;
+    const wgt = 1 + (1 - Math.hypot(xx - S / 2, yy - S / 2) / (S / 2));
+    let best = null, bd = Infinity;
+    for (const p of pal) { const dd = (p.rgb[0] - r) ** 2 + (p.rgb[1] - g) ** 2 + (p.rgb[2] - b) ** 2; if (dd < bd) { bd = dd; best = p.id; } }
+    score[best] = (score[best] || 0) + wgt;
+  }
+  const top = Object.entries(score).sort((a, b) => b[1] - a[1])[0];
+  return top ? top[0] : null;
+}
+async function processPhoto(file) {
+  if (!file || !/^image\//.test(file.type)) { toast("Ce fichier n'est pas une image. Choisis une photo JPG ou PNG."); return; }
+  renderSheet(true);
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await loadImage(url);
+    const max = 640;
+    const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    let q = 0.82, data = c.toDataURL('image/jpeg', q);
+    while (data.length > 170000 && q > 0.45) { q -= 0.1; data = c.toDataURL('image/jpeg', q); }
+    if (!draft) return;
+    draft.photo = data;
+    const col = suggestColor(ctx, w, h);
+    if (col) draft.color = col;
+    refreshAutoName();
+    renderSheet();
+  } catch (e) {
+    toast("Impossible de lire cette image. Essaie une photo JPG ou PNG.");
+    if (draft) renderSheet();
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+function submitItem() {
+  const name = ($('#f-name').value.trim() || autoName()).slice(0, 40);
+  const isNew = !draft.id;
+  const item = {
+    id: draft.id || newId('i_'), name, cat: draft.cat, shape: draft.shape, color: draft.color,
+    occasions: draft.occasions.slice(), seasons: draft.seasons.slice(), photo: draft.photo || null,
+    createdAt: draft.createdAt || Date.now(), updatedAt: Date.now(),
+  };
+  const firstOwn = isNew && state.items.length === 0;
+  state.items = isNew ? [item, ...state.items] : state.items.map(i => (i.id === item.id ? item : i));
+  persist({ kind: 'item', action: 'put', data: item });
+  closeSheet();
+  if (firstOwn && state.settings.showExamples) {
+    setSettings({ showExamples: false });
+    toast('Premier vêtement ajouté. Les exemples sont masqués, il ne reste que tes pièces.');
+  } else {
+    toast(isNew ? `« ${name} » est dans ta penderie.` : 'Modifications enregistrées.');
+    afterData();
+  }
+}
+function deleteItem() {
+  const it = state.items.find(i => i.id === draft.id);
+  if (!it) return;
+  state.items = state.items.filter(i => i.id !== it.id);
+  persist({ kind: 'item', action: 'del', id: it.id });
+  closeSheet();
+  toast(`« ${it.name} » a été retiré de ta penderie.`);
+  afterData();
+}
+function setSettings(patch) {
+  state.settings = { ...state.settings, ...patch };
+  persist({ kind: 'settings', action: 'put', data: state.settings });
+  afterData();
+}
+
+/* ================= enregistrement ================= */
+const store = { mode: 'pending', queue: [], unsub: [], refs: null, idb: null };
+const chains = new Map();
+const STATUS = {
+  pending: ['Chargement…', 'On cherche où enregistrer tes vêtements.'],
+  cloud: ['Sauvegardé sur ton compte', 'Tes vêtements et tes tenues sont enregistrés sur ton compte. Toi seul les vois.'],
+  local: ['Sauvegardé sur cet appareil', 'Tes vêtements et tes tenues restent dans ce navigateur, sur cet appareil.'],
+  memory: ['Non sauvegardé', "Ce navigateur bloque l'enregistrement. Tes changements disparaîtront quand tu fermeras la page."],
+};
+function setStatus(mode) {
+  const el = $('#save-status');
+  el.dataset.mode = mode;
+  el.textContent = STATUS[mode][0];
+  el.title = STATUS[mode][1];
+}
+const clean = d => { const o = JSON.parse(JSON.stringify(d)); delete o.example; return o; };
+
+function persist(op) {
+  if (store.mode === 'pending') { store.queue.push(op); return; }
+  if (store.mode === 'memory') return;
+  const key = op.kind + ':' + (op.kind === 'settings' ? 'settings' : (op.id || op.data.id));
+  const p = (chains.get(key) || Promise.resolve()).then(() => runOp(op)).catch(err => onWriteError(err, op));
+  chains.set(key, p);
+}
+function runOp(op) {
+  if (store.mode === 'cloud') {
+    const { items, outfits, settings } = store.refs;
+    if (op.kind === 'settings') return settings.set(clean(op.data));
+    const col = op.kind === 'item' ? items : outfits;
+    return op.action === 'put' ? col.doc(op.data.id).set(clean(op.data)) : col.doc(op.id).delete();
+  }
+  if (store.mode === 'local') {
+    const name = op.kind === 'item' ? 'items' : op.kind === 'outfit' ? 'outfits' : 'meta';
+    return idbTx(name, 'readwrite', os => (op.action === 'put'
+      ? os.put(op.kind === 'settings' ? { ...clean(op.data), id: 'settings' } : clean(op.data))
+      : os.delete(op.id)));
+  }
+}
+function onWriteError(err, op) {
+  const code = err && err.code;
+  if (store.mode === 'cloud' && ['invalid_argument', 'not_granted', 'revoked', 'capability_disabled', 'capability_removed'].includes(code)) { switchToLocal(); return; }
+  if (code === 'quota_exceeded') { toast('Plus de place pour enregistrer. Supprime quelques vêtements ou photos.'); return; }
+  if (code === 'unavailable' && !op.retried) { setTimeout(() => persist({ ...op, retried: true }), 500 + Math.random() * 900); return; }
+  toast("L'enregistrement n'a pas marché. Réessaie dans un instant.");
+}
+
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const timer = setTimeout(() => rej(new Error('timeout')), 4000);
+    let r;
+    try { r = indexedDB.open('penderie', 1); } catch (e) { clearTimeout(timer); rej(e); return; }
+    r.onupgradeneeded = () => { const d = r.result; for (const n of ['items', 'outfits', 'meta']) if (!d.objectStoreNames.contains(n)) d.createObjectStore(n, { keyPath: 'id' }); };
+    r.onsuccess = () => { clearTimeout(timer); res(r.result); };
+    r.onerror = () => { clearTimeout(timer); rej(r.error); };
+    r.onblocked = () => { clearTimeout(timer); rej(new Error('blocked')); };
+  });
+}
+function idbTx(name, mode, fn) {
+  return new Promise((res, rej) => {
+    const tx = store.idb.transaction(name, mode);
+    const req = fn(tx.objectStore(name));
+    tx.oncomplete = () => res(req ? req.result : undefined);
+    tx.onerror = () => rej(tx.error);
+    tx.onabort = () => rej(tx.error);
+  });
+}
+function flushQueue() { const q = store.queue; store.queue = []; q.forEach(persist); }
+function rememberLocal(on) { try { on ? localStorage.setItem('penderie.storage', 'local') : localStorage.removeItem('penderie.storage'); } catch (e) { /* stockage bloqué */ } }
+function prefersLocal() { try { return localStorage.getItem('penderie.storage') === 'local'; } catch (e) { return false; } }
+
+async function startLocal() {
+  try {
+    store.idb = await idbOpen();
+    store.mode = 'local';
+    flushQueue();
+    await Promise.all([...chains.values()]);
+    const [items, outfits, meta] = await Promise.all([idbTx('items', 'readonly', os => os.getAll()), idbTx('outfits', 'readonly', os => os.getAll()), idbTx('meta', 'readonly', os => os.getAll())]);
+    state.items = items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    state.outfits = outfits;
+    const s = meta.find(m => m.id === 'settings');
+    if (s) { const { id, ...rest } = s; state.settings = { ...DEFAULT_SETTINGS, ...rest }; }
+    setStatus('local');
+  } catch (e) {
+    store.mode = 'memory';
+    store.queue = [];
+    setStatus('memory');
+  }
+  afterData();
+}
+function startCloud(db, uid) {
+  const root = db.doc(`data/users/${uid}/closet`);
+  store.refs = { settings: root, items: root.collection('items'), outfits: root.collection('outfits') };
+  store.mode = 'cloud';
+  setStatus('cloud');
+  flushQueue();
+  const fail = err => { if (err && err.code !== 'unavailable') switchToLocal(); };
+  store.unsub.push(store.refs.items.onSnapshot(snap => {
+    state.items = snap.docs.map(d => ({ ...d.data(), id: d.id })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    afterData();
+  }, fail));
+  store.unsub.push(store.refs.outfits.onSnapshot(snap => {
+    state.outfits = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+    afterData();
+  }, fail));
+  store.unsub.push(root.onSnapshot(snap => {
+    if (snap.exists) state.settings = { ...DEFAULT_SETTINGS, ...snap.data() };
+    afterData();
+  }, fail));
+}
+let switching = false;
+async function switchToLocal() {
+  if (switching || store.mode !== 'cloud') return;
+  switching = true;
+  store.unsub.forEach(u => { try { u(); } catch (e) { /* déjà fermé */ } });
+  store.unsub = [];
+  store.mode = 'pending';
+  try {
+    store.idb = await idbOpen();
+    store.mode = 'local';
+    rememberLocal(true);
+    state.items.forEach(i => persist({ kind: 'item', action: 'put', data: i }));
+    state.outfits.forEach(o => persist({ kind: 'outfit', action: 'put', data: o }));
+    persist({ kind: 'settings', action: 'put', data: state.settings });
+    flushQueue();
+    setStatus('local');
+  } catch (e) {
+    store.mode = 'memory';
+    store.queue = [];
+    setStatus('memory');
+  }
+  switching = false;
+}
+async function initStorage() {
+  let db = null, uid = null, canWrite = null;
+  if (!prefersLocal() && window.claude && typeof window.claude.use === 'function') {
+    try {
+      const [d, u] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      db = d;
+      if (u) { uid = await u.id(); canWrite = await u.can('data.write'); }
+    } catch (e) { db = null; }
+  }
+  if (db && uid && canWrite !== false) {
+    try { startCloud(db, uid); return; } catch (e) { /* chemin refusé : on reste en local */ }
+  }
+  await startLocal();
+}
+
+/* ================= rendu général ================= */
+function updateCounts() {
+  $('#count-items').textContent = visibleItems().length;
+  $('#count-looks').textContent = visibleLooks().length;
+}
+function renderView() {
+  if (state.view === 'atelier') { if (!spinning) renderBoard(); renderPanel(); }
+  else if (state.view === 'penderie') renderWardrobe();
+  else renderLooks();
+}
+function afterData() {
+  if (!spinning) ensureSelection();
+  updateCounts();
+  renderView();
+}
+function go(view, write = true) {
+  if (!VIEWS.includes(view)) view = 'atelier';
+  state.view = view;
+  confirmLook = null;
+  for (const v of VIEWS) $('#view-' + v).hidden = v !== view;
+  $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === view)));
+  $('#mobile-bar').hidden = view !== 'atelier';
+  document.body.classList.toggle('has-bar', view === 'atelier');
+  if (write) { try { history.replaceState(null, '', '#' + view); } catch (e) { /* cadre sans historique */ } }
+  if (view === 'atelier') ensureSelection();
+  renderView();
+}
+
+/* ================= événements ================= */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, a');
+  if (!t) return;
+  const d = t.dataset;
+  if (d.view) { go(d.view); return; }
+  if (d.goto) { e.preventDefault(); go(d.goto); return; }
+  if ('shuffle' in d) { shuffle(); return; }
+  if ('add' in d) { openSheet(null); return; }
+  if (d.addCat) { openSheet(null, d.addCat); return; }
+  if ('clearFilters' in d) { st.occ = null; st.season = null; ensureSelection(); renderBoard(); renderPanel(); return; }
+  if (d.examples) { setSettings({ showExamples: d.examples === 'show' }); return; }
+  if (d.wcat) { state.wardrobeCat = d.wcat; renderWardrobe(); return; }
+  if (d.item) {
+    const it = state.items.find(i => i.id === d.item);
+    if (it) openSheet(it);
+    else toast("Les exemples ne se modifient pas. Ajoute tes propres vêtements avec « Ajouter un vêtement ».");
+    return;
+  }
+  if (d.open) { openLook(d.open); return; }
+  if (d.wear) { toggleWorn(d.wear); return; }
+  if (d.askDel) { confirmLook = d.askDel; renderLooks(); return; }
+  if ('cancelDel' in d) { confirmLook = null; renderLooks(); return; }
+  if (d.delLook) {
+    const o = state.outfits.find(x => x.id === d.delLook);
+    state.outfits = state.outfits.filter(x => x.id !== d.delLook);
+    persist({ kind: 'outfit', action: 'del', id: d.delLook });
+    confirmLook = null;
+    updateCounts();
+    renderLooks();
+    if (o) toast(`« ${o.name} » a été supprimée.`);
+    return;
+  }
+  if (t.id === 'save-status') { toast(STATUS[$('#save-status').dataset.mode][1]); return; }
+  if (t.id === 'mobile-save') { saveOutfit(); return; }
+});
+
+board.addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.step) step(b.dataset.slot, Number(b.dataset.step));
+  else if (b.dataset.lock) {
+    const s = b.dataset.lock;
+    st.locks[s] = !st.locks[s];
+    renderSlot(s);
+  }
+});
+let swipe = null;
+board.addEventListener('pointerdown', e => {
+  const s = e.target.closest('.stage');
+  swipe = s ? { slot: s.dataset.slot, x: e.clientX, y: e.clientY } : null;
+});
+board.addEventListener('pointerup', e => {
+  if (!swipe) return;
+  const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y, slot = swipe.slot;
+  swipe = null;
+  if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy)) step(slot, dx < 0 ? 1 : -1);
+});
+board.addEventListener('pointercancel', () => { swipe = null; });
+
+$('.panel').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.mode) { st.mode = b.dataset.mode; ensureSelection(); renderBoard(); renderPanel(); }
+  else if (b.dataset.occ !== undefined) { st.occ = b.dataset.occ || null; ensureSelection(); renderBoard(); renderPanel(); }
+  else if (b.dataset.season !== undefined) { st.season = b.dataset.season || null; ensureSelection(); renderBoard(); renderPanel(); }
+});
+$('#save-form').addEventListener('submit', e => { e.preventDefault(); saveOutfit(); });
+
+document.addEventListener('keydown', e => {
+  if (!sheet.hidden) { if (e.key === 'Escape') closeSheet(); return; }
+  if (state.view !== 'atelier' || e.target.closest('input, textarea, select, [contenteditable]')) return;
+  if (e.code === 'Space' && !e.target.closest('button, a')) { e.preventDefault(); shuffle(); return; }
+  const slotEl = e.target.closest('.slot');
+  if (slotEl && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); step(slotEl.dataset.slot, e.key === 'ArrowRight' ? 1 : -1); }
+});
+
+/* fiche */
+sheet.addEventListener('click', e => {
+  if (e.target === sheet) { closeSheet(); return; }
+  const b = e.target.closest('button');
+  if (!b || !draft) return;
+  const d = b.dataset;
+  if ('close' in d) closeSheet();
+  else if (d.fcat) { draft.cat = d.fcat; draft.shape = P.SHAPES_BY_CAT[d.fcat][0]; refreshAutoName(); renderSheet(); }
+  else if (d.fshape) { draft.shape = d.fshape; refreshAutoName(); renderSheet(); }
+  else if (d.fcolor) { draft.color = d.fcolor; refreshAutoName(); renderSheet(); }
+  else if (d.focc) { draft.occasions = draft.occasions.includes(d.focc) ? draft.occasions.filter(x => x !== d.focc) : [...draft.occasions, d.focc]; renderSheet(); }
+  else if (d.fseason) { draft.seasons = draft.seasons.includes(d.fseason) ? draft.seasons.filter(x => x !== d.fseason) : [...draft.seasons, d.fseason]; renderSheet(); }
+  else if ('askDelItem' in d) { draft.confirmDel = true; renderSheet(); }
+  else if ('keepItem' in d) { draft.confirmDel = false; renderSheet(); }
+  else if ('delItem' in d) deleteItem();
+  else if (b.id === 'photo-remove') { draft.photo = null; renderSheet(); }
+});
+$('#f-name').addEventListener('input', e => { if (!draft) return; draft.name = e.target.value; draft.nameTouched = e.target.value.trim() !== ''; });
+$('#item-form').addEventListener('submit', e => { e.preventDefault(); if (draft) submitItem(); });
+$('#photo-input').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) processPhoto(f); });
+const drop = $('#drop');
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#photo-input').click(); } });
+drop.tabIndex = 0;
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) processPhoto(f); });
+document.addEventListener('paste', e => {
+  if (sheet.hidden || !draft) return;
+  const f = [...(e.clipboardData?.files || [])].find(x => /^image\//.test(x.type));
+  if (f) { e.preventDefault(); processPhoto(f); }
+});
+window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (VIEWS.includes(v) && v !== state.view) go(v, false); });
+
+/* ================= démarrage ================= */
+const start = P.SAMPLE_OUTFITS[Math.floor(Math.random() * P.SAMPLE_OUTFITS.length)];
+st.mode = start.mode;
+st.sel = { ...start.sel };
+setStatus('pending');
+go(VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'atelier', false);
+updateCounts();
+initStorage();
+})();
+</script>
+</body>
+</html>
