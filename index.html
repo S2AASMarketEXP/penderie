@@ -131,6 +131,12 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
 .art { width: 100%; height: 100%; display: grid; place-items: center; }
 .art svg { width: 84%; height: 84%; display: block; }
 .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.art.swatch { background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); container-type: inline-size; }
+.swatch .lbl { display: flex; flex-direction: column; align-items: center; gap: 3px; max-width: 84%; padding: 7% 10%; border-radius: 7px; background: #FFFFFF; color: #14172A; text-align: center; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); }
+.swatch .lbl small { font: 600 clamp(7px, 6.5cqi, 11px)/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
+.swatch .lbl b { font: 700 clamp(9px, 10cqi, 19px)/1.15 var(--font-body); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+@container (max-width: 96px) { .swatch .lbl small { display: none; } }
+@container (max-width: 66px) { .swatch .lbl { display: none; } }
 .none { width: 100%; height: 100%; display: grid; place-items: center; text-align: center; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--muted); font: 500 11.5px/1.3 var(--font-mono); padding: 8px; }
 
 /* ---------- atelier ---------- */
@@ -270,6 +276,54 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
 .data-stats { font: 500 13px var(--font-mono); color: var(--muted); }
 .data-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .settings .save-status { align-self: flex-start; font-size: 13px; color: var(--ink); padding: 0; }
+.profile { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 18px 24px; }
+.avatar { position: relative; flex: none; width: 96px; height: 96px; border-radius: 50%; overflow: hidden; cursor: pointer; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 800 40px/1 var(--font-display); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar svg.i { width: 44px; height: 44px; stroke-width: 1.6; }
+.avatar::after { content: "Modifier"; position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 0 8px; background: rgba(10, 12, 24, .5); color: #fff; font: 600 11px var(--font-body); text-align: center; }
+.profile-main { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.profile-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.stat { background: var(--surface-2); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); min-width: 0; }
+.stat b { display: block; font-family: var(--font-display); font-stretch: 112%; font-weight: 850; font-size: 30px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: 4px; font-size: 13px; color: var(--muted); }
+.sizes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+select.text { width: 100%; min-width: 0; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 500 15px var(--font-body); cursor: pointer; }
+.toggles { display: flex; flex-direction: column; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; cursor: pointer; }
+.toggle:first-child { padding-top: 0; }
+.toggle + .toggle { border-top: 1px solid var(--line); }
+.toggle b { display: block; font-weight: 650; }
+.toggle small { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
+.toggle input { appearance: none; -webkit-appearance: none; flex: none; position: relative; width: 48px; height: 28px; margin: 0; border-radius: 999px; background: var(--line); cursor: pointer; transition: background .15s; }
+.toggle input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); transition: transform .15s; }
+.toggle input:checked { background: var(--accent); }
+.toggle input:checked::after { transform: translateX(20px); }
+.danger-zone { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; border-top: 1px solid var(--line); padding-top: 14px; font-size: 14px; font-weight: 600; }
+.faq details { border-top: 1px solid var(--line); padding-block: 12px; }
+.faq details:first-child { border-top: 0; padding-top: 0; }
+.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; font-weight: 650; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font: 600 16px var(--font-mono); color: var(--muted); }
+.faq details[open] summary::after { content: "–"; }
+.faq p { margin: 8px 0 0; max-width: 70ch; color: var(--muted); font-size: 14px; }
+.about { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; font: 500 12.5px var(--font-mono); color: var(--muted); }
+.mini-av { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; overflow: hidden; background: var(--accent); color: var(--accent-ink); font: 700 11px/1 var(--font-body); }
+.mini-av img { width: 100%; height: 100%; object-fit: cover; }
+.mini-av svg.i { width: 13px; height: 13px; }
+.onboard { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-bottom: 20px; }
+.onboard-text { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.steps li { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 6px; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+.steps li i { width: 22px; height: 22px; border-radius: 50%; border: 1.5px dashed var(--line); display: grid; place-items: center; }
+.steps li.ok { color: var(--ink); }
+.steps li.ok i { border: 0; background: var(--accent); color: var(--accent-ink); }
+.steps li svg.i { width: 13px; height: 13px; stroke-width: 3; }
+html.no-motion *, html.no-motion *::before, html.no-motion *::after { animation: none !important; transition: none !important; }
+@media (max-width: 760px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .avatar { width: 80px; height: 80px; }
+}
 
 /* ---------- fiche vêtement ---------- */
 .sheet-backdrop { position: fixed; inset: 0; z-index: 50; background: var(--scrim); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
@@ -328,7 +382,7 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
       <button class="tab" role="tab" id="tab-atelier" data-view="atelier" aria-controls="view-atelier" aria-selected="true"><span class="t-long">Créer une tenue</span><span class="t-short">Créer</span></button>
       <button class="tab" role="tab" id="tab-penderie" data-view="penderie" aria-controls="view-penderie" aria-selected="false"><span class="t-long">Mon dressing</span><span class="t-short">Dressing</span> <span class="count" id="count-items"></span></button>
       <button class="tab" role="tab" id="tab-tenues" data-view="tenues" aria-controls="view-tenues" aria-selected="false"><span class="t-long">Mes tenues</span><span class="t-short">Tenues</span> <span class="count" id="count-looks"></span></button>
-      <button class="tab" role="tab" id="tab-compte" data-view="compte" aria-controls="view-compte" aria-selected="false">Compte</button>
+      <button class="tab" role="tab" id="tab-compte" data-view="compte" aria-controls="view-compte" aria-selected="false"><span class="mini-av" id="mini-av" aria-hidden="true"></span>Compte</button>
     </nav>
   </div>
 </header>
@@ -340,6 +394,7 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
       <h1 id="hello">Qu'est-ce que je mets aujourd'hui&nbsp;?</h1>
       <p>Fais défiler tes vêtements, garde ceux qui te plaisent et mélange le reste. Tout vient de ton dressing.</p>
     </div>
+    <div class="card onboard" id="onboard" hidden></div>
     <div class="studio">
       <div class="board" id="board" aria-label="Tenue en cours"></div>
       <aside class="panel" aria-label="Réglages de la tenue">
@@ -400,7 +455,6 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
         <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter un vêtement
       </button>
     </div>
-    <div id="examples-note"></div>
     <div class="chips cat-filter" id="cat-filter" aria-label="Filtrer par catégorie"></div>
     <div class="grid-items" id="grid-items"></div>
   </section>
@@ -424,26 +478,54 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
     <div class="page-head">
       <div>
         <h2>Compte</h2>
-        <p>Personnalise DressIn à ton goût. Chaque choix s'applique tout de suite.</p>
+        <p>Ton profil, tes préférences et tes données.</p>
       </div>
     </div>
     <div class="settings">
-      <section class="card wide">
-        <h3 class="card-title">Fond de l'appli</h3>
-        <p class="hint">Des couleurs mates, sans reflet. « Auto » suit le mode clair ou sombre de ton appareil.</p>
-        <div class="bg-grid" id="bg-grid"></div>
-      </section>
-      <section class="card">
-        <h3 class="card-title">Couleur des boutons</h3>
-        <div class="acc-pick" id="acc-pick"></div>
-      </section>
-      <section class="card">
-        <h3 class="card-title">Profil</h3>
-        <div class="field">
-          <label class="label" for="f-me">Ton prénom</label>
-          <input class="text" id="f-me" type="text" maxlength="24" placeholder="Ex. Sam" autocomplete="given-name">
+      <section class="card wide profile">
+        <label class="avatar" for="avatar-input" id="avatar" title="Changer la photo de profil"></label>
+        <input class="sr-only" type="file" id="avatar-input" accept="image/*">
+        <div class="profile-main">
+          <div class="field">
+            <label class="label" for="f-me">Prénom</label>
+            <input class="text" id="f-me" type="text" maxlength="24" placeholder="Ex. Sam" autocomplete="given-name">
+          </div>
+          <div class="profile-meta">
+            <span class="hint" id="member-since"></span>
+            <span id="avatar-actions"></span>
+          </div>
         </div>
-        <p class="hint">Il s'affiche dans l'atelier pour te dire bonjour.</p>
+      </section>
+      <section class="card wide">
+        <h3 class="card-title">Statistiques</h3>
+        <div class="stats" id="stats"></div>
+        <p class="hint" id="stats-note"></p>
+      </section>
+      <section class="card">
+        <h3 class="card-title">Mes tailles</h3>
+        <div class="sizes">
+          <div class="field"><label class="label" for="sz-top">Haut</label><select class="text" id="sz-top" data-size="top"></select></div>
+          <div class="field"><label class="label" for="sz-bottom">Bas</label><select class="text" id="sz-bottom" data-size="bottom"></select></div>
+          <div class="field"><label class="label" for="sz-feet">Pointure</label><select class="text" id="sz-feet" data-size="feet"></select></div>
+        </div>
+        <p class="hint">Pratique en magasin ou pour prêter un vêtement.</p>
+      </section>
+      <section class="card">
+        <h3 class="card-title">Mon style</h3>
+        <div class="chips" id="style-chips"></div>
+        <p class="hint">Choisis jusqu'à trois styles.</p>
+      </section>
+      <section class="card">
+        <h3 class="card-title">Apparence</h3>
+        <div class="field"><span class="label">Fond</span><div class="bg-grid" id="bg-grid"></div></div>
+        <div class="field"><span class="label">Couleur des boutons</span><div class="acc-pick" id="acc-pick"></div></div>
+      </section>
+      <section class="card">
+        <h3 class="card-title">Préférences</h3>
+        <div class="toggles">
+          <label class="toggle" for="pref-recent"><span><b>Éviter les répétitions</b><small>Le mélange écarte les vêtements portés ces 3 derniers jours.</small></span><input type="checkbox" id="pref-recent" data-pref="avoidRecent"></label>
+          <label class="toggle" for="pref-motion"><span><b>Animations</b><small>Le défilement quand tu mélanges et les petites transitions.</small></span><input type="checkbox" id="pref-motion" data-pref="motion"></label>
+        </div>
       </section>
       <section class="card wide">
         <h3 class="card-title">Tes données</h3>
@@ -452,6 +534,17 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
         <div class="data-stats" id="data-stats"></div>
         <div class="data-actions" id="data-actions"></div>
         <input class="sr-only" type="file" id="import-input" accept="application/json,.json">
+        <div class="danger-zone" id="danger-zone"></div>
+      </section>
+      <section class="card wide">
+        <h3 class="card-title">Aide</h3>
+        <div class="faq">
+          <details><summary>Comment ajouter un vêtement&nbsp;?</summary><p>Dans « Mon dressing », touche « Ajouter un vêtement » et prends-le en photo. DressIn devine sa couleur, il ne reste qu'à choisir le type.</p></details>
+          <details><summary>À quoi sert « Garder »&nbsp;?</summary><p>Un vêtement gardé ne bouge plus quand tu mélanges. Pratique pour construire une tenue autour d'une pièce que tu veux porter.</p></details>
+          <details><summary>Où sont enregistrées mes données&nbsp;?</summary><p id="faq-data"></p></details>
+          <details><summary>Je change de téléphone, je fais comment&nbsp;?</summary><p id="faq-phone"></p></details>
+        </div>
+        <div class="about"><span>DressIn · version 1.2</span><span id="share-zone"></span></div>
       </section>
     </div>
   </section>
@@ -481,7 +574,7 @@ input.text::placeholder { color: var(--muted); opacity: .8; }
           </label>
           <input class="sr-only" type="file" id="photo-input" accept="image/*">
           <div class="photo-tools">
-            <span id="photo-note">Sans photo, on dessine le vêtement.</span>
+            <span id="photo-note">Sans photo, le vêtement s'affiche avec sa couleur et son nom.</span>
             <button type="button" class="btn sm ghost" id="photo-remove" hidden>Retirer la photo</button>
           </div>
         </div>
@@ -513,7 +606,8 @@ const P = window.Penderie;
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduceMotion = () => prefersReduced || state.settings.motion === false;
 const svg = d => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
 const ICON = {
   left: svg('M15 5l-7 7 7 7'),
@@ -531,37 +625,34 @@ const OCCASIONS = [{ id: 'quotidien', label: 'Quotidien' }, { id: 'travail', lab
 const SEASONS = [{ id: 'chaud', label: 'Chaud' }, { id: 'mi-saison', label: 'Mi-saison' }, { id: 'froid', label: 'Froid' }];
 const OCC_LABEL = Object.fromEntries(OCCASIONS.map(o => [o.id, o.label]));
 const SLOTS = {
-  outer: { cat: 'veste', label: 'Veste', optional: true, none: 'Sans veste' },
+  outer: { cat: 'veste', label: 'Veste', optional: true, none: 'Sans veste', empty: 'Aucune veste' },
   top: { cat: 'haut', label: 'Haut', empty: 'Aucun haut' },
   bottom: { cat: 'bas', label: 'Bas', empty: 'Aucun bas' },
   piece: { cat: 'piece', label: 'Une-pièce', empty: 'Aucune robe ni combinaison' },
   feet: { cat: 'chaussures', label: 'Chaussures', empty: 'Aucune paire de chaussures' },
-  acc: { cat: 'accessoire', label: 'Accessoire', optional: true, none: 'Sans accessoire' },
+  acc: { cat: 'accessoire', label: 'Accessoire', optional: true, none: 'Sans accessoire', empty: 'Aucun accessoire' },
 };
 const ORDER = { separates: ['outer', 'top', 'bottom', 'feet', 'acc'], piece: ['outer', 'piece', 'feet', 'acc'] };
 const VIEWS = ['atelier', 'penderie', 'tenues', 'compte'];
-const DEFAULT_SETTINGS = { showExamples: true, bg: 'auto', accent: 'cobalt', name: '' };
+const DEFAULT_SETTINGS = { bg: 'auto', accent: 'cobalt', name: '', avatar: null, sizes: {}, styles: [], avoidRecent: true, motion: true };
 const inClaude = !!(window.claude && typeof window.claude.use === 'function');
 const BGS = [
-  { id: 'auto', name: 'Auto', hint: 'Clair ou sombre' },
-  { id: 'perle', name: 'Perle', hex: '#F2F3F6' },
-  { id: 'craie', name: 'Craie', hex: '#F3F2EE' },
+  { id: 'auto', name: 'Auto', hint: 'Suit ton appareil' },
+  { id: 'perle', name: 'Clair', hex: '#F2F3F6' },
   { id: 'sable', name: 'Sable', hex: '#EEE7DC' },
-  { id: 'sauge', name: 'Sauge', hex: '#E4EADF' },
-  { id: 'poudre', name: 'Bleu poudré', hex: '#E2E9F1' },
-  { id: 'rose', name: 'Rose poudré', hex: '#F3E5E6' },
-  { id: 'lavande', name: 'Lavande', hex: '#E9E5F2' },
-  { id: 'ardoise', name: 'Ardoise', hex: '#262A33', dark: true },
-  { id: 'encre', name: 'Encre', hex: '#10121C', dark: true },
+  { id: 'encre', name: 'Sombre', hex: '#10121C', dark: true },
 ];
 const ACCENTS = [
   { id: 'cobalt', name: 'Cobalt', hex: '#2B45F5' },
   { id: 'corail', name: 'Corail', hex: '#DE5139' },
-  { id: 'sapin', name: 'Sapin', hex: '#1F7A55' },
-  { id: 'prune', name: 'Prune', hex: '#7B3F91' },
-  { id: 'moutarde', name: 'Moutarde', hex: '#D4A017' },
   { id: 'noir', name: 'Noir', hex: '#16181F' },
 ];
+const SIZES = {
+  top: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+  bottom: ['34', '36', '38', '40', '42', '44', '46'],
+  feet: Array.from({ length: 13 }, (_, i) => String(35 + i)),
+};
+const STYLES = ['Casual', 'Chic', 'Streetwear', 'Minimaliste', 'Sport', 'Vintage', 'Bohème'];
 
 const state = {
   items: [],
@@ -584,11 +675,13 @@ const fmtDay = key => {
   const [y, m, d] = key.split('-').map(Number);
   return 'le ' + new Date(y, m - 1, d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
 };
-function visibleItems() { return state.settings.showExamples ? [...state.items, ...P.SAMPLE_ITEMS] : state.items.slice(); }
-function itemById(id) { return id ? (state.items.find(i => i.id === id) || P.SAMPLE_ITEMS.find(i => i.id === id) || null) : null; }
+function visibleItems() { return state.items.slice(); }
+function itemById(id) { return id ? (state.items.find(i => i.id === id) || null) : null; }
+/* sans photo : l'étiquette du vêtement posée sur un aplat de sa couleur */
 function art(item) {
   if (item.photo) return `<div class="art"><img src="${esc(item.photo)}" alt="" draggable="false"></div>`;
-  return `<div class="art">${P.garmentSVG(item.shape, colorOf(item.color).hex)}</div>`;
+  const type = (P.SHAPES[item.shape] && P.SHAPES[item.shape].label) || catOf(item.cat).one;
+  return `<div class="art swatch" style="--c:${colorOf(item.color).hex}"><span class="lbl"><small>${esc(type)}</small><b>${esc(item.name)}</b></span></div>`;
 }
 let toastTimer;
 function toast(msg) {
@@ -610,8 +703,21 @@ function pool(slot) { return visibleItems().filter(i => i.cat === SLOTS[slot].ca
 function options(slot) { const p = pool(slot); return SLOTS[slot].optional ? [null, ...p] : p; }
 function hasPieces() { return visibleItems().some(i => i.cat === 'piece'); }
 
+/* vêtements des tenues portées ces 3 derniers jours (préférence « Éviter les répétitions ») */
+function recentlyWorn() {
+  const ids = new Set();
+  if (state.settings.avoidRecent === false) return ids;
+  const limit = new Date();
+  limit.setDate(limit.getDate() - 3);
+  const lim = `${limit.getFullYear()}-${String(limit.getMonth() + 1).padStart(2, '0')}-${String(limit.getDate()).padStart(2, '0')}`;
+  for (const o of state.outfits) if ((o.wornDates || []).some(d => d >= lim)) Object.values(o.sel || {}).forEach(id => id && ids.add(id));
+  return ids;
+}
 function pickRandom(slot, avoid) {
-  const p = pool(slot);
+  let p = pool(slot);
+  const recent = recentlyWorn();
+  const fresh = p.filter(i => !recent.has(i.id));
+  if (fresh.length) p = fresh;
   if (SLOTS[slot].optional) {
     const pNone = slot === 'outer' ? (st.season === 'froid' ? 0 : st.season === 'chaud' ? 0.8 : 0.45) : 0.4;
     if (!p.length || Math.random() < pNone) return null;
@@ -645,7 +751,7 @@ function currentInner(o, slot) {
 function tagHTML(o, slot) {
   if (o === null) return `<span class="tag ghost">${SLOTS[slot].none}</span>`;
   if (!o) return '';
-  return `<span class="tag"><b>${esc(o.name)}</b><small>${esc(colorOf(o.color).name)}${o.example ? ' · exemple' : ''}</small></span>`;
+  return `<span class="tag"><b>${esc(o.name)}</b><small>${esc(colorOf(o.color).name)}</small></span>`;
 }
 
 function slotHTML(slot, anim = '') {
@@ -658,15 +764,13 @@ function slotHTML(slot, anim = '') {
   const locked = !!st.locks[slot];
   const lockBtn = `<button type="button" class="lock" data-lock="${slot}" data-fk="${slot}:lock" aria-pressed="${locked}" title="${locked ? 'Ce vêtement reste en place quand tu mélanges' : 'Garder ce vêtement quand tu mélanges'}">${locked ? ICON.lock : ICON.unlock}${locked ? 'Gardé' : 'Garder'}</button>`;
 
-  if (curId === undefined || (curId && !itemById(curId))) {
-    if (!def.optional) {
-      const filtered = st.occ || st.season;
-      return `<section class="slot${size}" data-slot="${slot}" aria-label="${def.label}">
-        <div class="slot-side"><span class="slot-label">${def.label}</span><span class="slot-pos">0</span></div>
-        <div class="slot-empty"><p>${def.empty}${filtered ? ' pour ces filtres.' : ' dans ton dressing.'}</p>
-          ${filtered ? '<button type="button" class="btn sm" data-clear-filters>Retirer les filtres</button>' : `<button type="button" class="btn sm" data-add-cat="${def.cat}">${ICON.plus}Ajouter</button>`}</div>
-      </section>`;
-    }
+  if (!p.length && !(curId && itemById(curId))) {
+    const filtered = st.occ || st.season;
+    return `<section class="slot${size}" data-slot="${slot}" aria-label="${def.label}">
+      <div class="slot-side"><span class="slot-label">${def.label}</span><span class="slot-pos">0</span></div>
+      <div class="slot-empty"><p>${def.empty}${filtered ? ' pour ces filtres.' : ' dans ton dressing.'}</p>
+        ${filtered ? '<button type="button" class="btn sm" data-clear-filters>Retirer les filtres</button>' : `<button type="button" class="btn sm" data-add-cat="${def.cat}">${ICON.plus}Ajouter</button>`}</div>
+    </section>`;
   }
   const cur = curId ? itemById(curId) : null;
   const idx = ids.indexOf(curId ?? null);
@@ -739,6 +843,7 @@ function step(slot, dir) {
 let spinning = false;
 function shuffle() {
   if (spinning) return;
+  if (!state.items.length) { toast("Ajoute d'abord des vêtements dans ton dressing."); return; }
   const order = ORDER[st.mode];
   const targets = {};
   for (const slot of order) {
@@ -748,7 +853,7 @@ function shuffle() {
   }
   const slots = Object.keys(targets);
   if (!slots.length) { toast('Tout est gardé. Libère une pièce pour mélanger.'); return; }
-  if (reduceMotion) { Object.assign(st.sel, targets); renderBoard(); renderPanel(); return; }
+  if (reduceMotion()) { Object.assign(st.sel, targets); renderBoard(); renderPanel(); return; }
   spinning = true;
   let done = 0;
   slots.forEach((slot, k) => {
@@ -787,7 +892,7 @@ function animateNumber(el, to) {
   const from = shownTotal;
   shownTotal = to;
   const fmt = n => n.toLocaleString('fr-FR');
-  if (from === null || from === to || reduceMotion) { el.textContent = fmt(to); return; }
+  if (from === null || from === to || reduceMotion()) { el.textContent = fmt(to); return; }
   const t0 = performance.now();
   const f = now => {
     const k = Math.min(1, (now - t0) / 650);
@@ -805,12 +910,14 @@ function selectedItems() { return ORDER[st.mode].map(s => itemById(st.sel[s])).f
 function renderPanel() {
   const c = combos();
   animateNumber($('#combos-num'), c.total);
-  $('#combos-label').textContent = `${c.total > 1 ? 'tenues possibles' : 'tenue possible'} avec ${plural(c.count, 'vêtement', 'vêtements')}`;
+  $('#combos-label').textContent = c.count
+    ? `${c.total > 1 ? 'tenues possibles' : 'tenue possible'} avec ${plural(c.count, 'vêtement', 'vêtements')}`
+    : 'tenue possible pour l’instant. Ajoute tes vêtements pour lancer le compteur.';
   const parts = [];
   parts.push(`${plural(c.tops, 'haut', 'hauts')} × ${plural(c.bottoms, 'bas', 'bas')}${c.pieces ? ` + ${plural(c.pieces, 'une-pièce', 'une-pièces')}` : ''}`);
   if (c.feet) parts.push(`× ${plural(c.feet, 'paire', 'paires')}`);
   parts.push(`× ${c.outer + 1} options veste`, `× ${c.acc + 1} options accessoire`);
-  $('#combos-formula').textContent = parts.join(' ');
+  $('#combos-formula').textContent = c.count ? parts.join(' ') : '';
 
   const mb = $('#mode-block');
   mb.hidden = !hasPieces();
@@ -860,19 +967,7 @@ function usageMap() {
 }
 function renderWardrobe() {
   const all = visibleItems();
-  const own = state.items.length;
-  const ex = state.settings.showExamples ? P.SAMPLE_ITEMS.length : 0;
-  $('#wardrobe-sub').textContent = own || !ex
-    ? `${plural(own, 'vêtement à toi', 'vêtements à toi')}${ex ? ` · ${ex} exemples` : ''}`
-    : `${ex} vêtements d'exemple pour tester`;
-
-  const note = $('#examples-note');
-  if (state.settings.showExamples) {
-    note.innerHTML = `<div class="note"><p>Les pièces marquées <b>Exemple</b> servent à tester l'appli. Elles disparaissent dès que tu ajoutes ton premier vêtement.</p><button type="button" class="btn sm" data-examples="hide">Masquer les exemples</button></div>`;
-  } else if (own) {
-    note.innerHTML = `<div class="note quiet"><p>Les exemples sont masqués. L'atelier ne mélange que tes vêtements.</p><button type="button" class="btn sm ghost" data-examples="show">Réafficher les exemples</button></div>`;
-  } else note.innerHTML = '';
-
+  $('#wardrobe-sub').textContent = all.length ? plural(all.length, 'vêtement', 'vêtements') : 'Rien pour l’instant';
   const counts = Object.fromEntries(P.CATS.map(c => [c.id, all.filter(i => i.cat === c.id).length]));
   if (state.wardrobeCat !== 'all' && !counts[state.wardrobeCat]) state.wardrobeCat = 'all';
   $('#cat-filter').innerHTML = [`<button type="button" class="chip" data-wcat="all" aria-pressed="${state.wardrobeCat === 'all'}">Tout<span class="n">${all.length}</span></button>`]
@@ -880,9 +975,8 @@ function renderWardrobe() {
 
   const grid = $('#grid-items');
   if (!all.length) {
-    grid.innerHTML = `<div class="empty"><h3>Ton dressing est vide</h3><p>Ajoute tes vêtements un par un, avec une photo ou un simple dessin. Dès qu'il y a un haut, un bas et une paire de chaussures, l'atelier peut composer des tenues.</p>
-      <button type="button" class="btn primary" data-add>${ICON.plus}Ajouter mon premier vêtement</button>
-      <button type="button" class="btn sm ghost" data-examples="show">Réafficher les exemples</button></div>`;
+    grid.innerHTML = `<div class="empty"><h3>Ton dressing est vide</h3><p>Ajoute tes vêtements un par un, de préférence en photo. Dès qu'il y a un haut, un bas et une paire de chaussures, l'atelier peut composer des tenues.</p>
+      <button type="button" class="btn primary" data-add>${ICON.plus}Ajouter mon premier vêtement</button></div>`;
     return;
   }
   const list = state.wardrobeCat === 'all' ? all : all.filter(i => i.cat === state.wardrobeCat);
@@ -891,8 +985,8 @@ function renderWardrobe() {
     + list.map(i => {
       const n = use.get(i.id) || 0;
       const meta = n ? `Dans ${plural(n, 'tenue', 'tenues')}` : (i.occasions || []).map(o => OCC_LABEL[o]).filter(Boolean).join(' · ') || 'Toutes occasions';
-      return `<button type="button" class="item-card" data-item="${esc(i.id)}" aria-label="${esc(i.name)}${i.example ? ', exemple' : ', modifier'}">
-        <div class="tile">${art(i)}${i.example ? '<span class="badge">Exemple</span>' : ''}</div>
+      return `<button type="button" class="item-card" data-item="${esc(i.id)}" aria-label="${esc(i.name)}, modifier">
+        <div class="tile">${art(i)}</div>
         <span class="tag"><b>${esc(i.name)}</b><small>${esc(catOf(i.cat).one)} · ${esc(colorOf(i.color).name)}</small></span>
         <span class="meta">${esc(meta)}</span>
       </button>`;
@@ -901,16 +995,13 @@ function renderWardrobe() {
 
 /* ================= tenues ================= */
 function visibleLooks() {
-  const own = state.outfits.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-  return state.settings.showExamples ? [...own, ...P.SAMPLE_OUTFITS] : own;
+  return state.outfits.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 }
 let confirmLook = null;
 function renderLooks() {
   const own = state.outfits.length;
   const list = visibleLooks();
-  $('#looks-sub').textContent = own
-    ? plural(own, 'tenue enregistrée', 'tenues enregistrées')
-    : (list.length ? "Aucune tenue à toi pour l'instant. Voici des exemples." : '');
+  $('#looks-sub').textContent = own ? plural(own, 'tenue enregistrée', 'tenues enregistrées') : 'Rien pour l’instant';
   const grid = $('#grid-looks');
   if (!list.length) {
     grid.innerHTML = `<div class="empty"><h3>Aucune tenue enregistrée</h3><p>Compose une tenue dans l'atelier, donne-lui un nom et enregistre-la. Elle apparaîtra ici.</p><button type="button" class="btn primary" data-goto="atelier">Créer une tenue</button></div>`;
@@ -925,15 +1016,13 @@ function renderLooks() {
     }).join('');
     const names = areas.map(a => itemById(o.sel?.[a])).filter(Boolean).map(i => i.name);
     const worn = o.wornDates || [];
-    const meta = o.example ? [o.occasion ? OCC_LABEL[o.occasion] : null, 'Exemple'] : [
+    const meta = [
       o.occasion ? OCC_LABEL[o.occasion] : null,
       worn.length ? `Portée ${worn.length} fois` : 'Pas encore portée',
       worn.length ? `dernière fois ${fmtDay(worn[worn.length - 1])}` : null,
     ];
     const isConfirm = confirmLook === o.id;
-    const actions = o.example
-      ? `<button type="button" class="btn sm" data-open="${esc(o.id)}">${ICON.open}Ouvrir dans l'atelier</button>`
-      : isConfirm
+    const actions = isConfirm
         ? `<div class="confirm">Supprimer cette tenue ?<button type="button" class="btn sm danger-solid" data-del-look="${esc(o.id)}">Supprimer</button><button type="button" class="btn sm" data-cancel-del>Annuler</button></div>`
         : `<button type="button" class="btn sm" data-open="${esc(o.id)}">${ICON.open}Ouvrir</button>
            <button type="button" class="btn sm" data-wear="${esc(o.id)}" aria-pressed="${worn.includes(today)}">${ICON.check}${worn.includes(today) ? "Portée aujourd'hui" : "Je la porte aujourd'hui"}</button>
@@ -941,7 +1030,7 @@ function renderLooks() {
     return `<article class="look">
       <div class="collage ${o.mode === 'piece' ? 'piece' : ''}">${cells}</div>
       <div class="look-body">
-        <div class="look-title"><h3>${esc(o.name)}</h3>${o.example ? '<span class="badge">Exemple</span>' : ''}</div>
+        <div class="look-title"><h3>${esc(o.name)}</h3></div>
         <p class="look-items">${esc(names.join(', ') || 'Vêtements supprimés')}</p>
         <div class="look-meta">${esc(meta.filter(Boolean).join(' · '))}</div>
         <div class="look-actions">${actions}</div>
@@ -950,7 +1039,7 @@ function renderLooks() {
   }).join('');
 }
 function openLook(id) {
-  const o = state.outfits.find(x => x.id === id) || P.SAMPLE_OUTFITS.find(x => x.id === id);
+  const o = state.outfits.find(x => x.id === id);
   if (!o) return;
   st.mode = o.mode === 'piece' ? 'piece' : 'separates';
   st.sel = { ...o.sel };
@@ -958,7 +1047,7 @@ function openLook(id) {
   st.occ = null;
   st.season = null;
   go('atelier');
-  window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  window.scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' });
   toast(`« ${o.name} » est sur la planche.`);
 }
 function toggleWorn(id) {
@@ -1000,13 +1089,12 @@ function closeSheet() {
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
 }
 function renderSheet(busy) {
-  const hex = colorOf(draft.color).hex;
-  $('#drop-art').innerHTML = draft.photo ? `<img src="${esc(draft.photo)}" alt="Photo du vêtement">` : P.garmentSVG(draft.shape, hex);
+  $('#drop-art').innerHTML = draft.photo ? `<img src="${esc(draft.photo)}" alt="Photo du vêtement">` : art({ ...draft, name: $('#f-name').value.trim() || autoName() });
   $('#drop-hint').innerHTML = busy
     ? `${ICON.camera}<span>Préparation de la photo…</span>`
     : `${ICON.camera}<span>${draft.photo ? 'Changer la photo' : 'Ajouter une photo'}<small>Clique, glisse une image ou colle-la</small></span>`;
   $('#photo-remove').hidden = !draft.photo;
-  $('#photo-note').textContent = draft.photo ? 'Photo réduite et gardée avec le vêtement.' : 'Sans photo, on dessine le vêtement.';
+  $('#photo-note').textContent = draft.photo ? 'Photo réduite et gardée avec le vêtement.' : "Sans photo, le vêtement s'affiche avec sa couleur et son nom.";
   $('#f-cat').innerHTML = P.CATS.map(c => `<button type="button" class="chip" data-fcat="${c.id}" aria-pressed="${draft.cat === c.id}">${c.one}</button>`).join('');
   $('#f-shape').innerHTML = P.SHAPES_BY_CAT[draft.cat].map(s => `<button type="button" class="chip" data-fshape="${s}" aria-pressed="${draft.shape === s}">${P.SHAPES[s].label}</button>`).join('');
   $('#f-color').innerHTML = P.COLORS.map(c => `<button type="button" style="--c:${c.hex}" data-fcolor="${c.id}" aria-pressed="${draft.color === c.id}" aria-label="${c.name}" title="${c.name}"></button>`).join('');
@@ -1085,17 +1173,11 @@ function submitItem() {
     occasions: draft.occasions.slice(), seasons: draft.seasons.slice(), photo: draft.photo || null,
     createdAt: draft.createdAt || Date.now(), updatedAt: Date.now(),
   };
-  const firstOwn = isNew && state.items.length === 0;
   state.items = isNew ? [item, ...state.items] : state.items.map(i => (i.id === item.id ? item : i));
   persist({ kind: 'item', action: 'put', data: item });
   closeSheet();
-  if (firstOwn && state.settings.showExamples) {
-    setSettings({ showExamples: false });
-    toast('Premier vêtement ajouté. Les exemples sont masqués, il ne reste que tes pièces.');
-  } else {
-    toast(isNew ? `« ${name} » est dans ton dressing.` : 'Modifications enregistrées.');
-    afterData();
-  }
+  toast(isNew ? `« ${name} » est dans ton dressing.` : 'Modifications enregistrées.');
+  afterData();
 }
 function deleteItem() {
   const it = state.items.find(i => i.id === draft.id);
@@ -1294,27 +1376,122 @@ function applyLook(s) {
   try { localStorage.setItem('dressin.look', JSON.stringify({ bg: s.bg, accent: s.accent })); } catch (e) { /* stockage bloqué */ }
 }
 function syncLook() {
+  document.documentElement.classList.toggle('no-motion', state.settings.motion === false);
+  renderMiniAvatar();
   const k = `${state.settings.bg}|${state.settings.accent}`;
   if (k !== lookKey) { lookKey = k; applyLook(state.settings); }
 }
 darkMQ.addEventListener('change', () => applyLook(state.settings));
 new MutationObserver(() => applyLook(state.settings)).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+const PERSON = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"/></svg>';
+function avatarInner(s) {
+  if (s.avatar) return `<img src="${esc(s.avatar)}" alt="">`;
+  const n = (s.name || '').trim();
+  return n ? `<span>${esc(n.charAt(0).toUpperCase())}</span>` : PERSON;
+}
+function renderMiniAvatar() { $('#mini-av').innerHTML = avatarInner(state.settings); }
+function wearStats() {
+  const now = new Date();
+  const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  let month = 0;
+  const wear = new Map();
+  for (const o of state.outfits) {
+    const w = o.wornDates || [];
+    month += w.filter(d => d.startsWith(ym)).length;
+    if (w.length) Object.values(o.sel || {}).forEach(id => id && wear.set(id, (wear.get(id) || 0) + w.length));
+  }
+  const used = state.items.filter(i => wear.has(i.id)).length;
+  let top = null;
+  for (const [id, n] of wear) { const it = itemById(id); if (it && (!top || n > top.n)) top = { it, n }; }
+  return { month, pct: state.items.length ? Math.round((used / state.items.length) * 100) : 0, top };
+}
+let confirmWipe = false;
 function renderAccount() {
   const s = state.settings;
   const me = $('#f-me');
   if (document.activeElement !== me) me.value = s.name || '';
+  $('#avatar').innerHTML = avatarInner(s);
+  $('#avatar-actions').innerHTML = s.avatar ? '<button type="button" class="btn sm ghost" data-avatar-remove>Retirer la photo</button>' : '<label class="btn sm" for="avatar-input">Ajouter une photo</label>';
+  const dates = [...state.items, ...state.outfits].map(x => x.createdAt).filter(Boolean);
+  $('#member-since').textContent = dates.length
+    ? `Membre depuis ${new Date(Math.min(...dates)).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`
+    : 'Bienvenue sur DressIn';
+
+  const w = wearStats();
+  $('#stats').innerHTML = [
+    [state.items.length, state.items.length > 1 ? 'vêtements' : 'vêtement'],
+    [state.outfits.length, state.outfits.length > 1 ? 'tenues enregistrées' : 'tenue enregistrée'],
+    [w.month, 'portées ce mois-ci'],
+    [`${w.pct} %`, 'du dressing porté'],
+  ].map(([n, l]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
+  $('#stats-note').textContent = w.top
+    ? `Ta pièce préférée : « ${w.top.it.name} », portée ${w.top.n} fois.`
+    : 'Dans « Mes tenues », touche « Je la porte aujourd’hui » pour suivre ce que tu portes vraiment.';
+
+  const sizes = s.sizes || {};
+  for (const k of Object.keys(SIZES)) {
+    const sel = $(`[data-size="${k}"]`);
+    sel.innerHTML = '<option value="">–</option>' + SIZES[k].map(v => `<option value="${v}"${sizes[k] === v ? ' selected' : ''}>${v}</option>`).join('');
+  }
+  const styles = s.styles || [];
+  $('#style-chips').innerHTML = STYLES.map(x => `<button type="button" class="chip" data-style="${x}" aria-pressed="${styles.includes(x)}">${x}</button>`).join('');
+
+  const curBg = BGS.some(b => b.id === s.bg) ? s.bg : 'auto';
   $('#bg-grid').innerHTML = BGS.map(b => {
     const c = b.hex || 'linear-gradient(135deg, #F2F3F6 50%, #10121C 50%)';
     const sfc = b.hex ? (b.dark ? P.mix(b.hex, '#ffffff', 0.06) : P.mix(b.hex, '#ffffff', 0.72)) : 'linear-gradient(135deg, #FFFFFF 50%, #1E2238 50%)';
-    return `<button type="button" class="bg-opt" data-bg="${b.id}" aria-pressed="${s.bg === b.id}"><span class="sw-bg" style="--c:${c};--s:${sfc}"></span><span>${b.name}<small>${b.hint || (b.dark ? 'Sombre' : 'Clair')}</small></span></button>`;
+    return `<button type="button" class="bg-opt" data-bg="${b.id}" aria-pressed="${curBg === b.id}"><span class="sw-bg" style="--c:${c};--s:${sfc}"></span><span>${b.name}<small>${b.hint || (b.dark ? 'Sombre' : 'Clair')}</small></span></button>`;
   }).join('');
-  $('#acc-pick').innerHTML = ACCENTS.map(a => `<button type="button" class="acc-opt" data-accent="${a.id}" aria-pressed="${s.accent === a.id}"><i style="--c:${a.hex}"></i>${a.name}</button>`).join('');
+  const curAc = ACCENTS.some(a => a.id === s.accent) ? s.accent : 'cobalt';
+  $('#acc-pick').innerHTML = ACCENTS.map(a => `<button type="button" class="acc-opt" data-accent="${a.id}" aria-pressed="${curAc === a.id}"><i style="--c:${a.hex}"></i>${a.name}</button>`).join('');
+  $('#pref-recent').checked = s.avoidRecent !== false;
+  $('#pref-motion').checked = s.motion !== false;
+
   const photos = state.items.filter(i => i.photo).length;
   $('#data-stats').textContent = `${plural(state.items.length, 'vêtement', 'vêtements')} · ${plural(state.outfits.length, 'tenue', 'tenues')} · ${plural(photos, 'photo', 'photos')}`;
-  $('#data-actions').innerHTML = `<button type="button" class="btn sm" data-examples="${s.showExamples ? 'hide' : 'show'}">${s.showExamples ? 'Masquer les exemples' : 'Afficher les exemples'}</button>`
-    + (inClaude ? '' : '<button type="button" class="btn sm" data-export>Exporter une sauvegarde</button>')
+  $('#data-actions').innerHTML = (inClaude ? '' : '<button type="button" class="btn sm" data-export>Exporter une sauvegarde</button>')
     + '<label class="btn sm" for="import-input">Importer une sauvegarde</label>';
+  $('#danger-zone').innerHTML = confirmWipe
+    ? `<span>Tout effacer ? Tes vêtements, tes tenues et ton profil seront supprimés pour de bon.</span><span class="data-actions"><button type="button" class="btn sm danger-solid" data-wipe>Oui, tout effacer</button><button type="button" class="btn sm" data-wipe-cancel>Annuler</button></span>`
+    : `<span class="hint">Repartir de zéro, avec un dressing vide.</span><button type="button" class="btn sm ghost danger" data-wipe-ask>${ICON.trash}Effacer toutes mes données</button>`;
+
+  $('#faq-data').textContent = STATUS[store.mode][1];
+  $('#faq-phone').textContent = inClaude
+    ? 'Ouvre DressIn depuis ton nouveau téléphone avec le même compte : tes vêtements et tes tenues y sont déjà.'
+    : 'Exporte une sauvegarde depuis cet onglet, envoie-toi le fichier, puis importe-le sur ton nouveau téléphone.';
+  $('#share-zone').innerHTML = inClaude ? '' : '<button type="button" class="btn sm" data-share>Partager DressIn</button>';
+}
+
+function processAvatar(file) {
+  if (!file || !/^image\//.test(file.type)) { toast("Ce fichier n'est pas une image."); return; }
+  const url = URL.createObjectURL(file);
+  loadImage(url).then(img => {
+    const S = 240, side = Math.min(img.naturalWidth, img.naturalHeight);
+    const c = document.createElement('canvas');
+    c.width = S; c.height = S;
+    c.getContext('2d').drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, S, S);
+    setSettings({ avatar: c.toDataURL('image/jpeg', 0.85) });
+    toast('Photo de profil mise à jour.');
+  }).catch(() => toast('Impossible de lire cette image.')).finally(() => URL.revokeObjectURL(url));
+}
+function wipeAll() {
+  state.items.forEach(i => persist({ kind: 'item', action: 'del', id: i.id }));
+  state.outfits.forEach(o => persist({ kind: 'outfit', action: 'del', id: o.id }));
+  state.items = [];
+  state.outfits = [];
+  st.sel = {};
+  st.locks = {};
+  confirmWipe = false;
+  setSettings({ ...DEFAULT_SETTINGS });
+  toast('Toutes tes données ont été effacées.');
+}
+async function shareApp() {
+  const url = location.href.split('#')[0];
+  try {
+    if (navigator.share) { await navigator.share({ title: 'DressIn', text: 'Compose tes tenues avec les vêtements que tu as déjà.', url }); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(url); toast('Lien copié. Colle-le où tu veux.'); } catch (e) { toast(url); }
 }
 
 function exportData() {
@@ -1357,13 +1534,24 @@ async function importData(file) {
     state.outfits = [...outfits, ...state.outfits.filter(o => !oids.has(o.id))];
     items.forEach(i => persist({ kind: 'item', action: 'put', data: i }));
     outfits.forEach(o => persist({ kind: 'outfit', action: 'put', data: o }));
-    if (items.length && state.settings.showExamples) setSettings({ showExamples: false });
-    else afterData();
+    afterData();
     toast(`Importé : ${plural(items.length, 'vêtement', 'vêtements')} et ${plural(outfits.length, 'tenue', 'tenues')}.`);
   } catch (e) { toast('Impossible de lire ce fichier. Choisis une sauvegarde DressIn en .json.'); }
 }
 
 /* ================= rendu général ================= */
+function renderOnboard() {
+  const has = cat => state.items.some(i => i.cat === cat);
+  const ready = ((has('haut') && has('bas')) || has('piece')) && has('chaussures');
+  const el = $('#onboard');
+  el.hidden = ready;
+  if (ready) return;
+  const steps = [['haut', 'Un haut', 'un haut'], ['bas', 'Un bas', 'un bas'], ['chaussures', 'Une paire de chaussures', 'des chaussures']];
+  const next = steps.find(([c]) => !has(c)) || steps[0];
+  el.innerHTML = `<div class="onboard-text"><h3 class="card-title">${state.items.length ? 'Encore un petit effort' : 'Bienvenue sur DressIn'}</h3><p class="hint">Ajoute ces trois pièces pour composer ta première tenue.</p></div>
+    <ul class="steps">${steps.map(([c, l]) => `<li class="${has(c) ? 'ok' : ''}"><i>${has(c) ? ICON.check : ''}</i>${l}</li>`).join('')}</ul>
+    <button type="button" class="btn primary" data-add-cat="${next[0]}">${ICON.plus}Ajouter ${next[2]}</button>`;
+}
 function updateCounts() {
   $('#count-items').textContent = visibleItems().length;
   $('#count-looks').textContent = visibleLooks().length;
@@ -1372,6 +1560,7 @@ function renderView() {
   if (state.view === 'atelier') {
     const n = (state.settings.name || '').trim();
     $('#hello').textContent = n ? `${n}, qu'est-ce que tu mets aujourd'hui ?` : `Qu'est-ce que je mets aujourd'hui ?`;
+    renderOnboard();
     if (!spinning) renderBoard();
     renderPanel();
   }
@@ -1409,12 +1598,10 @@ document.addEventListener('click', e => {
   if ('add' in d) { openSheet(null); return; }
   if (d.addCat) { openSheet(null, d.addCat); return; }
   if ('clearFilters' in d) { st.occ = null; st.season = null; ensureSelection(); renderBoard(); renderPanel(); return; }
-  if (d.examples) { setSettings({ showExamples: d.examples === 'show' }); return; }
   if (d.wcat) { state.wardrobeCat = d.wcat; renderWardrobe(); return; }
   if (d.item) {
     const it = state.items.find(i => i.id === d.item);
     if (it) openSheet(it);
-    else toast("Les exemples ne se modifient pas. Ajoute tes propres vêtements avec « Ajouter un vêtement ».");
     return;
   }
   if (d.open) { openLook(d.open); return; }
@@ -1434,6 +1621,17 @@ document.addEventListener('click', e => {
   if (d.bg) { setSettings({ bg: d.bg }); return; }
   if (d.accent) { setSettings({ accent: d.accent }); return; }
   if ('export' in d) { exportData(); return; }
+  if ('share' in d) { shareApp(); return; }
+  if (d.style) {
+    const cur = state.settings.styles || [];
+    if (!cur.includes(d.style) && cur.length >= 3) { toast('Trois styles maximum. Retire-en un pour en choisir un autre.'); return; }
+    setSettings({ styles: cur.includes(d.style) ? cur.filter(x => x !== d.style) : [...cur, d.style] });
+    return;
+  }
+  if ('avatarRemove' in d) { setSettings({ avatar: null }); return; }
+  if ('wipeAsk' in d) { confirmWipe = true; renderAccount(); return; }
+  if ('wipeCancel' in d) { confirmWipe = false; renderAccount(); return; }
+  if ('wipe' in d) { wipeAll(); return; }
   if (t.id === 'save-status') { toast(STATUS[$('#save-status').dataset.mode][1]); return; }
   if (t.id === 'mobile-save') { saveOutfit(); return; }
 });
@@ -1495,7 +1693,12 @@ sheet.addEventListener('click', e => {
   else if ('delItem' in d) deleteItem();
   else if (b.id === 'photo-remove') { draft.photo = null; renderSheet(); }
 });
-$('#f-name').addEventListener('input', e => { if (!draft) return; draft.name = e.target.value; draft.nameTouched = e.target.value.trim() !== ''; });
+$('#f-name').addEventListener('input', e => {
+  if (!draft) return;
+  draft.name = e.target.value;
+  draft.nameTouched = e.target.value.trim() !== '';
+  if (!draft.photo) $('#drop-art').innerHTML = art({ ...draft, name: e.target.value.trim() || autoName() });
+});
 $('#item-form').addEventListener('submit', e => { e.preventDefault(); if (draft) submitItem(); });
 $('#photo-input').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) processPhoto(f); });
 const drop = $('#drop');
@@ -1516,12 +1719,15 @@ $('#f-me').addEventListener('change', e => {
   toast(v ? `Salut ${v} !` : 'Prénom retiré.');
 });
 $('#import-input').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importData(f); });
+$('#avatar-input').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) processAvatar(f); });
+$('#view-compte').addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.size) setSettings({ sizes: { ...(state.settings.sizes || {}), [t.dataset.size]: t.value } });
+  else if (t.dataset.pref) setSettings({ [t.dataset.pref]: t.checked });
+});
 window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (VIEWS.includes(v) && v !== state.view) go(v, false); });
 
 /* ================= démarrage ================= */
-const start = P.SAMPLE_OUTFITS[Math.floor(Math.random() * P.SAMPLE_OUTFITS.length)];
-st.mode = start.mode;
-st.sel = { ...start.sel };
 try {
   const cached = JSON.parse(localStorage.getItem('dressin.look') || 'null');
   if (cached) state.settings = { ...state.settings, bg: cached.bg || 'auto', accent: cached.accent || 'cobalt' };
