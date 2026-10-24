@@ -1,4 +1,4 @@
-/* Penderie : illustrations de vêtements, couleurs, catégories et penderie d'exemple.
+/* DressIn : illustrations de vêtements, couleurs, catégories et dressing d'exemple.
    Partagé par le site (index.html) et la vidéo de présentation (video/promo.html). */
 (function (root) {
   'use strict';

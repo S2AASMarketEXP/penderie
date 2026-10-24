@@ -1,12 +1,12 @@
 {
-  "name": "Penderie",
-  "short_name": "Penderie",
+  "name": "DressIn",
+  "short_name": "DressIn",
   "description": "Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ECEEF3",
+  "background_color": "#F2F3F6",
   "theme_color": "#2B45F5",
   "icons": [
     {
