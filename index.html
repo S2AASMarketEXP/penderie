@@ -18,7 +18,6 @@
 <link rel="manifest" href="manifest.webmanifest">
 <style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>DressIn</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -510,6 +509,49 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
 .dz-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
 .dz-row + .dz-row { border-top: 1px solid var(--line); padding-top: 12px; }
 
+/* ---------- choix d'une pièce ---------- */
+.pick-backdrop { z-index: 54; background: rgba(2, 3, 10, .22); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.pick-sheet { width: min(440px, 100%); }
+.pick-body { display: flex; flex-direction: column; gap: 14px; padding: 4px 18px 18px; }
+.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+.pick-opt { appearance: none; border: 0; background: none; padding: 0; display: flex; flex-direction: column; gap: 6px; color: var(--ink); cursor: pointer; text-align: center; min-width: 0; }
+.pick-tile { display: grid; place-items: center; aspect-ratio: 1; max-width: 100%; border-radius: 14px; overflow: hidden; background: var(--tile); box-shadow: inset 0 0 0 1px var(--line); }
+.pick-opt:hover .pick-tile { box-shadow: inset 0 0 0 1px var(--accent); }
+.pick-opt[aria-pressed="true"] .pick-tile { box-shadow: 0 0 0 2px var(--accent), 0 10px 24px -12px var(--glow); }
+.pick-name { font-size: 12.5px; font-weight: 600; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.none-tile, .add-tile { background: transparent; box-shadow: none; border: 1.5px dashed var(--line); }
+.none-tile { color: var(--muted); font-size: 11.5px; padding: 6px; text-align: center; }
+.add-tile { color: var(--accent-hi); }
+.add-tile svg.i { width: 26px; height: 26px; }
+@media (min-width: 881px) {
+  .pick-backdrop { justify-content: flex-end; align-items: stretch; }
+  .pick-sheet { max-height: 100%; }
+}
+@media (max-width: 880px) {
+  .pick-backdrop { align-items: flex-end; padding: 0; }
+  .pick-sheet { width: 100%; max-height: 64%; border-radius: 22px 22px 0 0; }
+}
+.mq-row { grid-template-columns: minmax(0, 1fr) auto auto auto; }
+.mq-pick { appearance: none; border: 0; background: none; padding: 0; color: inherit; display: flex; align-items: center; gap: 10px; min-width: 0; text-align: left; cursor: pointer; border-radius: 10px; }
+.mq-pick:hover .mq-info b { color: var(--accent-hi); }
+.mq-thumb { display: block; flex: none; }
+.current { cursor: pointer; }
+.sw { appearance: none; border: 0; background: none; padding: 0; cursor: pointer; color: inherit; font: inherit; }
+
+/* ---------- éditeur d'avatar ---------- */
+.ae-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ae-grid { display: grid; grid-template-columns: minmax(200px, 280px) minmax(0, 1fr); gap: 18px 26px; align-items: start; }
+.ae-preview { display: grid; place-items: center; padding: 8px 0; border-radius: 18px; background: radial-gradient(closest-side at 50% 45%, var(--accent-soft), transparent 100%); position: sticky; top: calc(env(safe-area-inset-top, 0px) + 84px); }
+.ae-preview svg { display: block; height: 430px; width: auto; max-width: 100%; }
+.ae-options { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.ae-group { display: flex; flex-direction: column; gap: 7px; }
+.avatar > svg:not(.i), .mini-av > svg:not(.i) { display: block; width: 100%; height: 100%; }
+@media (max-width: 760px) {
+  .ae-grid { grid-template-columns: minmax(0, 1fr); }
+  .ae-preview { position: static; }
+  .ae-preview svg { height: 330px; }
+}
+
 /* ---------- météo ---------- */
 svg.wx-i { width: 22px; height: 22px; stroke-width: 1.8; color: var(--accent-hi); }
 .wx-card { gap: 10px; }
@@ -720,14 +762,18 @@ select.pd-sel { padding: 7px 4px 7px 8px; font-size: 12.5px; border-radius: 10px
             <span class="hint" id="member-since"></span>
             <span id="avatar-actions"></span>
           </div>
-          <div class="field">
-            <span class="label">Silhouette du mannequin</span>
-            <div class="seg" id="body-seg" role="group" aria-label="Silhouette du mannequin">
-              <button type="button" data-body="femme" aria-pressed="true">Femme</button>
-              <button type="button" data-body="homme" aria-pressed="false">Homme</button>
-            </div>
-          </div>
           <div class="acct-line" id="acct-line" hidden></div>
+        </div>
+      </section>
+      <section class="card wide avatar-editor">
+        <div class="ae-head">
+          <h3 class="card-title">Mon avatar</h3>
+          <button type="button" class="btn sm" data-look-random><svg class="i" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Au hasard</button>
+        </div>
+        <p class="hint">Crée ton personnage : il porte tes tenues dans l'atelier et dans le planning.</p>
+        <div class="ae-grid">
+          <div class="ae-preview" id="ae-preview"></div>
+          <div class="ae-options" id="ae-options"></div>
         </div>
       </section>
       <section class="card wide">
@@ -1011,6 +1057,18 @@ select.pd-sel { padding: 7px 4px 7px 8px; font-size: 12.5px; border-radius: 10px
   </div>
 </div>
 
+<div class="sheet-backdrop pick-backdrop" id="slotpick" hidden>
+  <div class="sheet pick-sheet" role="dialog" aria-modal="true" aria-labelledby="pick-title">
+    <div class="sheet-head">
+      <h2 id="pick-title">Pièce</h2>
+      <button type="button" class="icon-btn" data-close-pick aria-label="Fermer">
+        <svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="pick-body" id="pick-body"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="garments.js"></script>
@@ -1250,8 +1308,7 @@ function mqRowHTML(slot) {
   const canStep = ids.length >= 2 || (ids.length >= 1 && !ids.includes(curId ?? null));
   const locked = !!st.locks[slot];
   return `<div class="mq-row" data-slot="${slot}">
-    <div class="mq-thumb">${cur ? art(cur) : '<div class="none"></div>'}</div>
-    <div class="mq-info"><span class="label">${def.label}</span><b>${cur ? esc(cur.name) : (def.none || def.empty)}</b></div>
+    <button type="button" class="mq-pick" data-pick-slot="${slot}" data-fk="${slot}:pick" aria-label="Choisir : ${def.label.toLowerCase()}"><span class="mq-thumb">${cur ? art(cur) : '<span class="none"></span>'}</span><span class="mq-info"><span class="label">${def.label}</span><b>${cur ? esc(cur.name) : (def.none || def.empty)}</b></span></button>
     <button type="button" class="arrow" data-step="-1" data-slot="${slot}" data-fk="${slot}:prev" aria-label="${def.label} précédent" ${canStep ? '' : 'disabled'}>${ICON.left}</button>
     <button type="button" class="arrow" data-step="1" data-slot="${slot}" data-fk="${slot}:next" aria-label="${def.label} suivant" ${canStep ? '' : 'disabled'}>${ICON.right}</button>
     <button type="button" class="lock" data-lock="${slot}" data-fk="${slot}:lock" aria-pressed="${locked}" aria-label="${locked ? 'Ne plus garder' : 'Garder'} : ${def.label.toLowerCase()}" title="${locked ? 'Gardé quand tu mélanges' : 'Garder quand tu mélanges'}">${locked ? ICON.lock : ICON.unlock}</button>
@@ -1261,7 +1318,7 @@ function mannequinView(pop) {
   const sel = {};
   ORDER[st.mode].forEach(s => { sel[s] = st.sel[s] ?? null; });
   const dressed = ORDER[st.mode].some(s => itemById(sel[s]));
-  return `<div class="mq-wrap"><div class="mq-figure${pop ? ' pop' : ''}">${mannequinSVG(bodyOf(), sel, st.mode)}${dressed ? '<p class="mq-hint">Touche un vêtement sur le mannequin pour le changer.</p>' : ''}</div><div class="mq-list">${ORDER[st.mode].map(mqRowHTML).join('')}</div></div>`;
+  return `<div class="mq-wrap"><div class="mq-figure${pop ? ' pop' : ''}">${mannequinSVG(bodyOf(), sel, st.mode)}${dressed ? '<p class="mq-hint">Touche un vêtement ou une partie du corps pour choisir.</p>' : ''}</div><div class="mq-list">${ORDER[st.mode].map(mqRowHTML).join('')}</div></div>`;
 }
 function renderBoard(landed) {
   withFocus(() => {
@@ -1378,7 +1435,8 @@ function renderPanel() {
 
   const items = selectedItems();
   const colorIds = [...new Set(items.map(i => i.color))];
-  $('#palette').innerHTML = colorIds.map(id => `<span class="sw" style="--c:${colorOf(id).hex}"><i></i><span>${esc(colorOf(id).name)}</span></span>`).join('');
+  const slotOfColor = id => ORDER[st.mode].find(s => (itemById(st.sel[s]) || {}).color === id);
+  $('#palette').innerHTML = colorIds.map(id => `<button type="button" class="sw" style="--c:${colorOf(id).hex}" data-pick-slot="${slotOfColor(id)}" title="Changer la pièce ${esc(colorOf(id).name.toLowerCase())}"><i></i><span>${esc(colorOf(id).name)}</span></button>`).join('');
   const bright = colorIds.filter(id => !colorOf(id).neutral);
   let msg;
   if (!items.length) msg = 'Choisis au moins une pièce.';
@@ -1542,7 +1600,7 @@ function closeSheet() {
 }
 /* bloque le défilement de la page tant qu'une fenêtre est ouverte */
 function syncLock() {
-  const open = ['#auth', '#sheet', '#search', '#privacy', '#city'].some(s => !$(s).hidden);
+  const open = ['#auth', '#sheet', '#search', '#privacy', '#city', '#slotpick'].some(s => !$(s).hidden);
   document.documentElement.classList.toggle('locked', open);
 }
 function renderSheet(busy) {
@@ -1838,9 +1896,7 @@ function syncLook() {
 
 const PERSON = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"/></svg>';
 function avatarInner(s) {
-  if (s.avatar) return `<img src="${esc(s.avatar)}" alt="">`;
-  const n = (s.name || '').trim();
-  return n ? `<span>${esc(n.charAt(0).toUpperCase())}</span>` : PERSON;
+  return s.avatar ? `<img src="${esc(s.avatar)}" alt="">` : avatarHeadSVG();
 }
 function renderMiniAvatar() { $('#mini-av').innerHTML = avatarInner(state.settings); }
 function wearStats() {
@@ -1909,7 +1965,7 @@ function renderAccount() {
     ? `<span>Supprimer le compte ${esc(account.email)} et tout son contenu de cet appareil ?</span><span class="data-actions"><button type="button" class="btn sm danger-solid" data-del-account>Oui, supprimer</button><button type="button" class="btn sm" data-del-account-cancel>Annuler</button></span>`
     : `<span class="hint">Supprimer ton compte et son contenu de cet appareil.</span><button type="button" class="btn sm ghost danger" data-del-account-ask>${ICON.trash}Supprimer mon compte</button>`;
   $('#danger-zone').innerHTML = `<div class="dz-row">${wipeRow}</div>${accRow ? `<div class="dz-row">${accRow}</div>` : ''}`;
-  $$('#body-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.body === bodyOf())));
+  renderLookEditor();
   const al = $('#acct-line');
   al.hidden = !account;
   al.innerHTML = account ? `<span class="hint">Connecté avec <b>${esc(account.email)}</b></span><button type="button" class="btn sm" data-logout>Se déconnecter</button>` : '';
@@ -2218,17 +2274,18 @@ function garmentParts(it, d) {
     }
     case 'casquette': {
       const yb = d.top + (d.chin - d.top) * 0.36;
-      add([[100 - d.hw - 0.5, yb], [100 - d.hw + 1, d.top + 7], [100, d.top - 1.5], [100 + d.hw - 1, d.top + 7], [100 + d.hw + 0.5, yb]], 'main', 1);
+      const L = d.lift || 0;
+      add([[100 - d.hw - 0.5 - L * 0.4, yb], [100 - d.hw + 1 - L * 0.4, d.top + 7 - L], [100, d.top - 1.5 - L], [100 + d.hw - 1 + L * 0.4, d.top + 7 - L], [100 + d.hw + 0.5 + L * 0.4, yb]], 'main', 1);
       add(ellPts(100, yb + 1, d.hw + 7, 4.2), 'dark', 1);
       dot(100, d.top - 1, 2, 'dark');
       line(`M100 ${d.top}V${yb - 2}`);
       break;
     }
     case 'bonnet': {
-      const yb = d.top + (d.chin - d.top) * 0.42;
-      add([[100 - d.hw - 1.5, yb], [100 - d.hw, d.top + 10], [100, d.top - 1.5], [100 + d.hw, d.top + 10], [100 + d.hw + 1.5, yb]], 'main', 1);
-      add(band(yb - 9, yb + 1, d.hw + 1.2, d.hw + 1.8), 'dark', 0);
-      add(ellPts(100, d.top - 5, 5.5, 5.5), 'light', 1);
+      const yb = d.top + (d.chin - d.top) * 0.38, L = d.lift || 0;
+      add([[100 - d.hw - 1.5 - L * 0.4, yb], [100 - d.hw - L * 0.4, d.top + 10 - L], [100, d.top - 1.5 - L], [100 + d.hw + L * 0.4, d.top + 10 - L], [100 + d.hw + 1.5 + L * 0.4, yb]], 'main', 1);
+      add(band(yb - 9, yb + 1, d.hw + 1.2 + L * 0.4, d.hw + 1.8 + L * 0.4), 'dark', 0);
+      add(ellPts(100, d.top - 5 - L, 5.5, 5.5), 'light', 1);
       break;
     }
     case 'echarpe':
@@ -2243,17 +2300,135 @@ function garmentParts(it, d) {
 }
 const pathPts = rel => RX(rel);
 let mqSeq = 0;
-function mannequinSVG(gender, sel, mode, bare) {
-  const d = BODY[gender] || BODY.femme;
+/* ---------- avatar à personnaliser (façon Bitmoji) : style, corpulence, peau, cheveux, visage ---------- */
+const SKINS = [['porcelaine', 'Porcelaine', '#F6D9C6'], ['claire', 'Claire', '#EEC3A3'], ['doree', 'Dorée', '#D9A47C'], ['mate', 'Mate', '#B88058'], ['brune', 'Brune', '#8C5A3C'], ['ebene', 'Ébène', '#5B3A28']];
+const HAIRS = [['court', 'Court'], ['degrade', 'Dégradé'], ['boucles', 'Bouclés'], ['afro', 'Afro'], ['carre', 'Carré'], ['long', 'Longs'], ['queue', 'Queue-de-cheval'], ['chignon', 'Chignon'], ['rase', 'Rasé']];
+const HAIR_COLORS = [['noir', 'Noir', '#1F1A18'], ['brun', 'Brun', '#45291D'], ['chatain', 'Châtain', '#7A4C2C'], ['blond', 'Blond', '#D8B169'], ['roux', 'Roux', '#B0532A'], ['gris', 'Gris', '#A9A9B0'], ['rose', 'Rose', '#E890B3'], ['bleu', 'Bleu', '#5D7CF6']];
+const EYES = [['ronds', 'Ronds'], ['amande', 'En amande'], ['rieurs', 'Rieurs']];
+const EYE_COLORS = [['marron', 'Marron', '#5A3A22'], ['noisette', 'Noisette', '#8A6A2E'], ['vert', 'Vert', '#4E7A4A'], ['bleu', 'Bleu', '#4D7EB8'], ['gris', 'Gris', '#7D8794']];
+const MOUTHS = [['sourire', 'Sourire'], ['grand', 'Grand sourire'], ['neutre', 'Neutre']];
+const BEARDS = [['aucune', 'Sans'], ['courte', 'Courte'], ['pleine', 'Pleine']];
+const BUILDS = [['fine', 'Fine', 0.92], ['moyenne', 'Moyenne', 1], ['ronde', 'Ronde', 1.13]];
+const hexOf = (list, id, fb) => (list.find(x => x[0] === id) || list.find(x => x[0] === fb))[2];
+function lookOf(gender = bodyOf()) {
+  return { style: 'avatar', skin: 'doree', hair: gender === 'homme' ? 'court' : 'long', hairColor: 'chatain', eyes: 'ronds', eyeColor: 'marron',
+    mouth: 'sourire', beard: 'aucune', glasses: false, build: 'moyenne', ...(state.settings.look || {}) };
+}
+/* repères du corps selon la corpulence ; l'avatar a une tête plus grande, façon personnage */
+function dimsFor(gender, look) {
+  const b = BODY[gender] || BODY.femme, d = { ...b };
+  const k = (BUILDS.find(x => x[0] === look.build) || BUILDS[1])[2];
+  for (const key of ['ch', 'ub', 'wa', 'hh', 'hi', 'th', 'mt', 'kn', 'ca', 'up', 'el', 'wr']) d[key] = b[key] * k;
+  d.sh = b.sh * (1 + (k - 1) * 0.5);
+  d.lx = b.lx * (1 + (k - 1) * 0.7);
+  if (look.style === 'avatar') { d.hw = gender === 'homme' ? 34.5 : 33; d.f = d.hw / 24.5; d.top = -20; d.chin = 80; d.lift = 5 * d.f; }
+  return d;
+}
+function hairSVG(d, look) {
+  const W = d.hw, T = d.top, C = d.chin, cy = (T + C) / 2, hc = hexOf(HAIR_COLORS, look.hairColor, 'chatain');
+  const dark = P.mix(hc, '#000000', 0.3), gloss = P.lum(hc) < 0.05 ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.26)';
+  const shape = pts => `<path d="${pathOf(RX(pts), 1)}" fill="${hc}" stroke="${dark}" stroke-width=".7"/>`;
+  const curl = (x, y, r) => `<circle cx="${fx(100 + x)}" cy="${fx(y)}" r="${r}" fill="${hc}" stroke="${dark}" stroke-width=".6"/>`;
+  const shine = `<path d="M${fx(100 - W * 0.45)} ${fx(T + 3)}Q100 ${fx(T - 2)} ${fx(100 + W * 0.35)} ${fx(T + 2)}" fill="none" stroke="${gloss}" stroke-width="2.4" stroke-linecap="round"/>`;
+  const fringe = [[-W - 1.5, cy - 2], [-W - 1, T + 12], [-W * 0.62, T - 2.5], [0, T - 5], [W * 0.62, T - 2.5], [W + 1, T + 12], [W + 1.5, cy - 2], [W - 1.8, cy - 7], [W * 0.6, T + 15], [W * 0.12, T + 18.5], [-W * 0.35, T + 15], [-W * 0.75, T + 19], [-W + 1.6, cy - 7]];
+  const sleek = [[-W - 1, cy - 4], [-W * 0.62, T - 2], [0, T - 4.5], [W * 0.62, T - 2], [W + 1, cy - 4], [W - 1.5, cy - 9], [W * 0.5, T + 11], [0, T + 12.5], [-W * 0.5, T + 11], [-W + 1.5, cy - 9]];
+  const short = [[-W - 0.6, cy - 7], [-W * 0.62, T - 0.5], [0, T - 2.5], [W * 0.62, T - 0.5], [W + 0.6, cy - 7], [W - 2, cy - 10], [W * 0.5, T + 9], [0, T + 10.5], [-W * 0.5, T + 9], [-W + 2, cy - 10]];
+  let back = '', front = '';
+  switch (look.hair) {
+    case 'court': front = shape(fringe) + shine; break;
+    case 'degrade': front = shape(short) + shine; break;
+    case 'boucles':
+      front = shape(sleek);
+      for (let i = 0; i <= 10; i++) { const a = Math.PI * (1.08 + 0.84 * i / 10); front += curl((W + 1) * Math.cos(a), cy - 5 + (W + 5) * Math.sin(a), 6.6); }
+      for (let i = 0; i < 5; i++) front += curl(-W * 0.55 + i * W * 0.275, T + 14 + (i % 2) * 2, 5);
+      break;
+    case 'afro':
+      back = `<ellipse cx="100" cy="${fx(cy - 9)}" rx="${fx(W + 16)}" ry="${fx((C - T) * 0.62)}" fill="${hc}" stroke="${dark}" stroke-width=".7"/>`;
+      front = shape(sleek);
+      for (let i = 0; i < 6; i++) front += curl(-W * 0.62 + i * W * 0.248, T + 12 + (i % 2) * 2.5, 5.2);
+      break;
+    case 'carre':
+      back = shape([[-W - 5, C - 4], [-W - 6.5, cy], [-W - 3, T + 6], [0, T - 6], [W + 3, T + 6], [W + 6.5, cy], [W + 5, C - 4], [W - 1, C - 2], [-W + 1, C - 2]]);
+      front = shape([[-W - 2, cy + 2], [-W - 1, T + 10], [-W * 0.6, T - 3], [0, T - 5.5], [W * 0.62, T - 3], [W + 1.5, T + 10], [W + 2.5, cy + 6], [W - 1, cy + 4], [W - 3, T + 20], [W * 0.2, T + 16], [-W * 0.6, T + 22], [-W + 1.5, cy]]) + shine;
+      break;
+    case 'long':
+      back = shape([[-W - 5, cy - 2], [-W - 3, T + 5], [0, T - 6], [W + 3, T + 5], [W + 5, cy - 2], [W + 8, C + 20], [W + 9, d.chY - 2], [W + 2, d.chY + 10], [W - 4, C + 16], [-W + 4, C + 16], [-W - 2, d.chY + 10], [-W - 9, d.chY - 2], [-W - 8, C + 20]]);
+      front = shape([[0, T - 4], [-W * 0.6, T - 1.5], [-W - 1.5, T + 12], [-W - 2.5, cy + 10], [-W + 0.5, cy + 8], [-W + 2, T + 22], [-W * 0.35, T + 12]])
+        + shape([[0, T - 4], [W * 0.6, T - 1.5], [W + 1.5, T + 12], [W + 2.5, cy + 10], [W - 0.5, cy + 8], [W - 2, T + 22], [W * 0.35, T + 12]]) + shine;
+      break;
+    case 'queue':
+      back = shape([[W * 0.4, T + 2], [W + 8, T + 12], [W + 12, cy + 18], [W + 8, C + 30], [W + 3, C + 34], [W + 4, cy + 16], [W * 0.6, T + 12]]);
+      front = shape(sleek) + `<ellipse cx="${fx(100 + W * 0.72)}" cy="${fx(T + 8)}" rx="3" ry="4" fill="${dark}"/>` + shine;
+      break;
+    case 'chignon':
+      back = `<circle cx="100" cy="${fx(T - 7)}" r="11" fill="${hc}" stroke="${dark}" stroke-width=".7"/>`;
+      front = shape(sleek) + shine;
+      break;
+    case 'rase': front = `<g opacity=".32">${shape(short)}</g>`; break;
+  }
+  return { back, front };
+}
+function faceSVG(d, look, gender, skin) {
+  const cy = (d.top + d.chin) / 2, ey = cy + 3, ex = d.hw * 0.42, my = ey + 17;
+  const hc = hexOf(HAIR_COLORS, look.hairColor, 'chatain'), ec = hexOf(EYE_COLORS, look.eyeColor, 'marron'), ink = '#2A1E1A';
+  let s = [1, -1].map(k => `<ellipse cx="${fx(100 + k * d.hw * 0.6)}" cy="${fx(ey + 10)}" rx="4.6" ry="2.6" fill="#FF7A86" opacity=".22"/>`).join('');
+  if (gender === 'homme' && look.beard !== 'aucune') {
+    const full = look.beard === 'pleine';
+    s += `<path d="M${fx(100 - d.hw * 0.9)} ${fx(ey + 5)}Q${fx(100 - d.hw * 0.92)} ${fx(d.chin + (full ? 5 : 1))} 100 ${fx(d.chin + (full ? 5 : 1))}Q${fx(100 + d.hw * 0.92)} ${fx(d.chin + (full ? 5 : 1))} ${fx(100 + d.hw * 0.9)} ${fx(ey + 5)}Q${fx(100 + d.hw * 0.5)} ${fx(my + 3)} 100 ${fx(my - 6)}Q${fx(100 - d.hw * 0.5)} ${fx(my + 3)} ${fx(100 - d.hw * 0.9)} ${fx(ey + 5)}Z" fill="${hc}" opacity="${full ? 0.95 : 0.3}"/>`;
+    if (full) s += `<path d="M${fx(100 - 8)} ${fx(my - 2.5)}Q100 ${fx(my - 7)} ${fx(100 + 8)} ${fx(my - 2.5)}Q100 ${fx(my - 3.6)} ${fx(100 - 8)} ${fx(my - 2.5)}Z" fill="${hc}"/>`;
+  }
+  const by = ey - 9, bw = 5.5;
+  s += [1, -1].map(k => `<path d="M${fx(100 + k * (ex - bw))} ${fx(by + 1)}Q${fx(100 + k * ex)} ${fx(by - 2.4)} ${fx(100 + k * (ex + bw))} ${fx(by + 0.6)}" fill="none" stroke="${hc}" stroke-width="${gender === 'homme' ? 2.2 : 1.6}" stroke-linecap="round"/>`).join('');
+  for (const k of [1, -1]) {
+    const x = 100 + k * ex;
+    if (look.eyes === 'rieurs') { s += `<path d="M${fx(x - 4.5)} ${fx(ey + 1)}Q${fx(x)} ${fx(ey - 3.5)} ${fx(x + 4.5)} ${fx(ey + 1)}" fill="none" stroke="${ink}" stroke-width="1.7" stroke-linecap="round"/>`; continue; }
+    const almond = look.eyes === 'amande', rx = almond ? 5.4 : 4.6, ry = almond ? 3.4 : 5;
+    s += `<ellipse cx="${fx(x)}" cy="${fx(ey)}" rx="${rx}" ry="${ry}" fill="#FFFFFF"/>`
+      + `<circle cx="${fx(x)}" cy="${fx(ey + 0.4)}" r="${almond ? 2.9 : 3.3}" fill="${ec}"/><circle cx="${fx(x)}" cy="${fx(ey + 0.4)}" r="1.5" fill="#15100E"/><circle cx="${fx(x - 1.1)}" cy="${fx(ey - 0.9)}" r=".9" fill="#FFFFFF"/>`
+      + `<path d="M${fx(x - rx - 0.3)} ${fx(ey - (almond ? 0.4 : 1))}Q${fx(x)} ${fx(ey - ry - 1.6)} ${fx(x + rx + 0.3)} ${fx(ey - (almond ? 0.4 : 1))}" fill="none" stroke="${ink}" stroke-width="${almond ? 1.5 : 1.2}" stroke-linecap="round"/>`;
+  }
+  s += `<path d="M99 ${fx(ey + 4)}Q97.6 ${fx(ey + 9.5)} 100 ${fx(ey + 10.2)}Q101.8 ${fx(ey + 10.2)} 102 ${fx(ey + 9)}" fill="none" stroke="${P.mix(skin, '#000000', 0.32)}" stroke-width="1.2" stroke-linecap="round"/>`;
+  if (look.mouth === 'grand') {
+    s += `<path d="M93 ${fx(my - 1.5)}Q100 ${fx(my)} 107 ${fx(my - 1.5)}Q105 ${fx(my + 7)} 100 ${fx(my + 7)}Q95 ${fx(my + 7)} 93 ${fx(my - 1.5)}Z" fill="#6E2633"/>`
+      + `<path d="M94.4 ${fx(my - 0.9)}Q100 ${fx(my + 0.4)} 105.6 ${fx(my - 0.9)}L104.6 ${fx(my + 1.6)}Q100 ${fx(my + 2.4)} 95.4 ${fx(my + 1.6)}Z" fill="#FFFFFF"/>`
+      + `<ellipse cx="100" cy="${fx(my + 5)}" rx="3" ry="1.5" fill="#E0707A"/>`;
+  } else if (look.mouth === 'neutre') {
+    s += `<path d="M95.5 ${fx(my + 0.5)}Q100 ${fx(my + 2)} 104.5 ${fx(my + 0.5)}" fill="none" stroke="#8B3A3A" stroke-width="1.6" stroke-linecap="round"/>`;
+  } else {
+    s += `<path d="M94 ${fx(my - 1)}Q100 ${fx(my + 5)} 106 ${fx(my - 1)}" fill="none" stroke="#8B3A3A" stroke-width="1.7" stroke-linecap="round"/>`;
+  }
+  if (look.glasses) {
+    s += [1, -1].map(k => `<rect x="${fx(100 + k * ex - 7)}" y="${fx(ey - 5.5)}" width="14" height="11" rx="4.5" fill="rgba(255,255,255,.12)" stroke="#1E1E24" stroke-width="1.5"/>`).join('')
+      + `<path d="M${fx(100 - ex + 7)} ${fx(ey - 1)}Q100 ${fx(ey - 3)} ${fx(100 + ex - 7)} ${fx(ey - 1)}" fill="none" stroke="#1E1E24" stroke-width="1.4"/>`;
+  }
+  return s;
+}
+/* habille la silhouette ; opts.look pour un avatar précis, opts.crop pour ne garder que la tête */
+function mannequinSVG(gender, sel, mode, bare, opts = {}) {
+  const look = opts.look || lookOf(gender), av = look.style === 'avatar';
+  const d = dimsFor(gender, look);
   const u = 'mq' + (++mqSeq);
   const B = bodyGeom(d);
-  const limb = `fill="url(#${u}s)" stroke="#B9BECB" stroke-width=".6"`;
-  const trunk = `fill="url(#${u}t)" stroke="#B9BECB" stroke-width=".6"`;
-  const body = `<path d="${B.torso}" ${trunk}/>${B.arms.map(p => `<path d="${p}" ${limb}/>`).join('')}<path d="${B.neck}" ${limb}/><path d="${B.head}" ${trunk}/>`
+  const skin = av ? hexOf(SKINS, look.skin, 'doree') : '#F1F2F6';
+  const edge = av ? P.mix(skin, '#000000', 0.3) : '#B9BECB';
+  const limb = `fill="url(#${u}s)" stroke="${edge}" stroke-width=".6"`, trunk = `fill="url(#${u}t)" stroke="${edge}" stroke-width=".6"`;
+  const ref = { ...d, top: 6, chin: 78, hw: 24.5 }, cyA = (d.top + d.chin) / 2;
+  const tf = av ? `translate(100 ${fx(cyA)}) scale(${fx(d.f * 100) / 100}) translate(-100 -42)` : '';
+  const hair = av ? hairSVG(ref, look) : { back: '', front: '' };
+  const body = `<path d="${B.torso}" ${trunk}/>${B.arms.map(p => `<path d="${p}" ${limb}/>`).join('')}<path d="${B.neck}" ${limb}/>`
     + `${B.hands.map(p => `<path d="${p}" ${limb}/>`).join('')}${B.feet.map(p => `<path d="${p}" ${limb}/>`).join('')}`
-    + `<path d="${bodyLines(d, gender)}" fill="none" stroke="rgba(105,112,135,.32)" stroke-width=".8" stroke-linecap="round"/>`;
-  const layers = [];
-  if (!bare) {
+    + (av ? '' : `<path d="${bodyLines(d, gender)}" fill="none" stroke="rgba(105,112,135,.32)" stroke-width=".8" stroke-linecap="round"/>`);
+  const cy = (d.top + d.chin) / 2;
+  const head = (av ? [1, -1].map(k => `<ellipse cx="${fx(100 + k * (d.hw - 0.5))}" cy="${fx(cy + 4 * d.f)}" rx="${fx(4.4 * d.f)}" ry="${fx(7 * d.f)}" ${limb}/>`).join('') : '')
+    + `<path d="${B.head}" ${trunk}/>` + (av ? `<g transform="${tf}">${faceSVG(ref, look, gender, skin)}${hair.front}</g>` : '');
+  const layers = [], hats = [];
+  let hits = '';
+  if (!bare && !opts.crop) {
+    const top = mode === 'piece' ? 'piece' : 'top', bottom = mode === 'piece' ? 'piece' : 'bottom';
+    const zone = (slot, x, y, w, h) => `<rect data-mq-slot="${slot}" x="${fx(x)}" y="${fx(y)}" width="${fx(w)}" height="${fx(h)}" fill="transparent" style="cursor:pointer"/>`;
+    hits = zone(top, 100 - d.sh, d.nkY, 2 * d.sh, d.hiY - d.nkY + 8) + zone(bottom, 100 - d.hi - 4, d.hiY + 8, 2 * d.hi + 8, d.anY - d.hiY - 12)
+      + zone('feet', 100 - d.lx - 12, d.anY - 4, 2 * d.lx + 24, 30) + zone('acc', 100 - d.hw - 6, d.top - 8, 2 * d.hw + 12, d.chin - d.top + 8)
+      + zone('outer', 100 + d.sh - 10, d.shY, 26, d.wrY - d.shY) + zone('outer', 100 - d.sh - 16, d.shY, 26, d.wrY - d.shY);
     const order = mode === 'piece' ? ['piece', 'feet', 'outer', 'acc'] : ['bottom', 'top', 'feet', 'outer', 'acc'];
     for (const slot of order) {
       const it = itemById(sel[slot]);
@@ -2269,12 +2444,20 @@ function mannequinSVG(gender, sel, mode, bare) {
           + (p.tex ? `<path d="${path}" fill="url(#${u}${p.tex})"/>` : '')
           + (p.tone === 'main' ? `<path d="${path}" fill="url(#${u}h)"/>` : '');
       }).join('');
-      layers.push(`<g class="mq-g" data-mq-slot="${slot}" filter="url(#${u}ds)"><title>${esc(it.name)} : touche pour changer</title>${g}</g>`);
+      (slot === 'acc' ? hats : layers).push(`<g class="mq-g" data-mq-slot="${slot}" filter="url(#${u}ds)"><title>${esc(it.name)} : touche pour changer</title>${g}</g>`);
     }
   }
-  return `<svg viewBox="0 0 200 500" ${bare ? 'aria-hidden="true"' : `role="img" aria-label="Mannequin ${gender === 'homme' ? 'homme' : 'femme'} habillé avec la tenue"`}><defs>
-    <linearGradient id="${u}s" x1="0" x2="1"><stop offset="0" stop-color="#D3D7E1"/><stop offset=".36" stop-color="#FFFFFF"/><stop offset=".62" stop-color="#F1F2F6"/><stop offset="1" stop-color="#B9BECB"/></linearGradient>
-    <radialGradient id="${u}t" cx=".42" cy=".26" r=".85"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#EEF0F5"/><stop offset="1" stop-color="#C3C8D4"/></radialGradient>
+  const sk = av
+    ? [P.mix(skin, '#000000', 0.12), P.mix(skin, '#ffffff', 0.12), skin, P.mix(skin, '#000000', 0.22), P.mix(skin, '#ffffff', 0.16), skin, P.mix(skin, '#000000', 0.2)]
+    : ['#D3D7E1', '#FFFFFF', '#F1F2F6', '#B9BECB', '#FFFFFF', '#EEF0F5', '#C3C8D4'];
+  const view = opts.crop ? `${fx(100 - d.hw - 16)} ${fx(d.top - 14)} ${fx(2 * d.hw + 32)} ${fx(2 * d.hw + 32)}` : av ? '0 -42 200 542' : '0 0 200 500';
+  const floor = opts.crop ? '' : av
+    ? `<ellipse cx="100" cy="482" rx="52" ry="6" fill="rgba(0,0,0,.4)" filter="url(#${u}bl)"/>`
+    : `<ellipse cx="100" cy="492" rx="60" ry="6" fill="rgba(0,0,0,.45)" filter="url(#${u}bl)"/><ellipse cx="100" cy="486" rx="46" ry="7.5" fill="#101224"/>`
+      + `<ellipse cx="100" cy="482.5" rx="46" ry="7" fill="url(#${u}b)" stroke="rgba(255,255,255,.14)" stroke-width=".6"/><rect x="98.2" y="${d.cr + 16}" width="3.6" height="${482 - d.cr - 16}" rx="1.8" fill="url(#${u}r)"/>`;
+  return `<svg viewBox="${view}" ${bare || opts.crop ? 'aria-hidden="true"' : `role="img" aria-label="${av ? 'Avatar' : 'Mannequin'} ${gender === 'homme' ? 'homme' : 'femme'} habillé avec la tenue"`}><defs>
+    <linearGradient id="${u}s" x1="0" x2="1"><stop offset="0" stop-color="${sk[0]}"/><stop offset=".36" stop-color="${sk[1]}"/><stop offset=".62" stop-color="${sk[2]}"/><stop offset="1" stop-color="${sk[3]}"/></linearGradient>
+    <radialGradient id="${u}t" cx=".42" cy=".26" r=".85"><stop offset="0" stop-color="${sk[4]}"/><stop offset=".55" stop-color="${sk[5]}"/><stop offset="1" stop-color="${sk[6]}"/></radialGradient>
     <linearGradient id="${u}h" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></linearGradient>
     <linearGradient id="${u}r" x1="0" x2="1"><stop offset="0" stop-color="#4A4F66"/><stop offset=".45" stop-color="#C9CEDD"/><stop offset="1" stop-color="#363B52"/></linearGradient>
     <radialGradient id="${u}b" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#3A3F5E"/><stop offset="1" stop-color="#14162A"/></radialGradient>
@@ -2283,12 +2466,84 @@ function mannequinSVG(gender, sel, mode, bare) {
     <pattern id="${u}twill" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 5L5 0" stroke="rgba(0,0,0,.11)" stroke-width=".7"/></pattern>
     <filter id="${u}ds" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="1" stdDeviation="1.1" flood-color="#000" flood-opacity=".28"/></filter>
     <filter id="${u}bl" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>
-    <ellipse cx="100" cy="492" rx="60" ry="6" fill="rgba(0,0,0,.45)" filter="url(#${u}bl)"/>
-    <ellipse cx="100" cy="486" rx="46" ry="7.5" fill="#101224"/>
-    <ellipse cx="100" cy="482.5" rx="46" ry="7" fill="url(#${u}b)" stroke="rgba(255,255,255,.14)" stroke-width=".6"/>
-    <rect x="98.2" y="${d.cr + 16}" width="3.6" height="${482 - d.cr - 16}" rx="1.8" fill="url(#${u}r)"/>
-    <g>${body}</g><g>${layers.join('')}</g></svg>`;
+    ${floor}${av ? `<g transform="${tf}">${hair.back}</g>` : ''}<g>${opts.crop ? '' : body}</g>${hits}<g>${layers.join('')}</g><g>${head}</g><g>${hats.join('')}</g></svg>`;
 }
+const avatarHeadSVG = () => mannequinSVG(bodyOf(), {}, 'separates', true, { crop: true });
+
+/* ---------- éditeur d'avatar (onglet Compte) ---------- */
+function renderLookEditor() {
+  const look = lookOf(), g = bodyOf(), av = look.style === 'avatar';
+  const sel = {};
+  ORDER[st.mode].forEach(s => { sel[s] = st.sel[s] ?? null; });
+  $('#ae-preview').innerHTML = mannequinSVG(g, sel, st.mode, false, { look });
+  const chips = (key, list, cur) => `<div class="chips">${list.map(([id, label]) => `<button type="button" class="chip" data-look="${key}:${id}" aria-pressed="${String(cur) === id}">${label}</button>`).join('')}</div>`;
+  const swatches = (key, list, cur) => `<div class="swatch-pick">${list.map(([id, label, hex]) => `<button type="button" style="--c:${hex}" data-look="${key}:${id}" aria-pressed="${cur === id}" aria-label="${label}" title="${label}"></button>`).join('')}</div>`;
+  const group = (label, html) => `<div class="ae-group"><span class="label">${label}</span>${html}</div>`;
+  $('#ae-options').innerHTML = group('Style', chips('style', [['avatar', 'Avatar'], ['mannequin', 'Mannequin blanc']], look.style))
+    + group('Silhouette', `<div class="chips">${[['femme', 'Femme'], ['homme', 'Homme']].map(([id, l]) => `<button type="button" class="chip" data-body="${id}" aria-pressed="${g === id}">${l}</button>`).join('')}</div>`)
+    + group('Corpulence', chips('build', BUILDS, look.build))
+    + (av ? group('Peau', swatches('skin', SKINS, look.skin))
+      + group('Coiffure', chips('hair', HAIRS, look.hair)) + group('Couleur des cheveux', swatches('hairColor', HAIR_COLORS, look.hairColor))
+      + group('Yeux', chips('eyes', EYES, look.eyes)) + group('Couleur des yeux', swatches('eyeColor', EYE_COLORS, look.eyeColor))
+      + group('Bouche', chips('mouth', MOUTHS, look.mouth))
+      + (g === 'homme' ? group('Barbe', chips('beard', BEARDS, look.beard)) : '')
+      + group('Lunettes', chips('glasses', [['false', 'Sans'], ['true', 'Avec']], look.glasses)) : '');
+}
+function setLook(key, value) {
+  const look = { ...lookOf(), [key]: key === 'glasses' ? value === 'true' : value };
+  setSettings({ look });
+}
+function randomLook() {
+  const any = list => list[Math.floor(Math.random() * list.length)][0];
+  setSettings({ look: { ...lookOf(), style: 'avatar', skin: any(SKINS), hair: any(HAIRS), hairColor: any(HAIR_COLORS.slice(0, 6)), eyes: any(EYES), eyeColor: any(EYE_COLORS),
+    mouth: any(MOUTHS), beard: any(BEARDS), glasses: Math.random() < 0.25, build: any(BUILDS) } });
+}
+
+/* ---------- panneau de choix d'une pièce (on peut le rouvrir à volonté) ---------- */
+let pickSlot = null;
+function openPicker(slot) {
+  if (!ORDER[st.mode].includes(slot)) return;
+  pickSlot = slot;
+  renderPicker();
+  $('#slotpick').hidden = false;
+  syncLock();
+  setTimeout(() => $('#slotpick [aria-pressed="true"]')?.focus(), 40);
+}
+function closePicker() { $('#slotpick').hidden = true; pickSlot = null; syncLock(); }
+function renderPicker() {
+  const slot = pickSlot, def = SLOTS[slot], cur = st.sel[slot] ?? null, it = itemById(cur), locked = !!st.locks[slot];
+  const hidden = visibleItems().filter(i => i.cat === def.cat).length - pool(slot).length;
+  $('#pick-title').textContent = def.label;
+  $('#pick-body').innerHTML = `<div class="pick-grid">${options(slot).map(o => o
+      ? `<button type="button" class="pick-opt" data-pick="${esc(o.id)}" aria-pressed="${o.id === cur}"><span class="pick-tile">${art(o)}</span><span class="pick-name">${esc(o.name)}</span></button>`
+      : `<button type="button" class="pick-opt" data-pick="" aria-pressed="${cur === null}"><span class="pick-tile none-tile">${def.none}</span><span class="pick-name">${def.none}</span></button>`).join('')}
+      <button type="button" class="pick-opt" data-pick-add><span class="pick-tile add-tile">${ICON.plus}</span><span class="pick-name">Ajouter</span></button></div>`
+    + (hidden > 0 ? `<p class="hint">${plural(hidden, 'vêtement est masqué', 'vêtements sont masqués')} par les filtres Occasion ou Météo. <button type="button" class="linkish" data-pick-clear>Tout afficher</button></p>` : '')
+    + (it ? `<div class="field"><span class="label">Couleur de « ${esc(it.name)} »</span><div class="swatch-pick">${P.COLORS.map(c => `<button type="button" style="--c:${c.hex}" data-pick-color="${c.id}" aria-pressed="${it.color === c.id}" aria-label="${c.name}" title="${c.name}"></button>`).join('')}</div><p class="hint">La couleur change sur le mannequin et dans ton dressing.</p></div>` : '')
+    + `<div class="data-actions"><button type="button" class="btn sm" data-pick-lock aria-pressed="${locked}">${locked ? ICON.lock : ICON.unlock}${locked ? 'Gardé quand je mélange' : 'Garder quand je mélange'}</button>`
+    + (it ? `<button type="button" class="btn sm" data-pick-edit>Modifier ce vêtement</button>` : '')
+    + `<button type="button" class="btn sm primary" data-close-pick>Terminé</button></div>`;
+}
+$('#slotpick').addEventListener('click', e => {
+  if (e.target === $('#slotpick')) { closePicker(); return; }
+  const b = e.target.closest('button');
+  if (!b || !pickSlot) return;
+  const d = b.dataset, slot = pickSlot;
+  if ('closePick' in d) closePicker();
+  else if (d.pick !== undefined) { st.sel[slot] = d.pick || null; renderBoard(); renderPanel(); renderPicker(); }
+  else if ('pickLock' in d) { st.locks[slot] = !st.locks[slot]; renderBoard(); renderPicker(); }
+  else if ('pickClear' in d) { st.occ = null; st.season = null; st.rain = false; renderBoard(); renderPanel(); renderPicker(); }
+  else if ('pickAdd' in d) { const cat = SLOTS[slot].cat; closePicker(); openSheet(null, cat); }
+  else if ('pickEdit' in d) { const it = itemById(st.sel[slot]); closePicker(); if (it) openSheet(it); }
+  else if (d.pickColor) {
+    const it = itemById(st.sel[slot]);
+    if (!it) return;
+    const upd = { ...it, color: d.pickColor, updatedAt: Date.now() };
+    state.items = state.items.map(i => (i.id === it.id ? upd : i));
+    persist({ kind: 'item', action: 'put', data: upd });
+    renderBoard(); renderPanel(); renderPicker();
+  }
+});
 
 /* ================= politique de confidentialité ================= */
 const PRIVACY_VERSION = '2026-10-25-2';
@@ -3031,6 +3286,9 @@ document.addEventListener('click', e => {
   if ('wipeCancel' in d) { confirmWipe = false; renderAccount(); return; }
   if ('wipe' in d) { wipeAll(); return; }
   if (d.body) { setSettings({ body: d.body }); return; }
+  if (d.pickSlot) { openPicker(d.pickSlot); return; }
+  if (d.look) { const [k, v] = d.look.split(':'); setLook(k, v); return; }
+  if ('lookRandom' in d) { randomLook(); return; }
   if ('openPrivacy' in d) { openPrivacy(); return; }
   if ('openSearch' in d) { if (!draft) openSheet(null); openSearch(); return; }
   if ('logout' in d) { logOut(); return; }
@@ -3047,7 +3305,9 @@ document.addEventListener('click', e => {
 
 board.addEventListener('click', e => {
   const g = e.target.closest('[data-mq-slot]');
-  if (g) { step(g.dataset.mqSlot, 1); return; }
+  if (g) { openPicker(g.dataset.mqSlot); return; }
+  const tile = e.target.closest('.stage .current');
+  if (tile) { if (swiped) { swiped = false; return; } openPicker(tile.closest('.stage').dataset.slot); return; }
   const b = e.target.closest('button');
   if (!b) return;
   if (b.dataset.step) step(b.dataset.slot, Number(b.dataset.step));
@@ -3061,7 +3321,7 @@ board.addEventListener('click', e => {
     renderBoard();
   }
 });
-let swipe = null;
+let swipe = null, swiped = false;
 board.addEventListener('pointerdown', e => {
   const s = e.target.closest('.stage');
   swipe = s ? { slot: s.dataset.slot, x: e.clientX, y: e.clientY } : null;
@@ -3070,7 +3330,7 @@ board.addEventListener('pointerup', e => {
   if (!swipe) return;
   const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y, slot = swipe.slot;
   swipe = null;
-  if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy)) step(slot, dx < 0 ? 1 : -1);
+  if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy)) { swiped = true; step(slot, dx < 0 ? 1 : -1); }
 });
 board.addEventListener('pointercancel', () => { swipe = null; });
 
@@ -3086,6 +3346,7 @@ $('#save-form').addEventListener('submit', e => { e.preventDefault(); saveOutfit
 document.addEventListener('keydown', e => {
   if (!$('#privacy').hidden) { if (e.key === 'Escape') closePrivacy(); return; }
   if (!$('#city').hidden) { if (e.key === 'Escape') closeCity(); return; }
+  if (!$('#slotpick').hidden) { if (e.key === 'Escape') closePicker(); return; }
   if (!$('#auth').hidden) return;
   if (!$('#search').hidden) { if (e.key === 'Escape') closeSearch(); return; }
   if (!sheet.hidden) { if (e.key === 'Escape') closeSheet(); return; }
