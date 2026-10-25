@@ -508,6 +508,60 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
 .danger-zone { flex-direction: column; align-items: stretch; }
 .dz-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
 .dz-row + .dz-row { border-top: 1px solid var(--line); padding-top: 12px; }
+
+/* ---------- météo ---------- */
+svg.wx-i { width: 22px; height: 22px; stroke-width: 1.8; color: var(--accent-hi); }
+.wx-card { gap: 10px; }
+.wx-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wx-now { display: flex; align-items: center; gap: 12px; }
+.wx-now svg.wx-i { width: 40px; height: 40px; }
+.wx-now b { font-size: 34px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.wx-now span { display: flex; flex-direction: column; font-weight: 650; }
+.wx-now small { font-weight: 500; font-size: 13px; color: var(--muted); }
+.city-backdrop { z-index: 58; }
+.city-sheet { width: min(560px, 100%); }
+#city-list .chip { display: inline-flex; gap: 6px; align-items: baseline; }
+
+/* ---------- planning ---------- */
+.week-nav { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; font-size: 14px; }
+.week-nav span { min-width: 9.5em; text-align: center; }
+.plan-city { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 16px; color: var(--muted); font-size: 14px; }
+.plan-city:empty { display: none; }
+.plan-city svg.i { color: var(--accent-hi); }
+.plan-city b { color: var(--ink); }
+.plan-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; padding-bottom: 56px; }
+@media (max-width: 1120px) { .plan-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); } }
+.pday { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 12px; border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+.pday.today { box-shadow: var(--shadow), inset 0 0 0 1.5px var(--accent), 0 14px 34px -22px var(--glow); }
+.pday.past { opacity: .62; }
+.pd-head { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 64px; }
+.pd-date { display: flex; flex-direction: column; min-width: 0; }
+.pd-date b { font-size: 15px; text-transform: capitalize; }
+.pd-date span { font-size: 12.5px; color: var(--muted); }
+.pday.today .pd-date span { color: var(--accent-hi); font-weight: 650; }
+.pd-wx { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pd-wx small { font-weight: 500; color: var(--muted); }
+select.pd-sel { padding: 7px 4px 7px 8px; font-size: 12.5px; border-radius: 10px; }
+.pd-fig { display: grid; place-items: center; min-height: 250px; border-radius: 14px; background: radial-gradient(closest-side at 50% 45%, var(--accent-soft), transparent 100%); }
+.pd-fig svg { display: block; height: 240px; width: auto; max-width: 100%; }
+.pd-fig.empty { min-height: 96px; }
+.pday.past .pd-fig.empty { min-height: 0; padding-block: 10px; background: none; }
+.pd-empty { margin: 0; color: var(--muted); font-size: 13px; text-align: center; }
+.pd-names { margin: 0; font-size: 12px; line-height: 1.4; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pd-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.pd-actions .btn { flex: 1 1 auto; }
+.pd-actions .btn.danger { flex: none; }
+
+/* ---------- recherche précise via Google ---------- */
+.g-block { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; background: var(--tag); box-shadow: inset 0 0 0 1px var(--line); }
+.g-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; color: var(--muted); }
+.g-block #paste-clip { align-self: flex-start; }
+.sep { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.sep::before, .sep::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+@media (max-width: 760px) {
+  .tab { padding: 8px 7px; font-size: 13px; }
+  .tab .count { display: none; }
+}
 </style>
 </head>
 <body>
@@ -521,6 +575,7 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
       <button class="tab" role="tab" id="tab-atelier" data-view="atelier" aria-controls="view-atelier" aria-selected="true"><span class="t-long">Créer une tenue</span><span class="t-short">Créer</span></button>
       <button class="tab" role="tab" id="tab-penderie" data-view="penderie" aria-controls="view-penderie" aria-selected="false"><span class="t-long">Mon dressing</span><span class="t-short">Dressing</span> <span class="count" id="count-items"></span></button>
       <button class="tab" role="tab" id="tab-tenues" data-view="tenues" aria-controls="view-tenues" aria-selected="false"><span class="t-long">Mes tenues</span><span class="t-short">Tenues</span> <span class="count" id="count-looks"></span></button>
+      <button class="tab" role="tab" id="tab-planning" data-view="planning" aria-controls="view-planning" aria-selected="false"><span class="t-long">Planning</span><span class="t-short">Semaine</span></button>
       <button class="tab" role="tab" id="tab-compte" data-view="compte" aria-controls="view-compte" aria-selected="false"><span class="mini-av" id="mini-av" aria-hidden="true"></span>Compte</button>
     </nav>
   </div>
@@ -540,6 +595,7 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
     <div class="studio">
       <div class="board" id="board" aria-label="Tenue en cours"></div>
       <aside class="panel" aria-label="Réglages de la tenue">
+        <div class="card wx-card" id="wx-card" hidden></div>
         <div class="card hl">
           <div>
             <div class="combos-num" id="combos-num">0</div>
@@ -620,6 +676,28 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
     <div class="grid-looks" id="grid-looks"></div>
   </section>
 
+  <!-- PLANNING -->
+  <section id="view-planning" class="view wrap" role="tabpanel" aria-labelledby="tab-planning" hidden>
+    <div class="page-head">
+      <div>
+        <h2>Ma semaine</h2>
+        <p id="plan-range"></p>
+      </div>
+      <div class="data-actions">
+        <div class="week-nav">
+          <button type="button" class="arrow" data-plan-week="-1" aria-label="Semaine précédente"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <span id="plan-week-label">Cette semaine</span>
+          <button type="button" class="arrow" data-plan-week="1" aria-label="Semaine suivante"><svg class="i" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <button type="button" class="btn primary" data-plan-fill>
+          <svg class="i" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Remplir la semaine
+        </button>
+      </div>
+    </div>
+    <div class="plan-city" id="plan-city"></div>
+    <div class="plan-grid" id="plan-grid"></div>
+  </section>
+
   <!-- COMPTE -->
   <section id="view-compte" class="view wrap" role="tabpanel" aria-labelledby="tab-compte" hidden>
     <div class="page-head">
@@ -679,6 +757,7 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
         <h3 class="card-title">Préférences</h3>
         <div class="toggles">
           <label class="toggle" for="pref-recent"><span><b>Éviter les répétitions</b><small>Le mélange écarte les vêtements portés ces 3 derniers jours.</small></span><input type="checkbox" id="pref-recent" data-pref="avoidRecent"></label>
+          <div class="toggle" id="pref-city-row"><span><b>Ville pour la météo</b><small id="pref-city">Aucune ville choisie</small></span><button type="button" class="btn sm" data-city>Changer</button></div>
           <label class="toggle" for="pref-motion"><span><b>Animations</b><small>Le défilement quand tu mélanges et les petites transitions.</small></span><input type="checkbox" id="pref-motion" data-pref="motion"></label>
         </div>
       </section>
@@ -697,6 +776,8 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
           <details><summary>Comment ajouter un vêtement&nbsp;?</summary><p>Dans « Mon dressing », touche « Ajouter un vêtement » et prends-le en photo. DressIn devine sa couleur, il ne reste qu'à choisir le type.</p></details>
           <details><summary>À quoi sert « Garder »&nbsp;?</summary><p>Un vêtement gardé ne bouge plus quand tu mélanges. Pratique pour construire une tenue autour d'une pièce que tu veux porter.</p></details>
           <details><summary>Où sont enregistrées mes données&nbsp;?</summary><p id="faq-data"></p></details>
+          <details><summary>Comment marche le planning&nbsp;?</summary><p>Dans l'onglet Planning, choisis l'occasion de chaque jour, puis touche « Remplir la semaine » : DressIn compose une tenue par jour selon la météo de ta ville, sans répéter les mêmes pièces dans la semaine. Tu peux aussi mettre une tenue enregistrée sur un jour précis.</p></details>
+          <details><summary>Comment ajouter un vêtement précis, par exemple des Air Force 1&nbsp;?</summary><p>Dans la fiche d'ajout, touche « Rechercher l'image en ligne », tape la marque et le modèle, puis ouvre Google Images. Copie la photo du vêtement, reviens dans DressIn et touche « Coller l'image copiée ».</p></details>
           <details><summary>Je change de téléphone, je fais comment&nbsp;?</summary><p id="faq-phone"></p></details>
         </div>
         <div class="about"><span>DressIn · version 1.3</span><span class="data-actions" id="share-zone"></span></div>
@@ -764,6 +845,27 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
       </button>
     </div>
     <div class="search-body">
+      <section class="g-block">
+        <h3 class="card-title">Un vêtement précis</h3>
+        <p class="hint">Marque, modèle et couleur, par exemple « Nike Air Force 1 blanche » ou « jean Amiri MX1 noir ».</p>
+        <label class="sr-only" for="g-q">Vêtement précis à chercher sur Google</label>
+        <input class="text" id="g-q" type="search" placeholder="Ex. Nike Air Force 1 blanche" autocomplete="off">
+        <div class="data-actions">
+          <a class="btn primary" id="g-images" href="https://www.google.com/search?tbm=isch&amp;q=" target="_blank" rel="noopener">
+            <svg class="i" viewBox="0 0 24 24"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>Google Images
+          </a>
+          <a class="btn" id="g-shop" href="https://www.google.com/search?tbm=shop&amp;q=" target="_blank" rel="noopener">Google Shopping</a>
+        </div>
+        <ol class="g-steps">
+          <li>Sur Google, ouvre la photo du vêtement.</li>
+          <li>Appui long (ou clic droit) sur la photo, puis « Copier l'image ».</li>
+          <li>Reviens ici et touche « Coller l'image copiée », ou fais Ctrl+V.</li>
+        </ol>
+        <button type="button" class="btn" id="paste-clip">
+          <svg class="i" viewBox="0 0 24 24"><path d="M9 4h6v3H9zM8 5.5H6v15h12v-15h-2"/></svg>Coller l'image copiée
+        </button>
+      </section>
+      <div class="sep"><span>ou parmi les images libres de droits</span></div>
       <form class="search-row" id="search-form" role="search">
         <label class="sr-only" for="search-q">Vêtement à chercher</label>
         <input class="text" id="search-q" type="search" placeholder="Ex. jean brut, pull beige, baskets blanches" autocomplete="off">
@@ -787,6 +889,30 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
   </div>
 </div>
 
+<div class="sheet-backdrop city-backdrop" id="city" hidden>
+  <div class="sheet city-sheet" role="dialog" aria-modal="true" aria-labelledby="city-title">
+    <div class="sheet-head">
+      <h2 id="city-title">Ta ville pour la météo</h2>
+      <button type="button" class="icon-btn" data-close-city aria-label="Fermer">
+        <svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-body">
+      <form class="search-row" id="city-form">
+        <label class="sr-only" for="city-q">Nom de ta ville</label>
+        <input class="text" id="city-q" type="search" placeholder="Ex. Lyon, Bruxelles, Montréal" autocomplete="address-level2">
+        <button class="btn primary" type="submit">Chercher</button>
+      </form>
+      <button type="button" class="btn" id="city-geo">
+        <svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Utiliser ma position
+      </button>
+      <p class="hint" id="city-status"></p>
+      <div class="chips" id="city-list"></div>
+      <p class="hint">La météo vient d'Open-Meteo. Ta position sert seulement à trouver la météo, arrondie au kilomètre près.</p>
+    </div>
+  </div>
+</div>
+
 <div class="sheet-backdrop privacy-backdrop" id="privacy" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
     <div class="sheet-head">
@@ -800,17 +926,19 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
       <h3>Quelles données ?</h3>
       <ul>
         <li><b>Ton compte</b> : ton adresse e-mail, ton mot de passe et la silhouette choisie (femme ou homme). Le mot de passe n'est jamais gardé en clair : seule une empreinte chiffrée (PBKDF2) est conservée.</li>
-        <li><b>Ton dressing</b> : tes vêtements, leurs photos, tes tenues, ton prénom, ta photo de profil, tes tailles, ton style et tes préférences d'affichage.</li>
+        <li><b>Ton dressing</b> : tes vêtements, leurs photos, tes tenues, ton planning de la semaine, ta ville pour la météo, ton prénom, ta photo de profil, tes tailles, ton style et tes préférences d'affichage.</li>
       </ul>
       <h3>Où sont-elles enregistrées ?</h3>
       <p id="pp-storage"></p>
       <h3>À quoi servent-elles ?</h3>
-      <p>Uniquement à faire fonctionner l'appli : t'identifier, afficher ton dressing, composer tes tenues et habiller ton mannequin. Pas de publicité, pas de revente, pas de profilage.</p>
+      <p>Uniquement à faire fonctionner l'appli : t'identifier, afficher ton dressing, composer tes tenues, préparer ta semaine selon la météo et habiller ton mannequin. Pas de publicité, pas de revente, pas de profilage.</p>
       <h3>Services extérieurs</h3>
       <ul>
         <li><b>Google Fonts</b> fournit la police d'écriture : ton navigateur contacte les serveurs de Google, qui voient ton adresse IP.</li>
         <li><b>L'hébergeur du site</b> (GitHub Pages pour la version publique) peut garder des journaux techniques de visite.</li>
         <li><b>Openverse</b> reçoit les mots que tu tapes quand tu utilises « Rechercher en ligne ». Les images viennent de sites tiers (Flickr, Wikimedia…) sous licences libres Creative Commons.</li>
+        <li><b>Google</b> : les boutons « Google Images » et « Google Shopping » ouvrent Google dans un nouvel onglet avec ta recherche. Ce qui se passe ensuite sur Google relève de la politique de confidentialité de Google. Une image que tu copies depuis Google est gardée dans ton dressing pour ton usage personnel.</li>
+        <li><b>Open-Meteo</b> reçoit les coordonnées de ta ville, arrondies au kilomètre, pour donner la météo. Si tu choisis « Utiliser ma position », ton navigateur te demande d'abord ton accord, et seule la position arrondie est gardée.</li>
       </ul>
       <h3>Cookies</h3>
       <p>DressIn n'utilise ni cookies publicitaires ni mesure d'audience. Le stockage du navigateur sert seulement à garder ta session et ton dressing.</p>
@@ -824,7 +952,7 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
       <p>Si cette politique change, DressIn te demandera de l'accepter à nouveau à ta prochaine connexion.</p>
     </div>
     <div class="sheet-foot">
-      <span class="hint grow">Version du 25 octobre 2026</span>
+      <span class="hint grow">Version du 25 octobre 2026, mise à jour avec la météo et Google</span>
       <button type="button" class="btn primary" data-close-privacy>J'ai compris</button>
     </div>
   </div>
@@ -919,7 +1047,7 @@ const SLOTS = {
   acc: { cat: 'accessoire', label: 'Accessoire', optional: true, none: 'Sans accessoire', empty: 'Aucun accessoire' },
 };
 const ORDER = { separates: ['outer', 'top', 'bottom', 'feet', 'acc'], piece: ['outer', 'piece', 'feet', 'acc'] };
-const VIEWS = ['atelier', 'penderie', 'tenues', 'compte'];
+const VIEWS = ['atelier', 'penderie', 'tenues', 'planning', 'compte'];
 const DEFAULT_SETTINGS = { bg: 'nuit', accent: 'electrique', name: '', avatar: null, sizes: {}, styles: [], avoidRecent: true, motion: true, body: null };
 const inClaude = !!(window.claude && typeof window.claude.use === 'function');
 /* « nuit » reprend les valeurs du :root ; les deux autres fonds les remplacent */
@@ -952,7 +1080,7 @@ const state = {
   settings: { ...DEFAULT_SETTINGS },
   view: 'atelier',
   wardrobeCat: 'all',
-  studio: { mode: 'separates', sel: {}, locks: {}, occ: null, season: null },
+  studio: { mode: 'separates', sel: {}, locks: {}, occ: null, season: null, rain: false },
 };
 const st = state.studio;
 
@@ -1011,7 +1139,7 @@ function pickRandom(slot, avoid) {
   const fresh = p.filter(i => !recent.has(i.id));
   if (fresh.length) p = fresh;
   if (SLOTS[slot].optional) {
-    const pNone = slot === 'outer' ? (st.season === 'froid' ? 0 : st.season === 'chaud' ? 0.8 : 0.45) : 0.4;
+    const pNone = slot === 'outer' ? (st.rain || st.season === 'froid' ? 0 : st.season === 'chaud' ? 0.8 : 0.45) : 0.4;
     if (!p.length || Math.random() < pNone) return null;
   }
   if (!p.length) return undefined;
@@ -1413,7 +1541,7 @@ function closeSheet() {
 }
 /* bloque le défilement de la page tant qu'une fenêtre est ouverte */
 function syncLock() {
-  const open = ['#auth', '#sheet', '#search', '#privacy'].some(s => !$(s).hidden);
+  const open = ['#auth', '#sheet', '#search', '#privacy', '#city'].some(s => !$(s).hidden);
   document.documentElement.classList.toggle('locked', open);
 }
 function renderSheet(busy) {
@@ -1765,6 +1893,8 @@ function renderAccount() {
   $('#acc-pick').innerHTML = ACCENTS.map(a => `<button type="button" class="acc-opt" data-accent="${a.id}" aria-pressed="${curAc === a.id}"><i style="--c:${a.hex}"></i>${a.name}</button>`).join('');
   $('#pref-recent').checked = s.avoidRecent !== false;
   $('#pref-motion').checked = s.motion !== false;
+  $('#pref-city-row').hidden = !weatherOn();
+  $('#pref-city').textContent = s.city ? s.city.name : 'Aucune ville choisie';
 
   const photos = state.items.filter(i => i.photo).length;
   $('#data-stats').textContent = `${plural(state.items.length, 'vêtement', 'vêtements')} · ${plural(state.outfits.length, 'tenue', 'tenues')} · ${plural(photos, 'photo', 'photos')}`;
@@ -2159,7 +2289,7 @@ function mannequinSVG(gender, sel, mode, bare) {
 }
 
 /* ================= politique de confidentialité ================= */
-const PRIVACY_VERSION = '2026-10-25';
+const PRIVACY_VERSION = '2026-10-25-2';
 function openPrivacy() {
   $('#pp-storage').textContent = inClaude
     ? "Dans cette version, tes vêtements, tes tenues et ton profil sont enregistrés sur ton compte Claude, dans un espace privé que toi seul peux lire."
@@ -2404,6 +2534,342 @@ $('#url-form').addEventListener('submit', e => {
   useRemoteImage(u, { title: '', creator: '', license: '', url: u });
 });
 
+/* ================= météo (Open-Meteo, gratuit et sans clé) ================= */
+const PIN = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+const WX_ICONS = {
+  sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',
+  partly: '<path d="M8 3.5v1.4M3.4 8H4.8M4.9 4.6l1 1M11.4 4.6l-1 1"/><path d="M5.4 10.6a3.6 3.6 0 1 1 6.4-3.2"/><path d="M8.5 19.5h9a3.5 3.5 0 0 0 .3-7 5 5 0 0 0-9.6 1.2 2.9 2.9 0 0 0 .3 5.8z"/>',
+  cloud: '<path d="M7 18.5h10.5a4 4 0 0 0 .4-8 5.6 5.6 0 0 0-10.8 1.3A3.4 3.4 0 0 0 7 18.5z"/>',
+  fog: '<path d="M4 9h16M6 13h12M4 17h16"/>',
+  rain: '<path d="M7 14.5h10.5a4 4 0 0 0 .4-8 5.6 5.6 0 0 0-10.8 1.3A3.4 3.4 0 0 0 7 14.5z"/><path d="M8.5 17.5l-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/>',
+  snow: '<path d="M7 14.5h10.5a4 4 0 0 0 .4-8 5.6 5.6 0 0 0-10.8 1.3A3.4 3.4 0 0 0 7 14.5z"/><path d="M8 18.5h.01M12 20h.01M16 18.5h.01M10 21.5h.01M14 21.5h.01"/>',
+  storm: '<path d="M7 14.5h10.5a4 4 0 0 0 .4-8 5.6 5.6 0 0 0-10.8 1.3A3.4 3.4 0 0 0 7 14.5z"/><path d="M12.5 15l-2 3.5h3l-2 3.5"/>',
+};
+const wxIcon = k => `<svg class="i wx-i" viewBox="0 0 24 24" aria-hidden="true">${WX_ICONS[k] || WX_ICONS.cloud}</svg>`;
+/* codes météo WMO renvoyés par Open-Meteo */
+function wxInfo(code) {
+  if (code === 0) return ['sun', 'Soleil'];
+  if (code <= 2) return ['partly', 'Éclaircies'];
+  if (code === 3) return ['cloud', 'Nuageux'];
+  if (code <= 48) return ['fog', 'Brouillard'];
+  if (code <= 57) return ['rain', 'Bruine'];
+  if (code <= 67) return ['rain', 'Pluie'];
+  if (code <= 77) return ['snow', 'Neige'];
+  if (code <= 82) return ['rain', 'Averses'];
+  if (code <= 86) return ['snow', 'Averses de neige'];
+  return ['storm', 'Orage'];
+}
+const isRainy = day => (day.code >= 51 && day.code <= 67) || (day.code >= 80 && day.code <= 82) || day.code >= 95 || (day.rain || 0) >= 60;
+const seasonFor = day => (day.tmax >= 22 ? 'chaud' : day.tmax <= 13 ? 'froid' : 'mi-saison');
+const SEASON_LABEL = Object.fromEntries(SEASONS.map(s => [s.id, s.label.toLowerCase()]));
+const weatherOn = () => !inClaude;
+const googleWx = c => `https://www.google.com/search?q=${encodeURIComponent('météo ' + c.name)}`;
+let wx = null, wxLoading = false, wxErrorKey = '';
+const wxKey = c => (c ? `${c.lat.toFixed(2)},${c.lon.toFixed(2)}` : '');
+const wxDay = key => (wx && wx.days ? wx.days.find(d => d.date === key) || null : null);
+async function ensureWeather() {
+  const c = state.settings.city;
+  if (!weatherOn() || !c || wxLoading) return;
+  const k = wxKey(c);
+  if (wx && wx.key === k && Date.now() - wx.at < 3600e3) return;
+  if (wxErrorKey === k) return;
+  try {
+    const cached = JSON.parse(localStorage.getItem('dressin.wx') || 'null');
+    if (cached && cached.key === k && Date.now() - cached.at < 3600e3) { wx = cached; return; }
+  } catch (e) { /* stockage bloqué */ }
+  wxLoading = true;
+  try {
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,weather_code&timezone=auto&forecast_days=16`);
+    if (!res.ok) throw new Error(String(res.status));
+    const j = await res.json(), D = j.daily;
+    wx = {
+      key: k, at: Date.now(), now: { temp: j.current.temperature_2m, code: j.current.weather_code },
+      days: D.time.map((date, i) => ({ date, code: D.weather_code[i], tmax: D.temperature_2m_max[i], tmin: D.temperature_2m_min[i], rain: D.precipitation_probability_max ? D.precipitation_probability_max[i] : null })),
+    };
+    try { localStorage.setItem('dressin.wx', JSON.stringify(wx)); } catch (e) { /* stockage bloqué */ }
+  } catch (e) { wxErrorKey = k; }
+  wxLoading = false;
+  renderView();
+}
+function renderWxCard() {
+  const el = $('#wx-card');
+  el.hidden = !weatherOn();
+  if (el.hidden) return;
+  const c = state.settings.city;
+  if (!c) {
+    el.innerHTML = `<span class="label">Météo</span><p class="hint">Ajoute ta ville pour voir le temps du jour et adapter ta tenue.</p><button type="button" class="btn sm" data-city>${PIN}Choisir ma ville</button>`;
+    return;
+  }
+  const today = wxDay(todayKey());
+  if (!wx || !today) {
+    const failed = wxErrorKey === wxKey(c);
+    el.innerHTML = `<span class="label">Météo · ${esc(c.name)}</span><p class="hint">${failed ? "La météo n'est pas disponible pour l'instant." : 'Chargement de la météo…'}</p>${failed ? '<button type="button" class="btn sm" data-wx-retry>Réessayer</button>' : ''}`;
+    return;
+  }
+  const [ic, lab] = wxInfo(wx.now.code);
+  el.innerHTML = `<div class="wx-top"><span class="label">Météo · ${esc(c.name)}</span><button type="button" class="linkish" data-city>Changer</button></div>
+    <div class="wx-now">${wxIcon(ic)}<b>${Math.round(wx.now.temp)}°</b><span>${lab}<small>${Math.round(today.tmin)}° / ${Math.round(today.tmax)}°${today.rain != null ? ` · pluie ${today.rain} %` : ''}</small></span></div>
+    <div class="data-actions"><button type="button" class="btn sm" data-wx-apply>${ICON.open}Adapter ma tenue</button><a class="btn sm ghost" href="${googleWx(c)}" target="_blank" rel="noopener">Météo détaillée</a></div>`;
+}
+function applyWeather() {
+  const d = wxDay(todayKey());
+  if (!d) return;
+  st.season = seasonFor(d);
+  st.rain = isRainy(d);
+  ensureSelection();
+  shuffle();
+  toast(`Tenue adaptée : temps ${SEASON_LABEL[st.season]}${st.rain ? ', avec une veste contre la pluie' : ''}.`);
+}
+
+/* choix de la ville */
+let cityResults = [];
+function openCity() {
+  $('#city').hidden = false;
+  $('#city-status').textContent = '';
+  $('#city-list').innerHTML = '';
+  syncLock();
+  setTimeout(() => $('#city-q').focus(), 40);
+}
+function closeCity() { $('#city').hidden = true; syncLock(); }
+function setCity(c) {
+  wx = null;
+  wxErrorKey = '';
+  closeCity();
+  setSettings({ city: { name: c.name, lat: Math.round(c.lat * 100) / 100, lon: Math.round(c.lon * 100) / 100 } });
+  toast(`Météo réglée sur ${c.name}.`);
+}
+$('#city-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const q = $('#city-q').value.trim();
+  if (!q) return;
+  $('#city-status').textContent = 'Recherche…';
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=fr&format=json`);
+    const j = await res.json();
+    cityResults = j.results || [];
+    $('#city-status').textContent = cityResults.length ? 'Choisis ta ville :' : "Aucune ville trouvée. Vérifie l'orthographe.";
+    $('#city-list').innerHTML = cityResults.map((r, i) => `<button type="button" class="chip" data-city-pick="${i}">${esc(r.name)}<span class="n">${esc([r.admin1, r.country].filter(Boolean).join(', '))}</span></button>`).join('');
+  } catch (err) { $('#city-status').textContent = "La recherche n'a pas marché. Vérifie ta connexion."; }
+});
+$('#city').addEventListener('click', e => {
+  if (e.target === $('#city')) { closeCity(); return; }
+  const b = e.target.closest('button');
+  if (!b) return;
+  if ('closeCity' in b.dataset) closeCity();
+  else if (b.dataset.cityPick) { const r = cityResults[Number(b.dataset.cityPick)]; if (r) setCity({ name: r.name, lat: r.latitude, lon: r.longitude }); }
+  else if (b.id === 'city-geo') {
+    if (!navigator.geolocation) { $('#city-status').textContent = 'Ton navigateur ne donne pas ta position. Tape le nom de ta ville.'; return; }
+    $('#city-status').textContent = 'Recherche de ta position…';
+    navigator.geolocation.getCurrentPosition(
+      p => setCity({ name: 'Ma position', lat: p.coords.latitude, lon: p.coords.longitude }),
+      () => { $('#city-status').textContent = 'Position refusée ou introuvable. Tape plutôt le nom de ta ville.'; },
+      { timeout: 10000, maximumAge: 3600e3 });
+  }
+});
+
+/* ================= planning de la semaine ================= */
+/* le dimanche, la semaine en cours est presque finie : on ouvre la suivante */
+let planWeek = new Date().getDay() === 0 ? 1 : 0;
+const keyOf = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function weekDays(off) {
+  const now = new Date(), back = (now.getDay() + 6) % 7;
+  return Array.from({ length: 7 }, (_, i) => new Date(now.getFullYear(), now.getMonth(), now.getDate() - back + off * 7 + i));
+}
+const planFor = k => (state.settings.plan || {})[k] || null;
+function savePlan(plan) {
+  const lim = keyOf(new Date(Date.now() - 30 * 864e5));
+  setSettings({ plan: Object.fromEntries(Object.entries(plan).filter(([k]) => k >= lim)) });
+}
+/* compose une tenue pour un jour : occasion et météo d'abord, puis des pièces pas encore prévues dans la semaine */
+function generateOutfit({ season, occ, rain, avoid }) {
+  const fits = i => (!occ || !i.occasions?.length || i.occasions.includes(occ)) && (!season || !i.seasons?.length || i.seasons.includes(season));
+  const poolOf = cat => {
+    const all = state.items.filter(i => i.cat === cat);
+    const ok = all.filter(fits), base = ok.length ? ok : all;
+    const fresh = base.filter(i => !avoid.has(i.id));
+    return fresh.length ? fresh : base;
+  };
+  const pick = list => (list.length ? list[Math.floor(Math.random() * list.length)].id : null);
+  const pieces = poolOf('piece'), tops = poolOf('haut'), bottoms = poolOf('bas');
+  const canSep = tops.length && bottoms.length;
+  const usePiece = pieces.length && (!canSep || Math.random() < (occ === 'soiree' ? 0.5 : 0.2));
+  if (!usePiece && !canSep) return null;
+  const sel = usePiece ? { piece: pick(pieces) } : { top: pick(tops), bottom: pick(bottoms) };
+  sel.feet = pick(poolOf('chaussures'));
+  const outers = poolOf('veste');
+  sel.outer = outers.length && (rain || season === 'froid' || (season !== 'chaud' && Math.random() < 0.5)) ? pick(outers) : null;
+  const accs = poolOf('accessoire');
+  sel.acc = accs.length && Math.random() < 0.5 ? pick(accs) : null;
+  return { mode: usePiece ? 'piece' : 'separates', sel };
+}
+function usedInWeek(days, except) {
+  const s = new Set(recentlyWorn());
+  for (const d of days) {
+    const k = keyOf(d), e = planFor(k);
+    if (k !== except && e && e.sel) Object.values(e.sel).forEach(id => id && s.add(id));
+  }
+  return s;
+}
+function planDay(k, avoid) {
+  const e = planFor(k) || {}, w = wxDay(k);
+  const g = generateOutfit({ season: w ? seasonFor(w) : null, occ: e.occ || null, rain: w ? isRainy(w) : false, avoid });
+  return g ? { occ: e.occ || '', ...g, outfitId: null } : null;
+}
+const NEED_ITEMS = 'Ajoute au moins un haut, un bas et des chaussures pour préparer tes tenues.';
+function renderPlanning() {
+  const days = weekDays(planWeek), today = todayKey(), c = state.settings.city;
+  const short = d => d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  $('#plan-range').textContent = `Du ${short(days[0])} au ${short(days[6])}`;
+  $('#plan-week-label').textContent = planWeek === 0 ? 'Cette semaine' : planWeek === 1 ? 'Semaine prochaine' : planWeek === -1 ? 'Semaine dernière'
+    : `${planWeek > 0 ? 'Dans' : 'Il y a'} ${Math.abs(planWeek)} semaines`;
+  $('#plan-city').innerHTML = !weatherOn() ? ''
+    : c ? `${PIN}<span>Météo : <b>${esc(c.name)}</b></span><button type="button" class="linkish" data-city>Changer</button><a class="linkish" href="${googleWx(c)}" target="_blank" rel="noopener">Météo détaillée</a>`
+    : `${PIN}<span>Ajoute ta ville pour voir la météo de chaque jour et adapter les tenues.</span><button type="button" class="btn sm" data-city>Choisir ma ville</button>`;
+  const looks = visibleLooks();
+  $('#plan-grid').innerHTML = days.map(d => {
+    const k = keyOf(d), e = planFor(k), w = wxDay(k), past = k < today;
+    const wday = d.toLocaleDateString('fr-FR', { weekday: 'long' });
+    const wxHtml = w ? `<div class="pd-wx" title="${wxInfo(w.code)[1]}">${wxIcon(wxInfo(w.code)[0])}<span>${Math.round(w.tmax)}°<small> / ${Math.round(w.tmin)}°</small></span></div>` : '';
+    const names = e && e.sel ? Object.values(e.sel).map(itemById).filter(Boolean).map(i => i.name) : [];
+    return `<article class="pday${k === today ? ' today' : ''}${past ? ' past' : ''}">
+      <header class="pd-head"><div class="pd-date"><b>${wday}</b><span>${d.getDate()} ${d.toLocaleDateString('fr-FR', { month: 'short' })}${k === today ? ' · aujourd’hui' : ''}</span></div>${wxHtml}</header>
+      ${past ? '' : `<label class="sr-only" for="occ-${k}">Occasion du ${wday}</label>
+      <select class="text pd-sel" id="occ-${k}" data-plan-occ="${k}">${[['', 'Toute occasion'], ...OCCASIONS.map(o => [o.id, o.label])].map(([v, l]) => `<option value="${v}"${(e?.occ || '') === v ? ' selected' : ''}>${l}</option>`).join('')}</select>`}
+      <div class="pd-fig${e && e.sel ? '' : ' empty'}">${e && e.sel ? mannequinSVG(bodyOf(), e.sel, e.mode) : `<p class="pd-empty">${past ? 'Jour passé' : 'Rien de prévu'}</p>`}</div>
+      ${names.length ? `<p class="pd-names">${esc(names.join(', '))}</p>` : ''}
+      ${past ? '' : `<div class="pd-actions">
+        <button type="button" class="btn sm" data-plan-gen="${k}">${ICON.open}${e && e.sel ? 'Changer' : 'Composer'}</button>
+        ${e && e.sel ? `<button type="button" class="btn sm" data-plan-open="${k}">Voir</button><button type="button" class="btn sm ghost danger" data-plan-clear="${k}" aria-label="Retirer la tenue du ${wday}">${ICON.trash}</button>` : ''}
+      </div>`}
+      ${looks.length && !past ? `<label class="sr-only" for="pick-${k}">Tenue enregistrée pour le ${wday}</label><select class="text pd-sel" id="pick-${k}" data-plan-pick="${k}"><option value="">Mes tenues…</option>${looks.map(o => `<option value="${esc(o.id)}"${e?.outfitId === o.id ? ' selected' : ''}>${esc(o.name)}</option>`).join('')}</select>` : ''}
+    </article>`;
+  }).join('');
+}
+function planAction(d) {
+  const days = weekDays(planWeek);
+  if (d.planWeek) { planWeek += Number(d.planWeek); renderPlanning(); return true; }
+  if ('planFill' in d) {
+    const plan = { ...(state.settings.plan || {}) }, today = todayKey();
+    let n = 0;
+    for (const day of days) {
+      const k = keyOf(day);
+      if (k < today || (plan[k] && plan[k].sel)) continue;
+      const e = planDay(k, usedInWeek(days, k));
+      if (!e) { toast(NEED_ITEMS); return true; }
+      plan[k] = e;
+      state.settings = { ...state.settings, plan };
+      n++;
+    }
+    savePlan(plan);
+    toast(n ? `${plural(n, 'tenue prévue', 'tenues prévues')} pour la semaine.` : 'Tous les jours à venir ont déjà une tenue.');
+    return true;
+  }
+  if (d.planGen) {
+    const e = planDay(d.planGen, usedInWeek(days, d.planGen));
+    if (!e) { toast(NEED_ITEMS); return true; }
+    savePlan({ ...(state.settings.plan || {}), [d.planGen]: e });
+    return true;
+  }
+  if (d.planClear) {
+    const plan = { ...(state.settings.plan || {}) }, e = plan[d.planClear];
+    if (e && e.occ) plan[d.planClear] = { occ: e.occ }; else delete plan[d.planClear];
+    savePlan(plan);
+    return true;
+  }
+  if (d.planOpen) {
+    const e = planFor(d.planOpen);
+    if (!e || !e.sel) return true;
+    st.mode = e.mode === 'piece' ? 'piece' : 'separates';
+    st.sel = { ...e.sel };
+    st.locks = {};
+    st.occ = e.occ || null;
+    st.season = null;
+    st.rain = false;
+    go('atelier');
+    window.scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' });
+    return true;
+  }
+  return false;
+}
+$('#view-planning').addEventListener('change', e => {
+  const t = e.target, plan = { ...(state.settings.plan || {}) };
+  if (t.dataset.planOcc) {
+    plan[t.dataset.planOcc] = { ...(plan[t.dataset.planOcc] || {}), occ: t.value };
+    savePlan(plan);
+  } else if (t.dataset.planPick) {
+    const o = state.outfits.find(x => x.id === t.value);
+    if (!o) return;
+    plan[t.dataset.planPick] = { occ: (plan[t.dataset.planPick] || {}).occ || o.occasion || '', mode: o.mode, sel: { ...o.sel }, outfitId: o.id };
+    savePlan(plan);
+  }
+});
+
+/* ================= vêtement précis : recherche Google puis collage de l'image ================= */
+const GUESS = [
+  [['jeans?', 'denim'], 'bas', 'jean'], [['chino', 'pantalon', 'trousers?', 'cargo', 'jogging'], 'bas', 'pantalon'], [['shorts?', 'bermuda'], 'bas', 'short'], [['jupe', 'skirt'], 'bas', 'jupe'],
+  [['robe', 'dress'], 'piece', 'robe'], [['combinaison', 'jumpsuit'], 'piece', 'combi'], [['t-?shirt', 'tee'], 'haut', 'tshirt'], [['chemise', 'shirt', 'surchemise'], 'haut', 'chemise'],
+  [['pull', 'sweater', 'cardigan', 'maille'], 'haut', 'pull'], [['sweat', 'hoodie', 'sweatshirt'], 'haut', 'sweat'], [['débardeur', 'debardeur', 'tank', 'crop ?top'], 'haut', 'debardeur'],
+  [['manteau', 'doudoune', 'parka', 'trench', 'coat'], 'veste', 'manteau'], [['veste', 'blazer', 'blouson', 'jacket', 'bomber', 'perfecto'], 'veste', 'veste'],
+  [['baskets?', 'sneakers?', 'air ?force', 'af1', 'jordan', 'dunk', 'stan ?smith', 'converse', 'vans', 'new ?balance', 'air ?max', 'samba', 'gazelle', 'yeezy'], 'chaussures', 'baskets'],
+  [['bottines?', 'boots?', 'chelsea', 'timberland', 'dr\\.? ?martens'], 'chaussures', 'bottines'], [['escarpins?', 'talons?', 'heels?', 'pumps?'], 'chaussures', 'escarpins'],
+  [['sac', 'bag', 'tote', 'pochette'], 'accessoire', 'sac'], [['casquette', 'cap'], 'accessoire', 'casquette'], [['bonnet', 'beanie'], 'accessoire', 'bonnet'], [['écharpe', 'echarpe', 'scarf'], 'accessoire', 'echarpe'],
+];
+const COLOR_WORDS = [
+  [['noire?s?', 'black'], 'noir'], [['blanc', 'blanche', 'blancs', 'white'], 'blanc'], [['grise?s?', 'grey', 'gray'], 'gris'], [['beige', 'crème', 'creme', 'écru', 'ecru', 'sable'], 'beige'],
+  [['camel'], 'camel'], [['marron', 'brown', 'chocolat'], 'marron'], [['marine', 'navy'], 'marine'], [['bleu ciel', 'sky blue'], 'ciel'], [['bleue?s?', 'blue', 'indigo'], 'denim'],
+  [['kaki', 'khaki', 'olive'], 'kaki'], [['sauge', 'sage'], 'sauge'], [['verte?s?', 'green'], 'vert'], [['jaune', 'yellow', 'moutarde'], 'jaune'], [['orange'], 'orange'],
+  [['rouge', 'red'], 'rouge'], [['bordeaux', 'burgundy'], 'bordeaux'], [['rose', 'pink'], 'rose'], [['violet', 'violette', 'purple', 'lilas'], 'violet'],
+];
+const hasWord = (q, words) => words.some(w => new RegExp(`(^|[^a-zà-ÿ0-9])${w}([^a-zà-ÿ0-9]|$)`, 'i').test(q));
+let googleQuery = '';
+function updateGoogleLinks() {
+  const q = $('#g-q').value.trim();
+  $('#g-images').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q);
+  $('#g-shop').href = 'https://www.google.com/search?tbm=shop&q=' + encodeURIComponent(q);
+}
+/* reprend le nom, la catégorie et la couleur tapés pour préremplir la fiche */
+function applyQueryToDraft(q) {
+  googleQuery = q;
+  if (!draft) return;
+  const g = GUESS.find(([words]) => hasWord(q, words));
+  if (g) { draft.cat = g[1]; draft.shape = g[2]; }
+  const c = COLOR_WORDS.find(([words]) => hasWord(q, words));
+  if (c) draft.color = c[1];
+  if (!draft.nameTouched) {
+    draft.name = (q.charAt(0).toUpperCase() + q.slice(1)).slice(0, 40);
+    draft.nameTouched = true;
+    $('#f-name').value = draft.name;
+  }
+  renderSheet();
+}
+const googleCredit = () => (googleQuery ? { title: googleQuery.slice(0, 80), creator: '', license: 'trouvée via Google', url: '' } : null);
+async function pasteFromClipboard() {
+  try {
+    const entries = await navigator.clipboard.read();
+    for (const ci of entries) {
+      const type = ci.types.find(t => t.startsWith('image/'));
+      if (type) { const blob = await ci.getType(type); closeSearch(); await processPhoto(blob, googleCredit()); return; }
+    }
+    for (const ci of entries) {
+      if (!ci.types.includes('text/plain')) continue;
+      const txt = (await (await ci.getType('text/plain')).text()).trim();
+      if (/^https:\/\/\S+$/i.test(txt)) { useRemoteImage(txt, { ...(googleCredit() || {}), url: txt }); return; }
+    }
+    $('#search-status').textContent = "Rien à coller. Sur Google, fais « Copier l'image », puis réessaie.";
+  } catch (err) {
+    $('#search-status').textContent = "Ton navigateur n'autorise pas ce bouton. Fais Ctrl+V ici, ou colle le lien de l'image plus bas.";
+  }
+}
+$('#g-q').addEventListener('input', updateGoogleLinks);
+['#g-images', '#g-shop'].forEach(sel => $(sel).addEventListener('click', e => {
+  const q = $('#g-q').value.trim();
+  if (!q) { e.preventDefault(); $('#g-q').focus(); $('#search-status').textContent = "Tape d'abord le vêtement à chercher."; return; }
+  applyQueryToDraft(q);
+}));
+$('#g-q').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#g-images').click(); } });
+$('#paste-clip').addEventListener('click', pasteFromClipboard);
+$('#paste-clip').hidden = inClaude || !(navigator.clipboard && navigator.clipboard.read);
+
 /* ================= rendu général ================= */
 function renderOnboard() {
   const has = cat => state.items.some(i => i.cat === cat);
@@ -2422,7 +2888,9 @@ function updateCounts() {
   $('#count-looks').textContent = visibleLooks().length;
 }
 function renderView() {
+  ensureWeather();
   if (state.view === 'atelier') {
+    renderWxCard();
     const n = (state.settings.name || '').trim();
     $('#hello').textContent = n ? `${n}, qu'est-ce que tu mets aujourd'hui ?` : `Qu'est-ce que je mets aujourd'hui ?`;
     renderOnboard();
@@ -2431,6 +2899,7 @@ function renderView() {
   }
   else if (state.view === 'penderie') renderWardrobe();
   else if (state.view === 'tenues') renderLooks();
+  else if (state.view === 'planning') renderPlanning();
   else renderAccount();
 }
 function afterData() {
@@ -2504,6 +2973,10 @@ document.addEventListener('click', e => {
   if ('delAccountAsk' in d) { confirmDelAcc = true; renderAccount(); return; }
   if ('delAccountCancel' in d) { confirmDelAcc = false; renderAccount(); return; }
   if ('delAccount' in d) { if (account) deleteAccount(account); return; }
+  if ('city' in d) { openCity(); return; }
+  if ('wxApply' in d) { applyWeather(); return; }
+  if ('wxRetry' in d) { wxErrorKey = ''; renderView(); return; }
+  if (planAction(d)) return;
   if (t.id === 'save-status') { toast(STATUS[$('#save-status').dataset.mode][1]); return; }
   if (t.id === 'mobile-save') { saveOutfit(); return; }
 });
@@ -2542,12 +3015,13 @@ $('.panel').addEventListener('click', e => {
   if (!b) return;
   if (b.dataset.mode) { st.mode = b.dataset.mode; ensureSelection(); renderBoard(); renderPanel(); }
   else if (b.dataset.occ !== undefined) { st.occ = b.dataset.occ || null; ensureSelection(); renderBoard(); renderPanel(); }
-  else if (b.dataset.season !== undefined) { st.season = b.dataset.season || null; ensureSelection(); renderBoard(); renderPanel(); }
+  else if (b.dataset.season !== undefined) { st.season = b.dataset.season || null; st.rain = false; ensureSelection(); renderBoard(); renderPanel(); }
 });
 $('#save-form').addEventListener('submit', e => { e.preventDefault(); saveOutfit(); });
 
 document.addEventListener('keydown', e => {
   if (!$('#privacy').hidden) { if (e.key === 'Escape') closePrivacy(); return; }
+  if (!$('#city').hidden) { if (e.key === 'Escape') closeCity(); return; }
   if (!$('#auth').hidden) return;
   if (!$('#search').hidden) { if (e.key === 'Escape') closeSearch(); return; }
   if (!sheet.hidden) { if (e.key === 'Escape') closeSheet(); return; }
@@ -2591,7 +3065,11 @@ drop.addEventListener('drop', e => { const f = e.dataTransfer && e.dataTransfer.
 document.addEventListener('paste', e => {
   if (sheet.hidden || !draft) return;
   const f = [...(e.clipboardData?.files || [])].find(x => /^image\//.test(x.type));
-  if (f) { e.preventDefault(); processPhoto(f); }
+  if (!f) return;
+  e.preventDefault();
+  const fromSearch = !$('#search').hidden;
+  if (fromSearch) closeSearch();
+  processPhoto(f, fromSearch ? googleCredit() : null);
 });
 $('#f-me').addEventListener('change', e => {
   const v = e.target.value.trim().slice(0, 24);
