@@ -458,6 +458,7 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
 .photo-credit { margin: 8px 0 0; font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
 .photo-credit:empty { display: none; }
 .photo-credit a { color: var(--accent-hi); }
+.photo-err { color: var(--danger); font-weight: 600; }
 .search-backdrop { z-index: 56; }
 .search-body { padding: 6px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
 .search-row { display: flex; gap: 8px; }
@@ -1099,8 +1100,8 @@ function visibleItems() { return state.items.slice(); }
 function itemById(id) { return id ? (state.items.find(i => i.id === id) || null) : null; }
 /* sans photo : l'étiquette du vêtement posée sur un aplat de sa couleur */
 function art(item) {
-  if (item.photo) return `<div class="art"><img src="${esc(item.photo)}" alt="" draggable="false"></div>`;
   const type = (P.SHAPES[item.shape] && P.SHAPES[item.shape].label) || catOf(item.cat).one;
+  if (item.photo) return `<div class="art"><img src="${esc(item.photo)}" alt="" draggable="false" referrerpolicy="no-referrer" data-fbc="${colorOf(item.color).hex}" data-fbt="${esc(type)}" data-fbn="${esc(item.name)}"></div>`;
   return `<div class="art swatch" style="--c:${colorOf(item.color).hex}"><span class="lbl"><small>${esc(type)}</small><b>${esc(item.name)}</b></span></div>`;
 }
 let toastTimer;
@@ -1545,14 +1546,14 @@ function syncLock() {
   document.documentElement.classList.toggle('locked', open);
 }
 function renderSheet(busy) {
-  $('#drop-art').innerHTML = draft.photo ? `<img src="${esc(draft.photo)}" alt="Photo du vêtement">` : art({ ...draft, name: $('#f-name').value.trim() || autoName() });
+  $('#drop-art').innerHTML = draft.photo ? `<img src="${esc(draft.photo)}" alt="Photo du vêtement" referrerpolicy="no-referrer" data-drop="1">` : art({ ...draft, name: $('#f-name').value.trim() || autoName() });
   $('#drop-hint').innerHTML = busy
     ? `${ICON.camera}<span>Préparation de la photo…</span>`
     : `${ICON.camera}<span>${draft.photo ? 'Changer la photo' : 'Ajouter une photo'}<small>Clique, glisse une image ou colle-la</small></span>`;
   $('#photo-remove').hidden = !draft.photo;
   $('#photo-note').textContent = draft.photo ? 'Photo réduite et gardée avec le vêtement.' : "Sans photo, le vêtement s'affiche avec sa couleur et son nom.";
   const cr = draft.photo && draft.credit;
-  $('#photo-credit').innerHTML = !cr ? '' : `Image : ${cr.title ? `« ${esc(cr.title)} »` : 'en ligne'}${cr.creator ? ` par ${esc(cr.creator)}` : ''}${cr.license ? ` · ${esc(cr.license)}` : ''}${/^https:\/\//.test(cr.url || '') ? ` · <a href="${esc(cr.url)}" target="_blank" rel="noopener">source</a>` : ''}`;
+  $('#photo-credit').innerHTML = draft.photoError ? `<span class="photo-err">${esc(draft.photoError)}</span>` : !cr ? '' : `Image : ${cr.title ? `« ${esc(cr.title)} »` : 'en ligne'}${cr.creator ? ` par ${esc(cr.creator)}` : ''}${cr.license ? ` · ${esc(cr.license)}` : ''}${/^https:\/\//.test(cr.url || '') ? ` · <a href="${esc(cr.url)}" target="_blank" rel="noopener">source</a>` : ''}`;
   $('#open-search').hidden = inClaude;
   $('#f-cat').innerHTML = P.CATS.map(c => `<button type="button" class="chip" data-fcat="${c.id}" aria-pressed="${draft.cat === c.id}">${c.one}</button>`).join('');
   $('#f-shape').innerHTML = P.SHAPES_BY_CAT[draft.cat].map(s => `<button type="button" class="chip" data-fshape="${s}" aria-pressed="${draft.shape === s}">${P.SHAPES[s].label}</button>`).join('');
@@ -1613,6 +1614,7 @@ async function processPhoto(file, credit = null) {
     if (!draft) return;
     draft.photo = data;
     draft.credit = credit;
+    draft.photoError = '';
     const col = suggestColor(ctx, w, h);
     if (col) draft.color = col;
     refreshAutoName();
@@ -2502,21 +2504,83 @@ searchEl.addEventListener('click', e => {
   if ('closeSearch' in b.dataset) closeSearch();
   else if (b.dataset.result) pickResult(searchResults[Number(b.dataset.result)]);
 });
+/* déballe les liens Google qui enveloppent l'adresse réelle d'une image ou d'une page */
+function unwrapLink(u) {
+  try {
+    const x = new URL(u);
+    if (/(^|\.)google\./.test(x.hostname)) {
+      const real = x.searchParams.get('imgurl') || x.searchParams.get('url') || x.searchParams.get('q');
+      if (real && /^https?:\/\//i.test(real)) return real;
+    }
+  } catch (e) { /* lien illisible : on le garde tel quel */ }
+  return u;
+}
+function canDisplay(u) {
+  return new Promise(res => {
+    const img = new Image(), t = setTimeout(() => res(false), 8000);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = () => { clearTimeout(t); res(img.naturalWidth > 0); };
+    img.onerror = () => { clearTimeout(t); res(false); };
+    img.src = u;
+  });
+}
+function applyGuess(text) {
+  const g = GUESS.find(([words]) => hasWord(text, words));
+  if (g) { draft.cat = g[1]; draft.shape = g[2]; }
+  const c = COLOR_WORDS.find(([words]) => hasWord(text, words));
+  if (c) draft.color = c[1];
+}
+const LINK_HELP = "Ce lien ne mène pas à une photo que DressIn peut lire. Sur la page du vêtement, fais un appui long (ou clic droit) sur la photo, puis « Copier l'image » et colle-la ici.";
+/* lien collé : une image, ou la page d'un produit dont on récupère la photo principale et le nom */
 async function useRemoteImage(src, credit) {
   closeSearch();
+  if (!draft) return;
+  renderSheet(true);
+  const url = unwrapLink(src.trim()).replace(/^http:\/\//i, 'https://');
   try {
-    const res = await fetch(src);
+    if (/^data:image\//.test(url)) { await processPhoto(await (await fetch(url)).blob(), credit); return; }
+    const res = await fetch(url);
     if (!res.ok) throw new Error('http');
+    if (/text\/html/.test(res.headers.get('content-type') || '')) {
+      const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+      const meta = n => doc.querySelector(`meta[property="${n}"], meta[name="${n}"]`)?.getAttribute('content');
+      const img = meta('og:image:secure_url') || meta('og:image') || meta('twitter:image');
+      if (!img) throw new Error('noimage');
+      const title = (meta('og:title') || doc.title || '').replace(/\s+/g, ' ').trim();
+      const r2 = await fetch(new URL(img, url).href.replace(/^http:\/\//i, 'https://'));
+      if (!r2.ok) throw new Error('http');
+      const blob = await r2.blob();
+      if (!/^image\//.test(blob.type)) throw new Error('type');
+      if (draft && title) {
+        applyGuess(title);
+        if (!draft.nameTouched) { draft.name = title.slice(0, 40); draft.nameTouched = true; $('#f-name').value = draft.name; }
+      }
+      await processPhoto(blob, { title: title.slice(0, 80) || credit.title || '', creator: '', license: 'photo du produit', url });
+      /* la couleur annoncée dans le nom du produit passe avant celle devinée sur la photo */
+      const named = COLOR_WORDS.find(([words]) => hasWord(title, words));
+      if (draft && named) { draft.color = named[1]; renderSheet(); }
+      toast('Photo et nom récupérés depuis la page du produit.');
+      return;
+    }
     const blob = await res.blob();
     if (!/^image\//.test(blob.type)) throw new Error('type');
     await processPhoto(blob, credit);
   } catch (err) {
+    /* le site refuse la lecture directe : on garde le lien seulement s'il s'affiche bien comme une image */
+    const ok = !/^data:/.test(url) && await canDisplay(url);
     if (!draft) return;
-    draft.photo = src;
-    draft.credit = credit;
-    refreshAutoName();
-    renderSheet();
-    toast("Image ajoutée depuis son lien. Si le site d'origine la retire, elle ne s'affichera plus.");
+    if (ok) {
+      draft.photo = url;
+      draft.credit = credit;
+      draft.photoError = '';
+      refreshAutoName();
+      renderSheet();
+      toast("Image ajoutée depuis son lien. Si le site d'origine la retire, elle ne s'affichera plus.");
+    } else {
+      draft.photoError = LINK_HELP;
+      renderSheet();
+      toast("Ce lien n'est pas une photo lisible. Copie plutôt l'image elle-même.");
+    }
   }
 }
 function pickResult(r) {
@@ -2529,7 +2593,7 @@ function pickResult(r) {
 $('#url-form').addEventListener('submit', e => {
   e.preventDefault();
   const u = $('#url-q').value.trim();
-  if (!/^https:\/\/\S+$/i.test(u)) { $('#search-status').textContent = 'Colle une adresse qui commence par https://'; return; }
+  if (!/^(https?:\/\/\S+|data:image\/)/i.test(u)) { $('#search-status').textContent = 'Colle une adresse qui commence par https://'; return; }
   $('#url-q').value = '';
   useRemoteImage(u, { title: '', creator: '', license: '', url: u });
 });
@@ -2853,7 +2917,7 @@ async function pasteFromClipboard() {
     for (const ci of entries) {
       if (!ci.types.includes('text/plain')) continue;
       const txt = (await (await ci.getType('text/plain')).text()).trim();
-      if (/^https:\/\/\S+$/i.test(txt)) { useRemoteImage(txt, { ...(googleCredit() || {}), url: txt }); return; }
+      if (/^(https?:\/\/\S+|data:image\/)/i.test(txt)) { useRemoteImage(txt, { ...(googleCredit() || {}), url: txt.slice(0, 300) }); return; }
     }
     $('#search-status').textContent = "Rien à coller. Sur Google, fais « Copier l'image », puis réessaie.";
   } catch (err) {
@@ -3046,7 +3110,7 @@ sheet.addEventListener('click', e => {
   else if ('askDelItem' in d) { draft.confirmDel = true; renderSheet(); }
   else if ('keepItem' in d) { draft.confirmDel = false; renderSheet(); }
   else if ('delItem' in d) deleteItem();
-  else if (b.id === 'photo-remove') { draft.photo = null; draft.credit = null; renderSheet(); }
+  else if (b.id === 'photo-remove') { draft.photo = null; draft.credit = null; draft.photoError = ''; renderSheet(); }
 });
 $('#f-name').addEventListener('input', e => {
   if (!draft) return;
@@ -3085,6 +3149,23 @@ $('#view-compte').addEventListener('change', e => {
   else if (t.dataset.pref) setSettings({ [t.dataset.pref]: t.checked });
 });
 window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (VIEWS.includes(v) && v !== state.view) go(v, false); });
+
+/* une photo enregistrée qui ne charge plus (lien cassé ou bloqué) laisse place à l'étiquette de couleur */
+document.addEventListener('error', e => {
+  const img = e.target;
+  if (!(img instanceof HTMLImageElement)) return;
+  if (img.dataset.drop && draft) {
+    draft.photoError = "L'image de ce lien ne s'affiche pas. Remplace-la : colle la photo elle-même, ou le lien de la page du produit.";
+    $('#photo-credit').innerHTML = `<span class="photo-err">${esc(draft.photoError)}</span>`;
+    return;
+  }
+  if (!img.dataset.fbc) return;
+  const box = img.closest('.art');
+  if (!box) return;
+  box.classList.add('swatch');
+  box.style.setProperty('--c', img.dataset.fbc);
+  box.innerHTML = `<span class="lbl"><small>${esc(img.dataset.fbt)}</small><b>${esc(img.dataset.fbn)}</b></span>`;
+}, true);
 
 /* ================= démarrage ================= */
 try {
