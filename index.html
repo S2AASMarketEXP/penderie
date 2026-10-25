@@ -18,6 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>DressIn</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -3806,7 +3807,7 @@ function sportKit() {
 const quote = it => `« ${it.name} »`;
 function ideaTitle(S, ctx) {
   const adj = S.sp >= 2 && S.f <= 1.4 ? 'sportif' : S.f >= 2.6 ? 'chic' : S.nb >= 2 ? 'coloré' : S.st >= 2.3 ? 'streetwear' : S.bo >= 2.2 ? 'bohème'
-    : S.cf >= 2.6 ? 'cosy' : S.nb === 0 && S.dark > 0.5 ? 'tout en sombre' : S.nb === 0 ? 'sobre' : 'décontracté';
+    : S.cf >= 2.6 ? 'cosy' : S.nb === 0 && S.dark >= 0.75 ? 'tout en sombre' : S.nb === 0 ? 'sobre' : 'décontracté';
   const main = ctx.obls.slice().sort((a, b) => b.f - a.f)[0];
   return `Look ${adj} ${main ? `pour ${main.ph}` : ctx.key === todayKey() ? "pour aujourd'hui" : 'pour demain'}`;
 }
