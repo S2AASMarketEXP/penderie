@@ -18,6 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>DressIn</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -429,8 +430,11 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
 .board-head .seg { padding: 2px; }
 .board-head .seg button { padding: 6px 12px; font-size: 12.5px; letter-spacing: 0; text-transform: none; }
 .mq-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 20px; align-items: center; padding-block: 8px 14px; }
-.mq-figure { display: grid; place-items: center; min-height: 500px; border-radius: 18px; background: radial-gradient(closest-side at 50% 46%, var(--accent-soft), transparent 100%); }
-.mq-figure svg { display: block; height: 480px; width: auto; max-width: 100%; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .35)); }
+.mq-figure { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 520px; border-radius: 18px; background: radial-gradient(closest-side at 50% 44%, var(--accent-soft), transparent 100%); }
+.mq-figure svg { display: block; height: 490px; width: auto; max-width: 100%; }
+.mq-g { cursor: pointer; transition: opacity .15s; }
+.mq-g:hover { opacity: .86; }
+.mq-hint { margin: 0; font-size: 12px; color: var(--muted); text-align: center; }
 .mq-figure.pop svg { animation: mqpop .42s cubic-bezier(.3, 1.5, .5, 1); }
 @keyframes mqpop { from { transform: scale(.94); opacity: .45; } }
 .mq-list { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
@@ -445,8 +449,8 @@ input.text:focus, select.text:focus { outline: none; border-color: var(--accent)
 .mq-row .lock { padding: 8px; }
 @media (max-width: 640px) {
   .mq-wrap { grid-template-columns: minmax(0, 1fr); }
-  .mq-figure { min-height: 400px; }
-  .mq-figure svg { height: 390px; }
+  .mq-figure { min-height: 430px; }
+  .mq-figure svg { height: 410px; }
 }
 
 /* ---------- recherche, crédits photo ---------- */
@@ -1127,7 +1131,8 @@ function mqRowHTML(slot) {
 function mannequinView(pop) {
   const sel = {};
   ORDER[st.mode].forEach(s => { sel[s] = st.sel[s] ?? null; });
-  return `<div class="mq-wrap"><div class="mq-figure${pop ? ' pop' : ''}">${mannequinSVG(bodyOf(), sel, st.mode)}</div><div class="mq-list">${ORDER[st.mode].map(mqRowHTML).join('')}</div></div>`;
+  const dressed = ORDER[st.mode].some(s => itemById(sel[s]));
+  return `<div class="mq-wrap"><div class="mq-figure${pop ? ' pop' : ''}">${mannequinSVG(bodyOf(), sel, st.mode)}${dressed ? '<p class="mq-hint">Touche un vêtement sur le mannequin pour le changer.</p>' : ''}</div><div class="mq-list">${ORDER[st.mode].map(mqRowHTML).join('')}</div></div>`;
 }
 function renderBoard(landed) {
   withFocus(() => {
@@ -1865,10 +1870,12 @@ async function importData(file) {
 }
 
 /* ================= mannequin (silhouette femme ou homme, habillée de la tenue) ================= */
-/* repères en demi-largeurs depuis l'axe x = 100, dans un repère 200 × 500 */
+/* mannequin de vitrine d'environ 8,5 têtes, repère 200 × 500 centré sur x = 100 ; demi-largeurs et hauteurs des repères du corps */
 const BODY = {
-  femme: { hr: 17.5, nw: 7.5, sh: 43, ch: 37, wa: 27, hi: 43, lx: 20, th: 21, kn: 11.5, an: 6 },
-  homme: { hr: 19, nw: 9, sh: 52, ch: 45, wa: 36, hi: 39, lx: 19, th: 19, kn: 12, an: 7 },
+  femme: { top: 16, chin: 66, hw: 16, nkT: 6.5, nkB: 8.5, nkY: 88, sh: 41, shY: 98, ch: 34, chY: 128, ub: 30, ubY: 152, wa: 24.5, waY: 184, hh: 34, hhY: 214, hi: 39.5, hiY: 238, cr: 262,
+    lx: 18.5, th: 19.5, mt: 16, mtY: 304, kn: 10.5, knY: 356, ca: 12, caY: 394, an: 5.5, anY: 452, up: 9, el: 7, elY: 188, wr: 4.8, wrY: 262, out: 4 },
+  homme: { top: 13, chin: 66, hw: 18, nkT: 8.5, nkB: 10.5, nkY: 90, sh: 53, shY: 100, ch: 45, chY: 130, ub: 42, ubY: 154, wa: 35, waY: 190, hh: 37, hhY: 216, hi: 38.5, hiY: 238, cr: 264,
+    lx: 19, th: 20.5, mt: 17.5, mtY: 306, kn: 12, knY: 358, ca: 13.5, caY: 396, an: 7, anY: 452, up: 12, el: 9, elY: 194, wr: 6, wrY: 268, out: 3 },
 };
 const bodyOf = () => state.settings.body || (account && account.gender) || 'femme';
 const fx = n => Math.round(n * 10) / 10;
@@ -1888,107 +1895,231 @@ function pathOf(pts, smooth) {
   }
   return d + 'Z';
 }
-function bodyPaths(d) {
-  const torso = [[d.nw, 84], [d.nw + 9, 89], [d.sh - 6, 94], [d.sh, 104], [d.ch, 138], [d.wa, 190], [d.hi, 240], [d.lx + d.th, 282], [d.lx + d.kn + 1, 360], [d.lx + d.an + 1, 448], [d.lx - d.an - 1, 448], [d.lx - d.kn, 362], [d.lx - d.th + 5, 292], [2, 268]];
-  const arm = RX([[d.sh - 9, 96], [d.sh + 2, 101], [d.sh + 7, 140], [d.sh + 10, 192], [d.sh + 12, 258], [d.sh + 3, 260], [d.sh, 196], [d.ch - 1, 152], [d.ch - 3, 134]]);
-  const foot = RX([[d.lx - d.an - 1, 444], [d.lx + d.an + 1, 444], [d.lx + d.an + 3, 464], [d.lx + d.an, 473], [d.lx - d.an - 1, 473], [d.lx - d.an - 3, 464]]);
-  return [
-    pathOf(arm, 1), pathOf(MX(arm), 1), pathOf(sym(torso), 1), pathOf(foot, 1), pathOf(MX(foot), 1),
-    pathOf(ellPts(100 + d.sh + 7.5, 272, 5.5, 11), 1), pathOf(ellPts(100 - d.sh - 7.5, 272, 5.5, 11), 1),
-    `M${fx(100 - d.nw)} 60h${fx(2 * d.nw)}v32h${fx(-2 * d.nw)}Z`,
-    pathOf(ellPts(100, 42, d.hr, d.hr * 1.28, 24), 1),
-  ];
+/* bras droit : bord extérieur et bord intérieur, de l'épaule au poignet */
+function armLines(d) {
+  const wx = d.sh + d.out * 1.6;
+  return {
+    outer: [[d.sh - 6, d.shY - 3], [d.sh + 3, d.shY + 6], [d.sh + 4.5, d.shY + 32], [d.sh + d.out + d.el, d.elY], [wx + d.wr, d.wrY]],
+    inner: [[d.ch - 1, d.chY - 8], [d.sh - d.up - 1, d.shY + 46], [d.sh + d.out - d.el, d.elY + 4], [wx - d.wr, d.wrY]],
+    wx,
+  };
 }
-/* formes d'un vêtement posées sur la silhouette ; tone : main (couleur ou photo), dark, light, white */
+function xAt(poly, y) {
+  for (let i = 0; i < poly.length - 1; i++) {
+    const [x1, y1] = poly[i], [x2, y2] = poly[i + 1];
+    if (y >= y1 && y <= y2) return x1 + (x2 - x1) * ((y - y1) / (y2 - y1 || 1));
+  }
+  return y < poly[0][1] ? poly[0][0] : poly[poly.length - 1][0];
+}
+/* manche qui suit le bras jusqu'à yEnd, avec une aisance e */
+function sleevePts(d, yEnd, e) {
+  const A = armLines(d);
+  const ys = [d.shY + 32, (d.shY + 32 + d.elY) / 2, d.elY, (d.elY + d.wrY) / 2].filter(y => y < yEnd - 4);
+  const top = A.inner[0][1];
+  return RX([
+    [d.sh - 7, d.shY - 3], [d.sh + 4 + e * 0.6, d.shY + 6], ...ys.map(y => [xAt(A.outer, y) + e, y]), [xAt(A.outer, yEnd) + e, yEnd],
+    [xAt(A.inner, yEnd) - e * 0.6, yEnd], ...ys.filter(y => y > top).reverse().map(y => [xAt(A.inner, y) - e * 0.6, y]), [A.inner[0][0] - 1, top],
+  ]);
+}
+/* bande de poignet entre yA et yB, côté droit */
+function cuffPts(d, yA, yB, e) {
+  const A = armLines(d);
+  return RX([[xAt(A.inner, yA) - e * 0.6, yA], [xAt(A.outer, yA) + e, yA], [xAt(A.outer, yB) + e, yB], [xAt(A.inner, yB) - e * 0.6, yB]]);
+}
+function bodyGeom(d) {
+  const torso = [[d.nkB, d.nkY], [d.nkB + 8, d.nkY + 3], [d.sh - 8, d.shY - 3], [d.sh - 1, d.shY + 4], [d.sh - 3, d.shY + 16], [d.ch, d.chY], [d.ub, d.ubY], [d.wa, d.waY],
+    [d.hh, d.hhY], [d.hi, d.hiY], [d.lx + d.th, d.cr + 14], [d.lx + d.mt + 1, d.mtY], [d.lx + d.kn + 1, d.knY], [d.lx + d.ca, d.caY], [d.lx + d.an + 1, d.anY - 10],
+    [d.lx + d.an, d.anY], [d.lx - d.an, d.anY], [d.lx - d.an - 0.5, d.anY - 10], [d.lx - d.ca + 3.5, d.caY], [d.lx - d.kn, d.knY + 2], [d.lx - d.mt + 3, d.mtY], [3, d.cr + 6]];
+  const A = armLines(d);
+  const arm = RX([...A.outer, ...A.inner.slice().reverse()]);
+  const hx = A.wx, hy = d.wrY;
+  const hand = RX([[hx - 5, hy - 1], [hx + 5, hy - 1], [hx + 6.5, hy + 12], [hx + 4, hy + 29], [hx - 1, hy + 33], [hx - 5, hy + 23], [hx - 6, hy + 10]]);
+  const foot = RX([[d.lx - 6, d.anY + 1], [d.lx + 6, d.anY + 1], [d.lx + 8, d.anY + 15], [d.lx + 7, d.anY + 24], [d.lx - 7, d.anY + 24], [d.lx - 8, d.anY + 15]]);
+  const cy = (d.top + d.chin) / 2, h = (d.chin - d.top) / 2;
+  const head = Array.from({ length: 28 }, (_, i) => {
+    const a = (i / 28) * Math.PI * 2, s = Math.sin(a);
+    return [100 + d.hw * Math.cos(a) * (s > 0 ? 1 - 0.17 * s : 1), cy + h * s];
+  });
+  const neck = [[100 - d.nkT, d.chin - 8], [100 + d.nkT, d.chin - 8], [100 + d.nkB, d.nkY + 3], [100 - d.nkB, d.nkY + 3]];
+  return {
+    torso: pathOf(sym(torso), 1), arms: [pathOf(arm, 1), pathOf(MX(arm), 1)], hands: [pathOf(hand, 1), pathOf(MX(hand), 1)],
+    feet: [pathOf(foot, 1), pathOf(MX(foot), 1)], head: pathOf(head, 1), neck: pathOf(neck, 1),
+  };
+}
+/* fines lignes de modelé : articulations du cou et de la taille, clavicules, poitrine, genoux */
+function bodyLines(d, g) {
+  const L = [`M${100 - d.nkB} ${d.nkY + 1}Q100 ${d.nkY + 6} ${100 + d.nkB} ${d.nkY + 1}`,
+    `M96 ${d.nkY + 9}Q${100 - d.sh * 0.45} ${d.nkY + 5} ${100 - d.sh + 9} ${d.nkY + 10}M104 ${d.nkY + 9}Q${100 + d.sh * 0.45} ${d.nkY + 5} ${100 + d.sh - 9} ${d.nkY + 10}`,
+    g === 'femme'
+      ? `M95 ${d.chY + 4}Q${100 - d.ch * 0.55} ${d.chY + 20} ${100 - d.ch + 4} ${d.chY + 6}M105 ${d.chY + 4}Q${100 + d.ch * 0.55} ${d.chY + 20} ${100 + d.ch - 4} ${d.chY + 6}`
+      : `M100 ${d.chY + 2}Q${100 - d.ch * 0.5} ${d.chY + 14} ${100 - d.ch + 5} ${d.chY - 4}M100 ${d.chY + 2}Q${100 + d.ch * 0.5} ${d.chY + 14} ${100 + d.ch - 5} ${d.chY - 4}`,
+    `M${100 - d.wa - 0.5} ${d.waY + 8}Q100 ${d.waY + 13} ${100 + d.wa + 0.5} ${d.waY + 8}`];
+  for (const s of [1, -1]) L.push(`M${100 + s * (d.lx - 5)} ${d.knY + 2}Q${100 + s * d.lx} ${d.knY + 6} ${100 + s * (d.lx + 5)} ${d.knY + 2}`);
+  return L.join('');
+}
+/* formes d'un vêtement posées sur la silhouette ; tone : main (sa couleur), dark, light, white ; tex : texture du tissu */
 function garmentParts(it, d) {
   const out = [];
-  const add = (pts, tone = 'main', smooth = 1) => out.push({ pts, tone, smooth });
+  const tex = { jean: 'denim', pull: 'knit', bonnet: 'knit', echarpe: 'knit', manteau: 'twill' }[it.shape];
+  const add = (pts, tone = 'main', smooth = 1) => out.push({ pts, tone, smooth, tex: tone === 'main' ? tex : null });
+  const raw = (path, tone = 'main') => out.push({ d: path, tone, tex: tone === 'main' ? tex : null });
   const line = (path, w) => out.push({ line: path, w });
+  const both = (pts, tone, smooth) => { add(pts, tone, smooth); add(MX(pts), tone, smooth); };
   const band = (y1, y2, w1, w2) => [[100 - w1, y1], [100 + w1, y1], [100 + w2, y2], [100 - w2, y2]];
-  const sleeve = long => RX(long
-    ? [[d.sh - 7, 94], [d.sh + 4, 101], [d.sh + 10, 140], [d.sh + 13, 192], [d.sh + 15, 254], [d.sh + 1, 256], [d.sh - 2, 196], [d.ch - 3, 152], [d.ch - 4, 132]]
-    : [[d.sh - 7, 94], [d.sh + 5, 101], [d.sh + 11, 152], [d.ch - 1, 156], [d.ch - 4, 132]]);
-  const sleeves = long => { const s = sleeve(long); add(s); add(MX(s)); };
-  const topBody = hem => sym([[d.nw + 4, 87], [d.sh - 4, 94], [d.sh + 1, 104], [d.ch + 2, 138], [d.wa + 3, 192], [d.hi + 3, hem]], 97);
-  const trousers = [[d.wa + 3, 204], [d.hi + 3, 240], [d.lx + d.th + 2, 282], [d.lx + d.kn + 3, 360], [d.lx + d.an + 4, 446], [d.lx - d.an - 4, 446], [d.lx - d.kn - 2, 362], [d.lx - d.th + 3, 292], [0, 272]];
+  const dot = (x, y, r, tone) => out.push({ pts: ellPts(x, y, r, r, 10), tone, smooth: 1 });
+  const topSide = (hem, e) => [[d.nkB + 3, d.nkY - 1], [d.nkB + 10, d.nkY + 2], [d.sh - 6, d.shY - 2], [d.sh + 1 + e * 0.4, d.shY + 5], [d.sh - 1, d.shY + 18],
+    [d.ch + 2.5 + e, d.chY], [d.ub + 3 + e, d.ubY], [d.wa + 4.5 + e, d.waY], [d.hh + 3.5 + e * 0.6, d.hhY], [d.hi + 3 + e * 0.4, hem]];
+  const neckRib = depth => raw(`M${100 - d.nkB - 3} ${d.nkY - 1}Q100 ${d.nkY + depth + 4} ${100 + d.nkB + 3} ${d.nkY - 1}L${100 + d.nkB + 1} ${d.nkY - 2.5}Q100 ${d.nkY + depth} ${100 - d.nkB - 1} ${d.nkY - 2.5}Z`, 'dark');
+  const sideFolds = () => line([1, -1].map(s => `M${100 + s * (d.wa + 3)} ${d.waY - 12}q${-s * 5} 9 ${-s * 1} 20`).join(''));
+  const elbowFolds = e => line([1, -1].map(s => `M${100 + s * (d.sh + d.out - d.el + 1)} ${d.elY - 1}q${s * (d.el + e * 0.5)} 5 ${s * (2 * d.el + e)} -1`).join(''));
+  const wY = d.waY + 18;
+  const trousers = w => [[d.wa + 4, wY], [d.hh + 3, d.hhY], [d.hi + 3, d.hiY], [d.lx + d.th + 2.5, d.cr + 14], [d.lx + d.mt + 3 + w, d.mtY], [d.lx + d.kn + 3.5 + w * 1.4, d.knY],
+    [d.lx + d.ca + 2 + w, d.caY], [d.lx + d.an + 5 + w * 1.6, d.anY - 2], [d.lx - d.an - 4.5 - w * 1.2, d.anY - 2], [d.lx - d.ca + 1.5 - w * 0.6, d.caY],
+    [d.lx - d.kn - 2 - w, d.knY + 2], [d.lx - d.mt + 1, d.mtY], [2.5, d.cr + 8], [0, d.cr + 4]];
+  const waistband = y => { add(band(y, y + 7, d.wa + 4, d.wa + 4.6), 'dark', 0); for (const x of [-d.wa + 2, -9, 9, d.wa - 2]) add(band(y - 0.5, y + 8, 1, 1).map(([px, py]) => [px + x, py]), 'dark', 0); };
+  const knees = () => line([1, -1].map(s => `M${100 + s * (d.lx - 6)} ${d.knY - 4}q${s * 6} 4 ${s * 12} 0M${100 + s * (d.lx - 5)} ${d.knY + 3}q${s * 5} 3 ${s * 10} 0`).join(''));
   switch (it.shape) {
-    case 'tshirt': sleeves(false); add(topBody(250)); break;
+    case 'tshirt':
+      both(sleevePts(d, d.shY + 40, 2.5));
+      add(sym(topSide(248, 1), d.nkY + 9)); neckRib(9); sideFolds();
+      break;
     case 'chemise':
-      sleeves(true); add(topBody(256));
-      add([[100, 101], [100 + d.nw + 6, 86], [100 + d.nw + 3, 98]], 'light', 0);
-      add([[100, 101], [100 - d.nw - 6, 86], [100 - d.nw - 3, 98]], 'light', 0);
-      line('M100 101V256'); break;
-    case 'pull': sleeves(true); add(topBody(252)); add(band(243, 252, d.hi + 2.6, d.hi + 3), 'dark', 0); break;
+      both(sleevePts(d, d.wrY - 4, 2.2)); both(cuffPts(d, d.wrY - 13, d.wrY - 4, 2.2), 'light', 0);
+      add(sym(topSide(254, 1.5), d.nkY + 12));
+      both(RX([[1, d.nkY + 11], [d.nkB + 5, d.nkY - 4], [d.nkB + 9, d.nkY + 6], [4, d.nkY + 15]]), 'light', 0);
+      line(`M100 ${d.nkY + 12}V254`);
+      for (let y = d.nkY + 22; y < 248; y += 22) dot(100, y, 1.3, 'light');
+      sideFolds(); elbowFolds(2.2);
+      break;
+    case 'pull':
+      both(sleevePts(d, d.wrY - 4, 3)); both(cuffPts(d, d.wrY - 12, d.wrY - 4, 3), 'dark', 0);
+      add(sym(topSide(244, 2.5), d.nkY + 8)); neckRib(8);
+      add(band(236, 244, d.hi + 2.8, d.hi + 3.6), 'dark', 0); elbowFolds(3);
+      break;
     case 'sweat':
-      add(ellPts(100, 90, d.nw + 13, 10), 'dark');
-      sleeves(true); add(topBody(252)); add(band(243, 252, d.hi + 2.6, d.hi + 3), 'dark', 0);
-      line(`M84 214H116L120 236H80Z M96 98L95 128 M104 98L105 128`); break;
-    case 'debardeur': add(sym([[d.nw + 3, 90], [d.nw + 8, 92], [d.ch - 6, 112], [d.ch + 1, 138], [d.wa + 3, 192], [d.hi + 3, 250]], 112)); break;
-    case 'jean': case 'pantalon':
-      add(legsShape(trousers)); add(band(204, 212, d.wa + 3, d.wa + 4.2), 'dark', 0);
-      line(it.shape === 'jean'
-        ? `M${100 + d.wa - 8} 212Q${100 + d.wa - 4} 226 ${100 + d.hi + 2} 228 M${100 - d.wa + 8} 212Q${100 - d.wa + 4} 226 ${100 - d.hi - 2} 228 M100 212V254`
-        : `M${100 + d.lx} 226V444 M${100 - d.lx} 226V444`); break;
-    case 'short': add(legsShape([[d.wa + 3, 204], [d.hi + 3, 240], [d.lx + d.th + 3, 312], [d.lx - d.th + 1, 316], [0, 274]])); add(band(204, 212, d.wa + 3, d.wa + 4.2), 'dark', 0); break;
-    case 'jupe':
-      add(sym([[d.wa + 3, 204], [d.hi + 3, 244], [d.hi + 13, 336]])); add(band(204, 212, d.wa + 3, d.wa + 4.2), 'dark', 0);
-      line(`M100 212V338 M${100 + d.wa - 6} 212L${100 + d.hi} 336 M${100 - d.wa + 6} 212L${100 - d.hi} 336`); break;
+      add(pathPts([[-d.nkB - 15, d.nkY + 5], [-d.nkB - 9, d.nkY - 13], [d.nkB + 9, d.nkY - 13], [d.nkB + 15, d.nkY + 5], [0, d.nkY + 18]]), 'dark', 1);
+      both(sleevePts(d, d.wrY - 4, 3.5)); both(cuffPts(d, d.wrY - 12, d.wrY - 4, 3.5), 'dark', 0);
+      add(sym(topSide(246, 3), d.nkY + 7));
+      add(band(238, 246, d.hi + 3.4, d.hi + 4.2), 'dark', 0);
+      line(`M${100 - 16} ${d.waY + 22}H${100 + 16}L${100 + 21} 236H${100 - 21}ZM96 ${d.nkY + 6}L95 ${d.nkY + 36}M104 ${d.nkY + 6}L105 ${d.nkY + 36}`); elbowFolds(3.5);
+      break;
+    case 'debardeur':
+      add(sym([[d.nkB + 4, d.nkY], [d.nkB + 9, d.nkY + 1], [d.ch - 6, d.chY - 12], [d.ch + 2, d.chY], [d.ub + 3, d.ubY], [d.wa + 4.5, d.waY], [d.hh + 3.5, d.hhY], [d.hi + 3, 246]], d.nkY + 26));
+      sideFolds();
+      break;
+    case 'jean':
+      add(legsShape(trousers(0))); waistband(wY); dot(100, wY + 3.5, 1.4, 'light');
+      line(`M101 ${wY + 7}V${d.cr - 6}q0 5 -5 7M${100 + d.wa - 4} ${wY + 7}Q${100 + d.wa + 1} ${wY + 22} ${100 + d.hh + 3} ${d.hhY + 4}M${100 - d.wa + 4} ${wY + 7}Q${100 - d.wa - 1} ${wY + 22} ${100 - d.hh - 3} ${d.hhY + 4}`);
+      knees();
+      break;
+    case 'pantalon':
+      add(legsShape(trousers(3))); waistband(wY);
+      line(`M101 ${wY + 7}V${d.cr - 6}M${100 + d.lx + 1} ${wY + 14}V${d.anY - 4}M${100 - d.lx - 1} ${wY + 14}V${d.anY - 4}M${100 + d.wa - 2} ${wY + 7}L${100 + d.hh + 2} ${d.hhY + 10}M${100 - d.wa + 2} ${wY + 7}L${100 - d.hh - 2} ${d.hhY + 10}`);
+      break;
+    case 'short':
+      add(legsShape([[d.wa + 4, wY], [d.hh + 3, d.hhY], [d.hi + 3.5, d.hiY], [d.lx + d.th + 4, d.cr + 14], [d.lx + d.th + 5, d.cr + 40], [d.lx - d.th + 2, d.cr + 42], [2.5, d.cr + 8], [0, d.cr + 4]]));
+      waistband(wY);
+      line(`M101 ${wY + 7}V${d.cr - 6}M${100 + d.lx - d.th + 3} ${d.cr + 36}L${100 + d.lx + d.th + 4} ${d.cr + 34}M${100 - d.lx + d.th - 3} ${d.cr + 36}L${100 - d.lx - d.th - 4} ${d.cr + 34}`);
+      break;
+    case 'jupe': {
+      const hem = d.knY - 18;
+      add(sym([[d.wa + 4, wY - 4], [d.hh + 4, d.hhY], [d.hi + 4.5, d.hiY + 2], [d.hi + 10, d.cr + 36], [d.hi + 15, hem]]));
+      add(band(wY - 4, wY + 3, d.wa + 4, d.wa + 4.6), 'dark', 0);
+      line([0, 0.33, 0.66].flatMap(k => [1, -1].map(s => `M${100 + s * k * d.wa} ${wY + 3}L${100 + s * k * (d.hi + 14)} ${hem - 1}`)).join(''));
+      break;
+    }
     case 'robe':
-      add(sym([[d.nw + 6, 90], [d.sh - 12, 95], [d.ch - 2, 132], [d.wa + 1, 192], [d.hi + 5, 246], [d.hi + 18, 350]], 106));
-      add(band(187, 197, d.wa + 1.3, d.wa + 1.8), 'dark', 0); break;
+      add(sym([[d.nkB + 5, d.nkY + 1], [d.sh - 11, d.shY - 2], [d.ch - 1, d.chY - 14], [d.ch + 2, d.chY], [d.ub + 2, d.ubY], [d.wa + 2, d.waY], [d.hh + 7, d.hhY + 4],
+        [d.hi + 11, d.cr + 12], [d.hi + 17, d.cr + 58], [d.hi + 21, d.knY - 4]], d.nkY + 22));
+      add(band(d.waY - 4, d.waY + 5, d.wa + 2, d.wa + 2.6), 'dark', 0);
+      line([1, -1].map(s => `M${100 + s * 9} ${d.waY + 7}L${100 + s * 16} ${d.knY - 6}M${100 + s * 24} ${d.hhY + 2}L${100 + s * 36} ${d.knY - 8}`).join(''));
+      break;
     case 'combi': {
-      const l = [[d.nw + 5, 90], [d.sh - 12, 95], [d.ch - 2, 132], [d.wa + 2, 194], [d.hi + 4, 240], [d.lx + d.th + 3, 282], [d.lx + d.kn + 4, 360], [d.lx + d.an + 6, 446], [d.lx - d.an - 5, 446], [d.lx - d.kn - 2, 362], [d.lx - d.th + 3, 292], [0, 272]];
-      add([[100, 106], ...legsShape(l)]); add(band(189, 199, d.wa + 2.2, d.wa + 2.8), 'dark', 0); break;
+      const l = [[d.nkB + 5, d.nkY + 1], [d.sh - 11, d.shY - 2], [d.ch - 1, d.chY - 14], [d.ch + 2.5, d.chY], [d.ub + 3, d.ubY], [d.wa + 3, d.waY], [d.hh + 4, d.hhY], [d.hi + 4, d.hiY],
+        [d.lx + d.th + 4, d.cr + 14], [d.lx + d.mt + 6, d.mtY], [d.lx + d.kn + 8, d.knY], [d.lx + d.an + 11, d.anY - 2], [d.lx - d.an - 9, d.anY - 2], [d.lx - d.kn - 4, d.knY],
+        [d.lx - d.mt, d.mtY], [2.5, d.cr + 8], [0, d.cr + 4]];
+      add([[100, d.nkY + 20], ...legsShape(l)]);
+      add(band(d.waY - 3, d.waY + 6, d.wa + 3, d.wa + 3.4), 'dark', 0);
+      line(`M100 ${d.waY + 6}V${d.cr}`);
+      break;
     }
     case 'veste': case 'manteau': {
-      const hem = it.shape === 'manteau' ? 352 : 262;
-      const panel = RX([[d.nw + 2, 85], [d.sh, 94], [d.sh + 6, 106], [d.ch + 6, 140], [d.wa + 7, 192], [d.hi + 8, hem], [6, hem], [6, 152], [d.nw + 1, 98]]);
-      add(panel, 'main', 0); add(MX(panel), 'main', 0);
-      const sl = RX([[d.sh - 5, 94], [d.sh + 7, 102], [d.sh + 13, 140], [d.sh + 16, 192], [d.sh + 18, 254], [d.sh + 1, 256], [d.sh - 2, 196], [d.ch, 152], [d.ch + 1, 134]]);
-      add(sl); add(MX(sl));
-      line(`M${100 + d.nw + 1} 98L106 152M${100 - d.nw - 1} 98L94 152`);
-      if (it.shape === 'manteau') add(band(186, 196, d.wa + 8, d.wa + 8), 'dark', 0);
+      const coat = it.shape === 'manteau';
+      const hem = coat ? d.knY - 4 : d.hiY + 18, fl = coat ? 6 : 0;
+      both(RX([[d.nkB + 1, d.nkY - 3], [d.sh - 6, d.shY - 4], [d.sh + 3.5, d.shY + 4], [d.sh + 1.5, d.shY + 18], [d.ch + 5, d.chY], [d.ub + 6, d.ubY], [d.wa + 7, d.waY],
+        [d.hh + 7 + fl * 0.3, d.hhY], [d.hi + 7 + fl * 0.5, d.hiY], [d.hi + 8 + fl, hem], [6, hem], [6, d.chY + 22], [d.nkB + 1, d.nkY + 6]]), 'main', 0);
+      both(RX([[d.nkB + 1, d.nkY + 1], [d.nkB + 12, d.nkY + 12], [d.nkB + 8, d.nkY + 18], [d.nkB + 14, d.nkY + 28], [6.5, d.chY + 22], [d.nkB + 1, d.nkY + 7]]), 'dark', 0);
+      both(sleevePts(d, d.wrY - 9, 4.5));
+      line([1, -1].map(s => `M${100 + s * (d.hh - 8)} ${d.hhY + 10}h${s * 15}M${100 + s * (d.sh - 6)} ${d.shY - 3}Q${100 + s * (d.sh + 2)} ${d.shY + 10} ${100 + s * (d.sh - 2)} ${d.shY + 20}`).join(''));
+      elbowFolds(4.5);
+      if (coat) {
+        for (const s of [1, -1]) for (const y of [d.chY + 30, d.waY - 8, d.hhY + 22]) dot(100 + s * 12, y, 1.8, 'dark');
+        add(band(d.waY - 5, d.waY + 5, d.wa + 8, d.wa + 8.4), 'dark', 0);
+        add(band(d.waY - 6, d.waY + 6, 4, 4), 'light', 0);
+      } else for (const y of [d.chY + 34, d.waY + 2]) dot(107, y, 1.7, 'dark');
       break;
     }
     case 'baskets': case 'bottines': case 'escarpins': {
-      const a = d.an;
-      const shoe = it.shape === 'baskets' ? [[-a - 5, 444], [a + 5, 444], [a + 7, 466], [-a - 7, 466]]
-        : it.shape === 'bottines' ? [[-a - 4, 424], [a + 4, 424], [a + 6, 467], [-a - 6, 467]]
-        : [[-a - 3, 452], [a + 3, 452], [a + 5, 468], [a + 1, 474], [-a - 4, 474], [-a - 5, 466]];
-      const sole = it.shape === 'baskets' ? [[-a - 7.5, 465], [a + 7.5, 465], [a + 7.5, 474], [-a - 7.5, 474]]
-        : it.shape === 'bottines' ? [[-a - 6.5, 466], [a + 6.5, 466], [a + 6.5, 475], [-a - 6.5, 475]] : null;
-      for (const sx of [1, -1]) {
-        const at = ([x, y]) => [100 + sx * d.lx + x, y];
-        add(shoe.map(at), 'main', 1);
-        if (sole) add(sole.map(at), it.shape === 'baskets' ? 'white' : 'dark', 0);
+      const shoe = it.shape === 'baskets' ? [[-8, -4], [8, -4], [10, 12], [9.5, 20], [-9.5, 20], [-10, 12]]
+        : it.shape === 'bottines' ? [[-8.5, -26], [8.5, -26], [9, 4], [10, 16], [9, 23], [-9, 23], [-10, 16], [-9, 4]]
+        : [[-7.5, 8], [7.5, 8], [9, 16], [6, 24], [0, 26], [-6, 24], [-9, 16]];
+      for (const s of [1, -1]) {
+        const at = pts => pts.map(([x, y]) => [100 + s * d.lx + x, d.anY + y]);
+        add(at(shoe), 'main', 1);
+        if (it.shape === 'baskets') {
+          add(at([[-10.5, 17], [10.5, 17], [10.5, 24], [-10.5, 24]]), 'white', 0);
+          line(at([[-4, 0], [4, 0]]).concat(at([[-4.5, 4], [4.5, 4]]), at([[-5, 8], [5, 8]])).reduce((p, q, i) => p + (i % 2 ? `L${fx(q[0])} ${fx(q[1])}` : `M${fx(q[0])} ${fx(q[1])}`), ''), 1);
+        } else if (it.shape === 'bottines') {
+          add(at([[-9.5, 20], [9.5, 20], [9.5, 24], [-9.5, 24]]), 'dark', 0);
+          add(at([[5, -24], [8.2, -24], [8.8, 2], [5.5, 2]]), 'dark', 0);
+        } else line(at([[-4, 12], [4, 12]]).reduce((p, q, i) => p + (i ? `Q${fx(100 + s * d.lx)} ${fx(d.anY + 15)} ${fx(q[0])} ${fx(q[1])}` : `M${fx(q[0])} ${fx(q[1])}`), ''));
       }
       break;
     }
     case 'sac': {
-      const cx = 100 + d.sh + 9;
-      line(`M${cx - 10} 279Q${cx} 252 ${cx + 10} 279`, 3);
-      add([[cx - 17, 278], [cx + 17, 278], [cx + 19, 314], [cx - 19, 314]], 'main', 0);
-      add([[cx - 17, 278], [cx + 17, 278], [cx + 17.6, 290], [cx - 17.6, 290]], 'dark', 0); break;
+      const cx = 100 + armLines(d).wx + 1, top = d.wrY + 26;
+      line(`M${cx - 10} ${top + 1}Q${cx} ${top - 26} ${cx + 10} ${top + 1}`, 2.6);
+      add([[cx - 17, top], [cx + 17, top], [cx + 19, top + 32], [cx - 19, top + 32]], 'main', 0);
+      add([[cx - 17, top], [cx + 17, top], [cx + 17.8, top + 13], [cx - 17.8, top + 13]], 'dark', 0);
+      add([[cx - 3, top + 11], [cx + 3, top + 11], [cx + 3, top + 17], [cx - 3, top + 17]], 'light', 0);
+      break;
     }
-    case 'casquette':
-      add([[100 - d.hr - 1, 38], [100 - d.hr + 2, 24], [100, 17], [100 + d.hr - 2, 24], [100 + d.hr + 1, 38]], 'main', 1);
-      add(ellPts(100, 40, d.hr + 7, 4.5), 'dark', 1); break;
-    case 'bonnet':
-      add([[100 - d.hr - 1.5, 45], [100 - d.hr, 27], [100, 16], [100 + d.hr, 27], [100 + d.hr + 1.5, 45]], 'main', 1);
-      add(band(37, 47, d.hr + 1.5, d.hr + 1.8), 'dark', 0); add(ellPts(100, 14, 5, 5), 'light', 1); break;
+    case 'casquette': {
+      const yb = d.top + (d.chin - d.top) * 0.36;
+      add([[100 - d.hw - 0.5, yb], [100 - d.hw + 1, d.top + 7], [100, d.top - 1.5], [100 + d.hw - 1, d.top + 7], [100 + d.hw + 0.5, yb]], 'main', 1);
+      add(ellPts(100, yb + 1, d.hw + 7, 4.2), 'dark', 1);
+      dot(100, d.top - 1, 2, 'dark');
+      line(`M100 ${d.top}V${yb - 2}`);
+      break;
+    }
+    case 'bonnet': {
+      const yb = d.top + (d.chin - d.top) * 0.42;
+      add([[100 - d.hw - 1.5, yb], [100 - d.hw, d.top + 10], [100, d.top - 1.5], [100 + d.hw, d.top + 10], [100 + d.hw + 1.5, yb]], 'main', 1);
+      add(band(yb - 9, yb + 1, d.hw + 1.2, d.hw + 1.8), 'dark', 0);
+      add(ellPts(100, d.top - 5, 5.5, 5.5), 'light', 1);
+      break;
+    }
     case 'echarpe':
-      add([[100 - d.nw - 7, 80], [100 + d.nw + 7, 80], [100 + d.nw + 8, 95], [100 - d.nw - 8, 95]], 'main', 1);
-      add([[103, 90], [115, 90], [116, 170], [104, 170]], 'main', 0);
-      add([[103.4, 120], [115.4, 120], [115.5, 126], [103.5, 126]], 'dark', 0); break;
+      add(pathPts([[-d.nkB - 7, d.nkY - 7], [d.nkB + 7, d.nkY - 7], [d.nkB + 9, d.nkY + 7], [-d.nkB - 9, d.nkY + 7]]), 'main', 1);
+      add(RX([[1, d.nkY + 5], [12, d.nkY + 5], [14, d.chY + 42], [3, d.chY + 44]]), 'main', 0);
+      add(RX([[8, d.nkY + 7], [18, d.nkY + 9], [22, d.chY + 30], [12, d.chY + 32]]), 'main', 0);
+      add(ellPts(106, d.nkY + 7, 6, 4.5), 'dark', 1);
+      line(Array.from({ length: 5 }, (_, i) => `M${103 + i * 2.4} ${d.chY + 43}v5`).join(''));
+      break;
   }
   return out;
 }
+const pathPts = rel => RX(rel);
 let mqSeq = 0;
 function mannequinSVG(gender, sel, mode, bare) {
   const d = BODY[gender] || BODY.femme;
   const u = 'mq' + (++mqSeq);
-  const defs = [];
-  const body = bodyPaths(d).map(p => `<path d="${p}" fill="url(#${u}s)" stroke="#C3C7D2" stroke-width=".7"/>`).join('');
+  const B = bodyGeom(d);
+  const limb = `fill="url(#${u}s)" stroke="#B9BECB" stroke-width=".6"`;
+  const trunk = `fill="url(#${u}t)" stroke="#B9BECB" stroke-width=".6"`;
+  const body = `<path d="${B.torso}" ${trunk}/>${B.arms.map(p => `<path d="${p}" ${limb}/>`).join('')}<path d="${B.neck}" ${limb}/><path d="${B.head}" ${trunk}/>`
+    + `${B.hands.map(p => `<path d="${p}" ${limb}/>`).join('')}${B.feet.map(p => `<path d="${p}" ${limb}/>`).join('')}`
+    + `<path d="${bodyLines(d, gender)}" fill="none" stroke="rgba(105,112,135,.32)" stroke-width=".8" stroke-linecap="round"/>`;
   const layers = [];
   if (!bare) {
     const order = mode === 'piece' ? ['piece', 'feet', 'outer', 'acc'] : ['bottom', 'top', 'feet', 'outer', 'acc'];
@@ -1996,29 +2127,35 @@ function mannequinSVG(gender, sel, mode, bare) {
       const it = itemById(sel[slot]);
       if (!it) continue;
       const hex = colorOf(it.color).hex, L = P.lum(hex);
-      const tones = { dark: L < 0.06 ? P.mix(hex, '#ffffff', 0.18) : P.mix(hex, '#000000', 0.22), light: L > 0.7 ? P.mix(hex, '#000000', 0.08) : P.mix(hex, '#ffffff', 0.35), white: '#F4F4F1' };
-      const stroke = L < 0.1 ? P.mix(hex, '#ffffff', 0.35) : P.mix(hex, '#000000', 0.35);
-      garmentParts(it, d).forEach((p, k) => {
-        if (p.line) { layers.push(`<path d="${p.line}" fill="none" stroke="${stroke}" stroke-width="${p.w || 0.9}" stroke-linecap="round" opacity=".85"/>`); return; }
-        const path = pathOf(p.pts, p.smooth);
-        let fill = tones[p.tone] || hex;
-        if (p.tone === 'main' && it.photo) {
-          const xs = p.pts.map(q => q[0]), ys = p.pts.map(q => q[1]);
-          const x = Math.min(...xs), y = Math.min(...ys), w = Math.max(...xs) - x, h = Math.max(...ys) - y;
-          const pid = `${u}${slot}${k}`;
-          defs.push(`<pattern id="${pid}" patternUnits="userSpaceOnUse" x="${fx(x)}" y="${fx(y)}" width="${fx(w)}" height="${fx(h)}"><image href="${esc(it.photo)}" width="${fx(w)}" height="${fx(h)}" preserveAspectRatio="xMidYMid slice"/></pattern>`);
-          fill = `url(#${pid})`;
-        }
-        layers.push(`<path d="${path}" fill="${fill}" stroke="${stroke}" stroke-width=".7" stroke-linejoin="round"/>`);
-        if (p.tone === 'main') layers.push(`<path d="${path}" fill="url(#${u}h)"/>`);
-      });
+      const tones = { main: hex, dark: L < 0.06 ? P.mix(hex, '#ffffff', 0.2) : P.mix(hex, '#000000', 0.24), light: L > 0.7 ? P.mix(hex, '#000000', 0.1) : P.mix(hex, '#ffffff', 0.38), white: '#F4F4F1' };
+      const stroke = L < 0.1 ? P.mix(hex, '#ffffff', 0.32) : P.mix(hex, '#000000', 0.34);
+      const fold = L < 0.12 ? 'rgba(255,255,255,.22)' : 'rgba(0,0,0,.28)';
+      const g = garmentParts(it, d).map(p => {
+        if (p.line) return `<path d="${p.line}" fill="none" stroke="${p.w ? stroke : fold}" stroke-width="${p.w || 0.8}" stroke-linecap="round"/>`;
+        const path = p.d || pathOf(p.pts, p.smooth);
+        return `<path d="${path}" fill="${tones[p.tone] || hex}" stroke="${stroke}" stroke-width=".6" stroke-linejoin="round"/>`
+          + (p.tex ? `<path d="${path}" fill="url(#${u}${p.tex})"/>` : '')
+          + (p.tone === 'main' ? `<path d="${path}" fill="url(#${u}h)"/>` : '');
+      }).join('');
+      layers.push(`<g class="mq-g" data-mq-slot="${slot}" filter="url(#${u}ds)"><title>${esc(it.name)} : touche pour changer</title>${g}</g>`);
     }
   }
   return `<svg viewBox="0 0 200 500" ${bare ? 'aria-hidden="true"' : `role="img" aria-label="Mannequin ${gender === 'homme' ? 'homme' : 'femme'} habillé avec la tenue"`}><defs>
-    <linearGradient id="${u}s" x1="0" x2="1"><stop offset="0" stop-color="#D7DAE3"/><stop offset=".38" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C2C6D1"/></linearGradient>
-    <linearGradient id="${u}h" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".24"/></linearGradient>
-    ${defs.join('')}</defs>
-    <ellipse cx="100" cy="478" rx="62" ry="7" fill="rgba(0,0,0,.3)"/><g>${body}</g><g>${layers.join('')}</g></svg>`;
+    <linearGradient id="${u}s" x1="0" x2="1"><stop offset="0" stop-color="#D3D7E1"/><stop offset=".36" stop-color="#FFFFFF"/><stop offset=".62" stop-color="#F1F2F6"/><stop offset="1" stop-color="#B9BECB"/></linearGradient>
+    <radialGradient id="${u}t" cx=".42" cy=".26" r=".85"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#EEF0F5"/><stop offset="1" stop-color="#C3C8D4"/></radialGradient>
+    <linearGradient id="${u}h" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></linearGradient>
+    <linearGradient id="${u}r" x1="0" x2="1"><stop offset="0" stop-color="#4A4F66"/><stop offset=".45" stop-color="#C9CEDD"/><stop offset="1" stop-color="#363B52"/></linearGradient>
+    <radialGradient id="${u}b" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#3A3F5E"/><stop offset="1" stop-color="#14162A"/></radialGradient>
+    <pattern id="${u}denim" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 4L4 0M-1 1L1 -1M3 5L5 3" stroke="rgba(255,255,255,.16)" stroke-width=".6"/></pattern>
+    <pattern id="${u}knit" width="3" height="5" patternUnits="userSpaceOnUse"><path d="M1.5 0V5" stroke="rgba(0,0,0,.14)" stroke-width=".9"/><path d="M0 0V5" stroke="rgba(255,255,255,.08)" stroke-width=".6"/></pattern>
+    <pattern id="${u}twill" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 5L5 0" stroke="rgba(0,0,0,.11)" stroke-width=".7"/></pattern>
+    <filter id="${u}ds" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="1" stdDeviation="1.1" flood-color="#000" flood-opacity=".28"/></filter>
+    <filter id="${u}bl" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>
+    <ellipse cx="100" cy="492" rx="60" ry="6" fill="rgba(0,0,0,.45)" filter="url(#${u}bl)"/>
+    <ellipse cx="100" cy="486" rx="46" ry="7.5" fill="#101224"/>
+    <ellipse cx="100" cy="482.5" rx="46" ry="7" fill="url(#${u}b)" stroke="rgba(255,255,255,.14)" stroke-width=".6"/>
+    <rect x="98.2" y="${d.cr + 16}" width="3.6" height="${482 - d.cr - 16}" rx="1.8" fill="url(#${u}r)"/>
+    <g>${body}</g><g>${layers.join('')}</g></svg>`;
 }
 
 /* ================= politique de confidentialité ================= */
@@ -2372,6 +2509,8 @@ document.addEventListener('click', e => {
 });
 
 board.addEventListener('click', e => {
+  const g = e.target.closest('[data-mq-slot]');
+  if (g) { step(g.dataset.mqSlot, 1); return; }
   const b = e.target.closest('button');
   if (!b) return;
   if (b.dataset.step) step(b.dataset.slot, Number(b.dataset.step));
