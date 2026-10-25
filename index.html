@@ -881,7 +881,7 @@ select.pd-sel { padding: 7px 4px 7px 8px; font-size: 12.5px; border-radius: 10px
           <details><summary>Comment ajouter un vêtement précis, par exemple des Air Force 1&nbsp;?</summary><p>Dans la fiche d'ajout, touche « Rechercher l'image en ligne », tape la marque et le modèle, puis ouvre Google Images. Copie la photo du vêtement, reviens dans DressIn et touche « Coller l'image copiée ».</p></details>
           <details><summary>Je change de téléphone, je fais comment&nbsp;?</summary><p id="faq-phone"></p></details>
         </div>
-        <div class="about"><span>DressIn · version 1.4</span><span class="data-actions" id="share-zone"></span></div>
+        <div class="about"><span>DressIn · version 1.5</span><span class="data-actions" id="share-zone"></span></div>
       </section>
     </div>
   </section>
@@ -2175,13 +2175,18 @@ function bodyGeom(d) {
   const A = armLines(d);
   const arm = RX([...A.outer, ...A.inner.slice().reverse()]);
   const hx = A.wx, hy = d.wrY;
-  const hand = RX([[hx - 5, hy - 1], [hx + 5, hy - 1], [hx + 6.5, hy + 12], [hx + 4, hy + 29], [hx - 1, hy + 33], [hx - 5, hy + 23], [hx - 6, hy + 10]]);
+  const hk = d.f ? 1.2 : 1;
+  const hand = RX([[-5, -1], [5, -1], [6.5, 12], [4, 29], [-1, 33], [-5, 23], [-6, 10]].map(([x, y]) => [hx + x * hk, hy + y * hk]));
   const foot = RX([[d.lx - 6, d.anY + 1], [d.lx + 6, d.anY + 1], [d.lx + 8, d.anY + 15], [d.lx + 7, d.anY + 24], [d.lx - 7, d.anY + 24], [d.lx - 8, d.anY + 15]]);
   const cy = (d.top + d.chin) / 2, h = (d.chin - d.top) / 2;
-  const F = optOf(FACES, d.face)[2];
-  const head = Array.from({ length: 28 }, (_, i) => {
-    const a = (i / 28) * Math.PI * 2, c = Math.cos(a), s = Math.sin(a);
-    return s > 0 ? [100 + d.hw * F.w * Math.sign(c) * Math.abs(c) ** F.px * (1 - F.t * s), cy + h * s ** F.py] : [100 + d.hw * F.w * c, cy + h * s];
+  let head;
+  if (d.f) {
+    const pts = optOf(FACES, d.face)[2], at = ([x, y]) => [100 + x * d.hw, cy + (y - 36) * d.f];
+    const right = pts.slice(1, -1).map(at);
+    head = [at(pts[0]), ...right, at(pts[pts.length - 1]), ...right.slice().reverse().map(([x, y]) => [200 - x, y])];
+  } else head = Array.from({ length: 28 }, (_, i) => {
+    const a = (i / 28) * Math.PI * 2, s = Math.sin(a);
+    return [100 + d.hw * Math.cos(a) * (s > 0 ? 1 - 0.17 * s : 1), cy + h * s];
   });
   const neck = [[100 - d.nkT, d.chin - 8], [100 + d.nkT, d.chin - 8], [100 + d.nkB, d.nkY + 3], [100 - d.nkB, d.nkY + 3]];
   return {
@@ -2363,8 +2368,13 @@ const HAIRS = [['court', 'Court'], ['raie', 'Raie sur le côté'], ['degrade', '
   ['pixie', 'Pixie'], ['carre', 'Carré'], ['milong', 'Mi-longs'], ['long', 'Longs'], ['ondules', 'Ondulés'], ['frange', 'Frange'], ['rase', 'Rasé'], ['chauve', 'Chauve']];
 const HAIR_COLORS = [['noir', 'Noir', '#1F1A18'], ['brun', 'Brun', '#45291D'], ['chatain', 'Châtain', '#7A4C2C'], ['auburn', 'Auburn', '#7B2F20'], ['roux', 'Roux', '#B0532A'], ['blond', 'Blond', '#D8B169'],
   ['platine', 'Platine', '#ECE0C4'], ['gris', 'Gris', '#A9A9B0'], ['blanc', 'Blanc', '#EDECEF'], ['rose', 'Rose', '#E890B3'], ['violet', 'Violet', '#8C5BD6'], ['bleu', 'Bleu', '#5D7CF6'], ['vert', 'Vert', '#3E9C78'], ['rouge', 'Rouge', '#C0283A']];
-const FACES = [['ovale', 'Ovale', { w: 1, t: 0.17, px: 1, py: 1 }], ['rond', 'Rond', { w: 1.04, t: 0.06, px: 1, py: 1 }], ['carre', 'Carré', { w: 1.02, t: 0.08, px: 0.6, py: 0.72 }],
-  ['coeur', 'Cœur', { w: 1.03, t: 0.3, px: 1.15, py: 1 }], ['long', 'Long', { w: 0.93, t: 0.14, px: 1, py: 1 }]];
+const FACES = [['ovale', 'Ovale', [[0, 0], [0.62, 1.8], [0.93, 12], [1, 30], [0.98, 42], [0.9, 53], [0.73, 63], [0.42, 70], [0, 72]]],
+  ['rond', 'Rond', [[0, 0], [0.64, 1.8], [0.95, 12], [1.02, 30], [1.01, 42], [0.95, 53], [0.82, 63], [0.5, 70.5], [0, 72]]],
+  ['carre', 'Carré', [[0, 0], [0.64, 1.6], [0.95, 11], [1.01, 30], [1, 42], [0.97, 54], [0.88, 64], [0.55, 70.5], [0, 71.5]]],
+  ['coeur', 'Cœur', [[0, 0], [0.66, 1.8], [0.98, 12], [1.03, 28], [1, 40], [0.86, 52], [0.64, 62], [0.34, 69.5], [0, 72]]],
+  ['long', 'Long', [[0, 0], [0.6, 1.8], [0.9, 12], [0.94, 30], [0.93, 43], [0.86, 55], [0.68, 65], [0.38, 71], [0, 73]]]];
+/* largeur du visage au niveau des oreilles */
+const faceW = look => { const p = optOf(FACES, look.face)[2]; return (p[3][0] + p[4][0]) / 2; };
 const EYES = [['ronds', 'Ronds'], ['amande', 'En amande'], ['grands', 'Grands'], ['felins', 'Félins'], ['endormis', 'Paupières lourdes'], ['rieurs', 'Rieurs'], ['clin', "Clin d'œil"]];
 const EYE_COLORS = [['marron', 'Marron', '#5A3A22'], ['noisette', 'Noisette', '#8A6A2E'], ['ambre', 'Ambre', '#B07A2A'], ['vert', 'Vert', '#4E7A4A'], ['bleu', 'Bleu', '#4D7EB8'], ['gris', 'Gris', '#7D8794'], ['noir', 'Noir', '#2A2222'], ['violet', 'Violet', '#7A5BB8']];
 const BROWS = [['naturels', 'Naturels'], ['fins', 'Fins'], ['epais', 'Épais'], ['arques', 'Arqués'], ['droits', 'Droits'], ['fronces', 'Froncés']];
@@ -2392,10 +2402,11 @@ const MOODS = [['joyeux', 'Joyeux', { eyes: 'ronds', mouth: 'grand', brows: 'nat
 /* cadrages des vignettes, en repère du visage : centre x, centre y, côté */
 const ZOOMS = { eyes: [100, 42, 38], glasses: [100, 44, 48], nose: [100, 52, 28], mouth: [100, 62, 28], chin: [100, 64, 54], ear: [118, 50, 36], pierce: [101, 50, 44], face: [100, 46, 66] };
 const TEE = { id: '_tee', name: 'T-shirt', cat: 'haut', shape: 'tshirt', color: 'blanc' };
+const BASICS = { top: TEE, bottom: { id: '_jean', name: 'Jean', cat: 'bas', shape: 'jean', color: 'denim' }, feet: { id: '_bk', name: 'Baskets', cat: 'chaussures', shape: 'baskets', color: 'blanc' } };
 const hexOf = (list, id, fb) => (typeof id === 'string' && /^#[0-9a-f]{6}$/i.test(id) ? id : (list.find(x => x[0] === id) || list.find(x => x[0] === fb))[2]);
 const optOf = (list, id) => list.find(x => x[0] === id) || list[0];
 function lookOf(gender = bodyOf()) {
-  const l = { style: 'avatar', skin: 'doree', hair: gender === 'homme' ? 'court' : 'long', hairColor: 'chatain', hairTips: 'aucun', face: 'ovale', brows: 'naturels', eyes: 'ronds', eyeColor: 'marron',
+  const l = { style: 'avatar', skin: 'doree', hair: gender === 'homme' ? 'court' : 'long', hairColor: 'chatain', hairTips: 'aucun', face: 'ovale', brows: 'naturels', eyes: 'amande', eyeColor: 'marron',
     lashes: gender === 'homme' ? 'aucun' : 'naturels', nose: 'bouton', mouth: 'sourire', beard: 'aucune', lips: 'naturel', shadow: 'aucun', liner: 'aucun', blush: 'leger', freckles: false, mole: 'aucun',
     glasses: 'aucune', frame: 'noir', earrings: 'aucune', metal: 'or', piercing: 'aucun', build: 'moyenne', bg: 'aucun', ...(state.settings.look || {}) };
   if (l.glasses === true) l.glasses = 'classiques';
@@ -2413,39 +2424,43 @@ function dimsFor(gender, look) {
   if (m.wa) { d.wa *= m.wa; d.ub *= (1 + m.wa) / 2; }
   if (m.hip) for (const key of ['hh', 'hi', 'th']) d[key] *= m.hip;
   if (m.arm) for (const key of ['up', 'el']) d[key] *= m.arm;
-  if (look.style === 'avatar') { d.hw = gender === 'homme' ? 34.5 : 33; d.f = d.hw / 24.5; d.top = -20; d.chin = 80; d.lift = 5 * d.f; d.face = look.face; }
+  if (look.style === 'avatar') { d.hw = gender === 'homme' ? 36.5 : 35; d.f = d.hw / 24.5; d.chin = 75; d.top = d.chin - 74 * d.f; d.lift = 5 * d.f; d.face = look.face; d.nkT = d.hw * 0.31; d.nkB = d.nkT + 2.5; }
   return d;
 }
 /* cheveux dessinés en repère du visage (tête de 24,5 de demi-largeur, du front y = 6 au menton y = 78) */
-function hairSVG(d, look, u) {
+function hairSVG(d, look, u, mono) {
   const W = d.hw, T = d.top, C = d.chin, cy = (T + C) / 2, S = d.chY;
   const hc = hexOf(HAIR_COLORS, look.hairColor, 'chatain');
   const tip = look.hairTips && look.hairTips !== 'aucun' ? hexOf(HAIR_COLORS, look.hairTips, 'blond') : null;
-  const dark = P.mix(hc, '#000000', 0.3), fill = tip ? `url(#${u}hg)` : hc;
+  const dark = mono || P.mix(hc, '#000000', 0.32), fill = mono || `url(#${u}hg)`, fillB = mono || `url(#${u}hb)`;
   const gloss = P.lum(hc) < 0.05 ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.26)';
-  const defs = tip ? `<linearGradient id="${u}hg" gradientUnits="userSpaceOnUse" x1="0" y1="${T + 4}" x2="0" y2="${C + 34}"><stop offset="0" stop-color="${hc}"/><stop offset=".4" stop-color="${hc}"/><stop offset="1" stop-color="${tip}"/></linearGradient>` : '';
+  const defs = mono ? '' : `<linearGradient id="${u}hg" gradientUnits="userSpaceOnUse" x1="0" y1="${T - 14}" x2="0" y2="${C + 36}"><stop offset="0" stop-color="${P.mix(hc, '#ffffff', 0.2)}"/><stop offset=".32" stop-color="${hc}"/><stop offset="1" stop-color="${tip || P.mix(hc, '#000000', 0.22)}"/></linearGradient>`
+    + `<linearGradient id="${u}hb" gradientUnits="userSpaceOnUse" x1="0" y1="${T - 14}" x2="0" y2="${S + 12}"><stop offset="0" stop-color="${P.mix(hc, '#000000', 0.14)}"/><stop offset="1" stop-color="${tip ? P.mix(tip, '#000000', 0.15) : P.mix(hc, '#000000', 0.34)}"/></linearGradient>`;
   const shape = pts => `<path d="${pathOf(RX(pts), 1)}" fill="${fill}" stroke="${dark}" stroke-width=".7"/>`;
   const curl = (x, y, r) => `<circle cx="${fx(100 + x)}" cy="${fx(y)}" r="${fx(r)}" fill="${fill}" stroke="${dark}" stroke-width=".6"/>`;
-  const lines = (dd, w = 0.9, op = 0.7) => `<path d="${dd}" fill="none" stroke="${dark}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;
+  const lines = (dd, w = 0.9, op = 0.7) => (mono ? '' : `<path d="${dd}" fill="none" stroke="${dark}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`);
   /* mèche, natte ou lock : une courbe épaisse ; braid ajoute les croisements de la tresse */
   const strand = (x1, y1, cx, cyy, x2, y2, w, braid) => {
     const p = `M${fx(100 + x1)} ${fx(y1)}Q${fx(100 + cx)} ${fx(cyy)} ${fx(100 + x2)} ${fx(y2)}`;
     return `<path d="${p}" fill="none" stroke="${dark}" stroke-width="${fx(w + 1.3)}" stroke-linecap="round"/><path d="${p}" fill="none" stroke="${fill}" stroke-width="${fx(w)}" stroke-linecap="round"/>`
-      + (braid ? `<path d="${p}" fill="none" stroke="${dark}" stroke-width="${fx(w)}" stroke-dasharray="1 2.6" opacity=".5"/>` : `<path d="${p}" fill="none" stroke="${dark}" stroke-width=".6" opacity=".45"/>`);
+      + (mono ? '' : braid ? `<path d="${p}" fill="none" stroke="${dark}" stroke-width="${fx(w)}" stroke-dasharray="1 2.6" opacity=".5"/>` : `<path d="${p}" fill="none" stroke="${dark}" stroke-width=".6" opacity=".45"/>`);
   };
-  const tie = (x, y) => `<ellipse cx="${fx(100 + x)}" cy="${fx(y)}" rx="3.6" ry="2.2" fill="#E8556D" stroke="#9C2F45" stroke-width=".5"/>`;
-  const shine = `<path d="M${fx(100 - W * 0.45)} ${fx(T + 3)}Q100 ${fx(T - 2)} ${fx(100 + W * 0.35)} ${fx(T + 2)}" fill="none" stroke="${gloss}" stroke-width="2.4" stroke-linecap="round"/>`;
-  const part = `<path d="M100 ${fx(T - 4.5)}V${fx(T + 9)}" stroke="${dark}" stroke-width="1" stroke-linecap="round"/>`;
+  const tie = (x, y) => mono ? '' : `<ellipse cx="${fx(100 + x)}" cy="${fx(y)}" rx="3.6" ry="2.2" fill="#E8556D" stroke="#9C2F45" stroke-width=".5"/>`;
+  const shine = mono ? '' : `<path d="M${fx(100 - W * 0.6)} ${fx(T + 5)}Q${fx(100 - W * 0.12)} ${fx(T - 4.2)} ${fx(100 + W * 0.5)} ${fx(T + 2.6)}Q${fx(100 - W * 0.06)} ${fx(T - 0.4)} ${fx(100 - W * 0.6)} ${fx(T + 5)}Z" fill="#FFFFFF" opacity="${P.lum(hc) < 0.05 ? 0.13 : 0.22}"/>`
+    + `<path d="M${fx(100 - W * 0.3)} ${fx(T + 0.6)}Q${fx(100 + W * 0.05)} ${fx(T - 1.8)} ${fx(100 + W * 0.32)} ${fx(T + 0.4)}" fill="none" stroke="${gloss}" stroke-width="1" stroke-linecap="round"/>`;
+  const part = mono ? '' : `<path d="M100 ${fx(T - 4.5)}V${fx(T + 9)}" stroke="${dark}" stroke-width="1" stroke-linecap="round"/>`;
   const fringe = [[-W - 1.5, cy - 2], [-W - 1, T + 12], [-W * 0.62, T - 2.5], [0, T - 5], [W * 0.62, T - 2.5], [W + 1, T + 12], [W + 1.5, cy - 2], [W - 1.8, cy - 7], [W * 0.6, T + 15], [W * 0.12, T + 18.5], [-W * 0.35, T + 15], [-W * 0.75, T + 19], [-W + 1.6, cy - 7]];
   const sleek = [[-W - 1, cy - 4], [-W * 0.62, T - 2], [0, T - 4.5], [W * 0.62, T - 2], [W + 1, cy - 4], [W - 1.5, cy - 9], [W * 0.5, T + 11], [0, T + 12.5], [-W * 0.5, T + 11], [-W + 1.5, cy - 9]];
   const short = [[-W - 0.6, cy - 7], [-W * 0.62, T - 0.5], [0, T - 2.5], [W * 0.62, T - 0.5], [W + 0.6, cy - 7], [W - 2, cy - 10], [W * 0.5, T + 9], [0, T + 10.5], [-W * 0.5, T + 9], [-W + 2, cy - 10]];
   const longBack = [[-W - 5, cy - 2], [-W - 3, T + 5], [0, T - 6], [W + 3, T + 5], [W + 5, cy - 2], [W + 8, C + 20], [W + 9, S - 2], [W + 2, S + 10], [W - 4, C + 16], [-W + 4, C + 16], [-W - 2, S + 10], [-W - 9, S - 2], [-W - 8, C + 20]];
   const longFront = shape([[0, T - 4], [-W * 0.6, T - 1.5], [-W - 1.5, T + 12], [-W - 2.5, cy + 10], [-W + 0.5, cy + 8], [-W + 2, T + 22], [-W * 0.35, T + 12]])
-    + shape([[0, T - 4], [W * 0.6, T - 1.5], [W + 1.5, T + 12], [W + 2.5, cy + 10], [W - 0.5, cy + 8], [W - 2, T + 22], [W * 0.35, T + 12]]);
+    + shape([[0, T - 4], [W * 0.6, T - 1.5], [W + 1.5, T + 12], [W + 2.5, cy + 10], [W - 0.5, cy + 8], [W - 2, T + 22], [W * 0.35, T + 12]])
+    + lines([1, -1].map(k => `M${fx(100 + k * W * 0.22)} ${fx(T - 2)}Q${fx(100 + k * (W + 0.4))} ${fx(T + 9)} ${fx(100 + k * (W + 1.2))} ${fx(cy + 6)}M${fx(100 + k * W * 0.5)} ${fx(T + 1)}Q${fx(100 + k * (W - 1))} ${fx(T + 12)} ${fx(100 + k * (W - 0.6))} ${fx(cy - 2)}`).join(''), 0.7, 0.35);
+  const longFlow = lines([1, -1].map(k => `M${fx(100 + k * (W + 5))} ${fx(cy + 6)}Q${fx(100 + k * (W + 8.5))} ${fx(C + 14)} ${fx(100 + k * (W + 5.5))} ${fx(S + 4)}M${fx(100 + k * (W + 1))} ${fx(C + 4)}Q${fx(100 + k * (W + 3))} ${fx(C + 18)} ${fx(100 + k * (W + 1))} ${fx(S + 6)}`).join(''), 0.7, 0.3);
   const shaved = `<g opacity=".32">${shape(short)}</g>`;
   let back = '', front = '';
   switch (look.hair) {
-    case 'court': front = shape(fringe) + shine; break;
+    case 'court': front = shape(fringe) + lines(`M${fx(100 - W * 0.1)} ${fx(T - 3)}Q${fx(100 + W * 0.15)} ${fx(T + 8)} ${fx(100 + W * 0.5)} ${fx(T + 13)}M${fx(100 - W * 0.5)} ${fx(T)}Q${fx(100 - W * 0.35)} ${fx(T + 9)} ${fx(100 - W * 0.1)} ${fx(T + 16)}`, 0.7, 0.35) + shine; break;
     case 'raie':
       front = shape([[-W - 0.6, cy - 6], [-W - 0.2, T + 9], [-W * 0.62, T - 1], [-W * 0.2, T - 3.6], [W * 0.4, T - 3], [W * 0.85, T + 2.5], [W + 0.8, T + 14], [W + 0.6, cy - 6], [W - 2, cy - 9],
         [W * 0.72, T + 17], [W * 0.25, T + 15.5], [-W * 0.2, T + 11], [-W * 0.42, T + 6.5], [-W * 0.55, T + 11.5], [-W + 2.2, cy - 9]])
@@ -2473,9 +2488,12 @@ function hairSVG(d, look, u) {
       for (let i = 0; i < 5; i++) front += curl(-W * 0.55 + i * W * 0.275, T + 14 + (i % 2) * 2, 5);
       break;
     case 'afro':
-      back = `<ellipse cx="100" cy="${fx(cy - 9)}" rx="${fx(W + 16)}" ry="${fx((C - T) * 0.62)}" fill="${fill}" stroke="${dark}" stroke-width=".7"/>`;
-      front = shape(sleek);
-      for (let i = 0; i < 6; i++) front += curl(-W * 0.62 + i * W * 0.248, T + 12 + (i % 2) * 2.5, 5.2);
+      { const R = W + 15, Ry = (C - T) * 0.6, n = 30;
+        back = `<path d="${pathOf(Array.from({ length: n }, (_, i) => { const a = (i / n) * Math.PI * 2, r = i % 2 ? 1 : 1.06; return [100 + R * r * Math.cos(a), cy - 9 + Ry * r * Math.sin(a)]; }), 1)}" fill="${fill}" stroke="${dark}" stroke-width=".7"/>`
+          + lines(Array.from({ length: 14 }, (_, i) => { const a = Math.PI * (1.05 + 0.9 * (i / 13)), r = 0.78 + (i % 3) * 0.07; const x = 100 + R * r * Math.cos(a), y = cy - 9 + Ry * r * Math.sin(a); return `M${fx(x - 2)} ${fx(y)}q2 -2.4 4 0`; }).join(''), 0.8, 0.35); }
+      front = shape([[-W - 1.5, cy - 2], [-W - 1, T + 10], [-W * 0.6, T - 3], [0, T - 5.5], [W * 0.6, T - 3], [W + 1, T + 10], [W + 1.5, cy - 2], [W - 1.2, cy - 6], [W * 0.82, T + 13],
+        [W * 0.6, T + 10.5], [W * 0.38, T + 13.5], [W * 0.14, T + 10.8], [-W * 0.1, T + 13.8], [-W * 0.34, T + 10.8], [-W * 0.58, T + 13.5], [-W * 0.8, T + 10.5], [-W + 1.2, cy - 6]])
+        + lines([-0.6, -0.25, 0.1, 0.45].map(k => `M${fx(100 + W * k - 2)} ${fx(T + 3)}q2 -2.4 4 0`).join(''), 0.8, 0.35) + shine;
       break;
     case 'locks':
       for (let i = 0; i < 9; i++) { const a = -W - 4 + i * (2 * W + 8) / 8; back += strand(a * 0.8, T + 6, a * 1.12, cy + 20, a * 1.16, C + 18, 6.4); }
@@ -2516,7 +2534,7 @@ function hairSVG(d, look, u) {
       front = shape([[W * 0.3, T - 4], [-W * 0.6, T - 1.5], [-W - 1.5, T + 12], [-W - 2.5, cy + 14], [-W + 0.5, cy + 12], [-W + 2, T + 24], [-W * 0.2, T + 14], [W * 0.2, T + 8]])
         + shape([[W * 0.3, T - 4], [W * 0.75, T - 0.5], [W + 1.5, T + 12], [W + 2.5, cy + 14], [W - 0.5, cy + 12], [W - 2, T + 22], [W * 0.45, T + 10]]) + shine;
       break;
-    case 'long': back = shape(longBack); front = longFront + shine; break;
+    case 'long': back = shape(longBack) + longFlow; front = longFront + shine; break;
     case 'ondules':
       { const side = Array.from({ length: 8 }, (_, i) => [W + 5 + (i % 2 ? 3 : 0) + i * 0.3, cy + 6 + i * ((S + 4 - cy - 6) / 7)]);
         back = shape([[-W - 5, cy - 2], [-W - 3, T + 5], [0, T - 6], [W + 3, T + 5], [W + 5, cy - 2], ...side, [W + 3, S + 12], [W - 4, C + 16], [-W + 4, C + 16], [-W - 3, S + 12], ...side.slice().reverse().map(([x, y]) => [-x, y])]); }
@@ -2530,19 +2548,24 @@ function hairSVG(d, look, u) {
     case 'rase': front = shaved; break;
     case 'chauve': front = ''; break;
   }
+  if (!mono) back = back.split(`fill="${fill}"`).join(`fill="${fillB}"`).split(`stroke="${fill}"`).join(`stroke="${fillB}"`);
   return { back, front, defs };
 }
 function faceSVG(d, look, gender, skin, u) {
   const cy = (d.top + d.chin) / 2, ey = cy + 3, ex = d.hw * 0.42, my = ey + 17, C = d.chin, W = d.hw;
-  const hc = hexOf(HAIR_COLORS, look.hairColor, 'chatain'), ec = hexOf(EYE_COLORS, look.eyeColor, 'marron'), ink = '#2A1E1A';
-  const brow = P.lum(hc) > 0.45 ? P.mix(hc, '#000000', 0.28) : hc, shade = P.mix(skin, '#000000', 0.32);
+  const hc = hexOf(HAIR_COLORS, look.hairColor, 'chatain'), ec = hexOf(EYE_COLORS, look.eyeColor, 'marron'), ink = '#24180F';
+  const brow = P.lum(hc) > 0.45 ? P.mix(hc, '#000000', 0.32) : P.mix(hc, '#000000', 0.1), shade = P.mix(skin, '#3A1A0E', 0.4);
   const metal = hexOf(METALS, look.metal, 'or'), frame = hexOf(FRAMES, look.frame, 'noir');
-  const lip = optOf(LIPS, look.lips)[2], lipLine = lip ? P.mix(lip, '#000000', 0.25) : P.mix(skin, '#6A1E26', 0.62);
-  const stk = (dd, c, w) => `<path d="${dd}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const paint = optOf(LIPS, look.lips)[2];
+  const lip = paint || (gender === 'homme' ? P.mix(skin, '#9A4A44', 0.34) : P.mix(skin, '#C0505C', 0.5)), lipLine = P.mix(lip, '#3A0F14', 0.5);
+  const stk = (dd, c, w, op) => `<path d="${dd}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"${op ? ` opacity="${op}"` : ''}/>`;
   const fl = (dd, c, extra = '') => `<path d="${dd}" fill="${c}"${extra}/>`;
-  let s = '';
-  // blush et taches de rousseur
-  if (look.blush !== 'aucun') { const big = look.blush === 'marque'; s += [1, -1].map(k => `<ellipse cx="${fx(100 + k * W * 0.6)}" cy="${fx(ey + 10)}" rx="${big ? 5.8 : 4.6}" ry="${big ? 3.3 : 2.6}" fill="#FF7A86" opacity="${big ? 0.4 : 0.22}"/>`).join(''); }
+  let s = `<defs><radialGradient id="${u}ir" cx=".5" cy=".42" r=".58"><stop offset="0" stop-color="${P.mix(ec, '#ffffff', 0.3)}"/><stop offset=".6" stop-color="${ec}"/><stop offset="1" stop-color="${P.mix(ec, '#000000', 0.5)}"/></radialGradient>`
+    + `<radialGradient id="${u}bh"><stop offset="0" stop-color="#FF6F7F" stop-opacity=".55"/><stop offset="1" stop-color="#FF6F7F" stop-opacity="0"/></radialGradient>`
+    + `<radialGradient id="${u}ch"><stop offset="0" stop-color="#FFFFFF" stop-opacity="${P.lum(skin) > 0.35 ? 0.22 : 0.12}"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient></defs>`;
+  // lumière sur la pommette, blush et taches de rousseur
+  s += `<ellipse cx="${fx(100 - W * 0.5)}" cy="${fx(ey + 6.5)}" rx="6" ry="3.4" fill="url(#${u}ch)"/>`;
+  if (look.blush !== 'aucun') { const big = look.blush === 'marque'; s += [1, -1].map(k => `<ellipse cx="${fx(100 + k * W * 0.6)}" cy="${fx(ey + 9.5)}" rx="${big ? 7.6 : 6.2}" ry="${big ? 4.8 : 3.8}" fill="url(#${u}bh)" opacity="${big ? 1 : 0.62}"/>`).join(''); }
   if (look.freckles) {
     const fc = P.mix(skin, '#6B3A1E', 0.45);
     const dots = [[-1, 0], [1.8, 1.4], [-2.2, 2.4], [0.6, 3.2], [2.8, -0.8], [-0.4, -1.8]].flatMap(([a, b]) => [1, -1].map(k => [100 + k * (ex + 1.5 + a), ey + 8.5 + b]));
@@ -2559,88 +2582,102 @@ function faceSVG(d, look, gender, skin, u) {
   else if (beard === 'bouc') s += fl(`M${fx(100 - 6.5)} ${fx(my + 3)}Q100 ${fx(my + 1.6)} ${fx(100 + 6.5)} ${fx(my + 3)}Q${fx(100 + 7)} ${fx(C - 1)} 100 ${fx(C + 2.5)}Q${fx(100 - 7)} ${fx(C - 1)} ${fx(100 - 6.5)} ${fx(my + 3)}Z`, hc, ' opacity=".95"')
     + stk(`M${fx(100 - 7.2)} ${fx(my - 1.4)}L${fx(100 - 6.6)} ${fx(my + 4)}M${fx(100 + 7.2)} ${fx(my - 1.4)}L${fx(100 + 6.6)} ${fx(my + 4)}`, hc, 2.2);
   else if (beard === 'collier') s += fl(`M${fx(100 - W * 0.93)} ${fx(ey + 2)}Q${fx(100 - W * 0.95)} ${fx(C + 2)} 100 ${fx(C + 2.5)}Q${fx(100 + W * 0.95)} ${fx(C + 2)} ${fx(100 + W * 0.93)} ${fx(ey + 2)}L${fx(100 + W * 0.8)} ${fx(ey + 2)}Q${fx(100 + W * 0.78)} ${fx(C - 4)} 100 ${fx(C - 3.5)}Q${fx(100 - W * 0.78)} ${fx(C - 4)} ${fx(100 - W * 0.8)} ${fx(ey + 2)}Z`, hc, ' opacity=".92"');
-  // yeux : ombre à paupières, sourcils, yeux, cils, eye-liner
+  // yeux : ombre à paupières, sourcils pleins, yeux en amande avec paupières, cils, eye-liner
   const shadow = optOf(SHADOWS, look.shadow)[2];
-  const EY = { ronds: [4.6, 5, 3.3], amande: [5.4, 3.4, 2.9], grands: [5.4, 6.2, 3.9], felins: [5.4, 3.6, 2.9], endormis: [4.8, 4.8, 3.3], clin: [4.6, 5, 3.3], rieurs: [4.6, 5, 3.3] };
-  const [rx, ry, ir] = EY[look.eyes] || EY.ronds;
-  if (shadow) s += [1, -1].map(k => `<ellipse cx="${fx(100 + k * ex)}" cy="${fx(ey - 2.4)}" rx="${fx(rx + 2.2)}" ry="${fx(ry * 0.8 + 1.6)}" fill="${shadow}" opacity=".55"/>`).join('');
-  const by = ey - 9 - (look.brows === 'arques' ? 0.8 : 0), bw = 5.5;
-  const BR = { naturels: [gender === 'homme' ? 2.2 : 1.7, -2.4, 0], fins: [1.1, -2.4, 0], epais: [3.3, -2, 0], arques: [1.8, -4.6, 0], droits: [2.1, -0.4, 0], fronces: [2.2, -0.6, 2.4] };
-  const [bwid, arch, drop] = BR[look.brows] || BR.naturels;
-  s += [1, -1].map(k => stk(`M${fx(100 + k * (ex - bw))} ${fx(by + 1 + drop)}Q${fx(100 + k * ex)} ${fx(by + arch)} ${fx(100 + k * (ex + bw))} ${fx(by + 0.6)}`, brow, bwid)).join('');
-  const lidW = look.liner === 'aucun' || !look.liner ? 1.2 : 1.9;
+  const EY = { ronds: [5.2, 4.7, 3.4], amande: [5.8, 3.9, 3.5], grands: [6, 5.5, 4.2], felins: [5.9, 3.7, 3.4], endormis: [5.6, 4.4, 3.5], clin: [5.8, 3.9, 3.5], rieurs: [5.6, 4, 3.4] };
+  const [rx, ry, ir] = EY[look.eyes] || EY.amande;
+  if (shadow) s += [1, -1].map(k => `<ellipse cx="${fx(100 + k * ex)}" cy="${fx(ey - ry * 0.55)}" rx="${fx(rx + 1.8)}" ry="${fx(ry * 0.75 + 1.8)}" fill="${shadow}" opacity=".55"/>`).join('');
+  const by = ey - Math.max(ry, 4) - 5 - (look.brows === 'arques' ? 0.8 : 0);
+  const BR = { naturels: [gender === 'homme' ? 2.9 : 2.3, -2.6, 0], fins: [1.3, -2.4, 0], epais: [3.8, -2.2, 0], arques: [2.2, -4.6, 0], droits: [2.5, -0.4, 0], fronces: [2.7, -0.8, 2.6] };
+  const [bt, arch, drop] = BR[look.brows] || BR.naturels;
+  s += [1, -1].map(k => {
+    const x0 = 100 + k * (ex - 6), y0 = by + 1 + drop, x1 = 100 + k * (ex + 0.8), y1 = by + arch, x2 = 100 + k * (ex + 6.8), y2 = by + 1.8;
+    return fl(`M${fx(x0)} ${fx(y0 - bt * 0.5)}Q${fx(x1)} ${fx(y1 - bt * 0.6)} ${fx(x2)} ${fx(y2)}Q${fx(x1)} ${fx(y1 + bt * 0.7)} ${fx(x0)} ${fx(y0 + bt * 0.5)}Q${fx(x0 - k * 0.9)} ${fx(y0)} ${fx(x0)} ${fx(y0 - bt * 0.5)}Z`, brow);
+  }).join('');
+  const lidW = look.liner === 'fin' || look.liner === 'aile' ? 2.4 : gender === 'homme' ? 1.7 : 1.9;
   for (const k of [1, -1]) {
-    const x = 100 + k * ex;
-    const closed = look.eyes === 'rieurs' || (look.eyes === 'clin' && k === 1);
-    if (closed) {
-      s += stk(`M${fx(x - 4.6)} ${fx(ey + 1)}Q${fx(x)} ${fx(ey - 3.6)} ${fx(x + 4.6)} ${fx(ey + 1)}`, ink, 1.8);
-      if (look.lashes !== 'aucun') s += stk(`M${fx(x + k * 4.4)} ${fx(ey + 0.6)}l${fx(k * 1.8)} -1.2`, ink, 1);
+    const x = 100 + k * ex, io = x - k * rx, oo = x + k * rx;
+    if (look.eyes === 'rieurs' || (look.eyes === 'clin' && k === 1)) {
+      s += stk(`M${fx(io)} ${fx(ey + 1.2)}Q${fx(x)} ${fx(ey - 4)} ${fx(oo)} ${fx(ey + 0.6)}`, ink, 2)
+        + stk(`M${fx(x - k * rx * 0.6)} ${fx(ey + 3.6)}Q${fx(x)} ${fx(ey + 4.6)} ${fx(x + k * rx * 0.6)} ${fx(ey + 3.4)}`, shade, 0.7, 0.4);
+      if (look.lashes && look.lashes !== 'aucun') s += stk(`M${fx(oo - k * 0.4)} ${fx(ey + 0.5)}l${fx(k * 1.8)} -1.4`, ink, 1.1);
       continue;
     }
-    const felin = look.eyes === 'felins';
-    const white = felin
-      ? `M${fx(x - k * 5.2)} ${fx(ey + 0.8)}Q${fx(x - k * 1)} ${fx(ey - 4.6)} ${fx(x + k * 5.9)} ${fx(ey - 2.2)}Q${fx(x + k * 2)} ${fx(ey + 4.2)} ${fx(x - k * 5.2)} ${fx(ey + 0.8)}Z`
-      : `M${fx(x - rx)} ${fx(ey)}A${rx} ${ry} 0 1 0 ${fx(x + rx)} ${fx(ey)}A${rx} ${ry} 0 1 0 ${fx(x - rx)} ${fx(ey)}Z`;
+    const felin = look.eyes === 'felins', oy = felin ? ey - 1.9 : ey - 0.5, iy = ey + 0.5;
+    const top = `M${fx(io)} ${fx(iy)}C${fx(x - k * rx * 0.55)} ${fx(ey - ry * 1.3)} ${fx(x + k * rx * 0.5)} ${fx(ey - ry * 1.3 - (felin ? 0.6 : 0))} ${fx(oo)} ${fx(oy)}`;
+    const white = `${top}C${fx(x + k * rx * 0.6)} ${fx(ey + ry * (felin ? 0.8 : 1.02))} ${fx(x - k * rx * 0.55)} ${fx(ey + ry * 1.05)} ${fx(io)} ${fx(iy)}Z`;
     const id = `${u}e${k > 0 ? 'r' : 'l'}`;
-    let inner = `<circle cx="${fx(x)}" cy="${fx(ey + 0.4)}" r="${ir}" fill="${ec}" stroke="${P.mix(ec, '#000000', 0.35)}" stroke-width=".5"/><circle cx="${fx(x)}" cy="${fx(ey + 0.4)}" r="${fx(ir * 0.46)}" fill="#15100E"/>`
-      + `<circle cx="${fx(x - ir * 0.36)}" cy="${fx(ey - ir * 0.3)}" r="${fx(ir * 0.28)}" fill="#FFFFFF"/><circle cx="${fx(x + ir * 0.36)}" cy="${fx(ey + ir * 0.4)}" r="${fx(ir * 0.13)}" fill="#FFFFFF" opacity=".8"/>`;
-    if (look.eyes === 'endormis') inner += fl(`M${fx(x - rx - 1)} ${fx(ey - ry - 1)}H${fx(x + rx + 1)}V${fx(ey - 0.6)}Q${fx(x)} ${fx(ey + 0.6)} ${fx(x - rx - 1)} ${fx(ey - 0.6)}Z`, P.mix(skin, '#000000', 0.05));
-    s += `<clipPath id="${id}"><path d="${white}"/></clipPath><path d="${white}" fill="#FFFFFF"/><g clip-path="url(#${id})">${inner}</g>`;
-    // trait de paupière, cils et eye-liner
-    if (felin) s += stk(`M${fx(x - k * 5.4)} ${fx(ey + 0.6)}Q${fx(x - k * 1)} ${fx(ey - 5)} ${fx(x + k * 6.8)} ${fx(ey - 3)}`, ink, lidW + 0.3);
-    else if (look.eyes === 'endormis') s += stk(`M${fx(x - rx)} ${fx(ey - 0.6)}Q${fx(x)} ${fx(ey + 0.6)} ${fx(x + rx)} ${fx(ey - 0.6)}`, ink, lidW + 0.3);
-    else s += stk(`M${fx(x - rx - 0.3)} ${fx(ey - ry * 0.2)}Q${fx(x)} ${fx(ey - ry - 1.6)} ${fx(x + rx + 0.3)} ${fx(ey - ry * 0.2)}`, ink, lidW);
-    if (look.liner === 'aile') s += stk(`M${fx(x + k * (rx - 0.2))} ${fx(ey - ry * 0.35)}l${fx(k * 3.4)} -2.6`, ink, 1.5);
+    let inner = `<circle cx="${fx(x)}" cy="${fx(ey + 0.3)}" r="${ir}" fill="url(#${u}ir)" stroke="${P.mix(ec, '#000000', 0.5)}" stroke-width=".55"/><circle cx="${fx(x)}" cy="${fx(ey + 0.3)}" r="${fx(ir * 0.44)}" fill="#120D0B"/>`
+      + `<circle cx="${fx(x - ir * 0.36)}" cy="${fx(ey - ir * 0.32)}" r="${fx(ir * 0.3)}" fill="#FFFFFF"/><circle cx="${fx(x + ir * 0.4)}" cy="${fx(ey + ir * 0.34)}" r="${fx(ir * 0.14)}" fill="#FFFFFF" opacity=".85"/>`
+      + fl(`M${fx(x - rx - 1)} ${fx(ey - ry - 2)}H${fx(x + rx + 1)}V${fx(ey - ry * 0.4)}Q${fx(x)} ${fx(ey - ry * 0.05)} ${fx(x - rx - 1)} ${fx(ey - ry * 0.4)}Z`, '#000000', ' opacity=".13"');
+    if (look.eyes === 'endormis') inner += fl(`M${fx(x - rx - 1)} ${fx(ey - ry - 2)}H${fx(x + rx + 1)}V${fx(ey - 0.4)}Q${fx(x)} ${fx(ey + 0.8)} ${fx(x - rx - 1)} ${fx(ey - 0.4)}Z`, P.mix(skin, '#000000', 0.06));
+    s += `<clipPath id="${id}"><path d="${white}"/></clipPath><path d="${white}" fill="#FBFBFD"/><g clip-path="url(#${id})">${inner}</g>`;
+    // pli de la paupière, paupière du bas, trait du haut avec sa petite pointe
+    s += stk(`M${fx(x - k * rx * 0.75)} ${fx(ey - ry - 1)}Q${fx(x)} ${fx(ey - ry - 3.4)} ${fx(x + k * rx * 0.95)} ${fx(ey - ry - 0.6)}`, shade, 0.8, 0.5)
+      + stk(`M${fx(x - k * rx * 0.7)} ${fx(ey + ry * 0.85)}Q${fx(x)} ${fx(ey + ry + 0.9)} ${fx(x + k * rx * 0.8)} ${fx(ey + ry * 0.6)}`, shade, 0.7, 0.32);
+    s += look.eyes === 'endormis'
+      ? stk(`M${fx(io)} ${fx(ey - 0.4)}Q${fx(x)} ${fx(ey + 0.8)} ${fx(oo)} ${fx(ey - 0.6)}`, ink, lidW)
+      : stk(`${top}l${fx(k * (look.liner === 'aile' ? 3.6 : 1.4))} ${look.liner === 'aile' ? -2.6 : -0.9}`, ink, lidW);
     if (look.lashes && look.lashes !== 'aucun') {
-      const long = look.lashes === 'longs', ts = long ? [0.5, 0.7, 0.9] : [0.66, 0.9];
-      s += ts.map(t => { const px = x + k * rx * t, py = ey - (felin ? 3 : ry) * Math.sqrt(1 - t * t) - (felin ? 0.4 : 0.9); return stk(`M${fx(px)} ${fx(py)}l${fx(k * (long ? 1.6 : 1.2))} ${fx(long ? -2 : -1.4)}`, ink, long ? 0.95 : 0.8); }).join('');
+      s += fl(`M${fx(oo - k * 0.8)} ${fx(oy - 0.3)}Q${fx(oo + k * 1.4)} ${fx(oy - 0.6)} ${fx(oo + k * 2.6)} ${fx(oy - 2.8)}Q${fx(oo + k * 0.8)} ${fx(oy - 1.6)} ${fx(oo - k * 1.8)} ${fx(oy - 1.7)}Z`, ink);
+      if (look.lashes === 'longs') s += [[0.15, 1], [0.5, 0.92]].map(([t, h]) => stk(`M${fx(x + k * rx * t)} ${fx(ey - ry * h - 0.6)}l${fx(k * 0.9)} -2`, ink, 0.9)).join('');
     }
   }
-  // nez
+  // nez : ombre de l'arête, ailes du nez, reflet sur le bout
+  const nb = ey + 10.8;
+  const tipHi = `<ellipse cx="100.8" cy="${fx(nb - 2.6)}" rx="1.4" ry=".9" fill="#FFFFFF" opacity=".28"/>`;
+  const bridge = stk(`M98.4 ${fx(ey + 0.5)}Q97.4 ${fx(ey + 5.5)} 97.5 ${fx(nb - 2.4)}`, shade, 1.2, 0.28);
+  const nostrils = op => `<ellipse cx="98" cy="${fx(nb - 0.6)}" rx="1" ry=".6" fill="${shade}" opacity="${op}"/><ellipse cx="102" cy="${fx(nb - 0.6)}" rx="1" ry=".6" fill="${shade}" opacity="${op}"/>`;
   const NOSE = {
-    bouton: stk(`M99 ${fx(ey + 4)}Q97.6 ${fx(ey + 9.5)} 100 ${fx(ey + 10.2)}Q101.8 ${fx(ey + 10.2)} 102 ${fx(ey + 9)}`, shade, 1.2),
-    droit: stk(`M101 ${fx(ey - 1)}L99.4 ${fx(ey + 8.2)}Q99.6 ${fx(ey + 10.6)} 102.4 ${fx(ey + 10)}`, shade, 1.1),
-    rond: stk(`M96.6 ${fx(ey + 9)}Q98 ${fx(ey + 11.8)} 100 ${fx(ey + 11.6)}Q102 ${fx(ey + 11.8)} 103.4 ${fx(ey + 9)}`, shade, 1.2) + `<circle cx="100" cy="${fx(ey + 8.8)}" r="1.1" fill="#FFFFFF" opacity=".18"/>`,
-    large: stk(`M95.6 ${fx(ey + 8.5)}Q96.4 ${fx(ey + 11.8)} 98.6 ${fx(ey + 10.8)}M101.4 ${fx(ey + 10.8)}Q103.6 ${fx(ey + 11.8)} 104.4 ${fx(ey + 8.5)}M98.6 ${fx(ey + 10.8)}Q100 ${fx(ey + 11.8)} 101.4 ${fx(ey + 10.8)}`, shade, 1.2),
-    retrousse: stk(`M99.6 ${fx(ey + 5)}Q99 ${fx(ey + 9.4)} 100.6 ${fx(ey + 9.6)}Q102.2 ${fx(ey + 9.6)} 102.4 ${fx(ey + 8.4)}`, shade, 1.15) + `<circle cx="99" cy="${fx(ey + 9.6)}" r=".55" fill="${shade}"/>`,
-    discret: `<circle cx="98.4" cy="${fx(ey + 9.6)}" r=".75" fill="${shade}"/><circle cx="101.6" cy="${fx(ey + 9.6)}" r=".75" fill="${shade}"/>`,
+    bouton: bridge + stk(`M96.2 ${fx(nb - 2.2)}Q95.4 ${fx(nb - 0.2)} 97.4 ${fx(nb)}M103.8 ${fx(nb - 2.2)}Q104.6 ${fx(nb - 0.2)} 102.6 ${fx(nb)}M97.6 ${fx(nb + 0.1)}Q100 ${fx(nb + 1.2)} 102.4 ${fx(nb + 0.1)}`, shade, 1.1, 0.85) + tipHi,
+    droit: stk(`M101.8 ${fx(ey - 2.5)}L101.1 ${fx(nb - 3)}`, shade, 1.1, 0.5)
+      + stk(`M96.4 ${fx(nb - 1.6)}Q95.8 ${fx(nb + 0.2)} 97.6 ${fx(nb + 0.2)}M103.6 ${fx(nb - 1.6)}Q104.2 ${fx(nb + 0.2)} 102.4 ${fx(nb + 0.2)}M97.8 ${fx(nb + 0.3)}Q100 ${fx(nb + 1)} 102.2 ${fx(nb + 0.3)}`, shade, 1.1, 0.85) + tipHi,
+    rond: bridge + stk(`M95.6 ${fx(nb - 2.8)}Q94.6 ${fx(nb + 0.4)} 97.6 ${fx(nb + 0.4)}Q100 ${fx(nb + 1.8)} 102.4 ${fx(nb + 0.4)}Q105.4 ${fx(nb + 0.4)} 104.4 ${fx(nb - 2.8)}`, shade, 1.15, 0.85)
+      + `<ellipse cx="100.6" cy="${fx(nb - 2.4)}" rx="2.2" ry="1.4" fill="#FFFFFF" opacity=".24"/>`,
+    large: bridge + stk(`M94.6 ${fx(nb - 2.6)}Q93.6 ${fx(nb + 0.4)} 96.8 ${fx(nb + 0.3)}M105.4 ${fx(nb - 2.6)}Q106.4 ${fx(nb + 0.4)} 103.2 ${fx(nb + 0.3)}M96.8 ${fx(nb + 0.4)}Q100 ${fx(nb + 1.6)} 103.2 ${fx(nb + 0.4)}`, shade, 1.2, 0.85) + nostrils(0.6) + tipHi,
+    retrousse: stk(`M98.8 ${fx(ey + 2)}Q98 ${fx(ey + 6.5)} 98.4 ${fx(nb - 2)}`, shade, 1.1, 0.3) + stk(`M97 ${fx(nb - 0.8)}Q100 ${fx(nb + 0.4)} 103 ${fx(nb - 1.2)}`, shade, 1.1, 0.85) + nostrils(0.7) + tipHi,
+    discret: nostrils(0.8) + stk(`M98 ${fx(nb + 0.6)}Q100 ${fx(nb + 1.3)} 102 ${fx(nb + 0.6)}`, shade, 0.9, 0.45),
   };
   s += NOSE[look.nose] || NOSE.bouton;
-  // bouche, avec la couleur du rouge à lèvres
-  const lips = (cY, mY, l = 94.5, r = 105.5) => fl(`M${l} ${fx(cY)}C${fx(l + 1.6)} ${fx(cY - 1.4)} 97 ${fx(mY - 3.6)} 98.5 ${fx(mY - 3.2)}Q100 ${fx(mY - 2.2)} 101.5 ${fx(mY - 3.2)}C103 ${fx(mY - 3.6)} ${fx(r - 1.6)} ${fx(cY - 1.4)} ${r} ${fx(cY)}Q100 ${fx(mY + 0.2)} ${l} ${fx(cY)}Z`, P.mix(lip, '#000000', 0.12))
+  // bouche : lèvres en deux tons (couleur naturelle ou rouge à lèvres), dents, petites fossettes
+  const lips = (cY, mY, l = 94.5, r = 105.5) => fl(`M${l} ${fx(cY)}C${fx(l + 1.6)} ${fx(cY - 1.4)} 97 ${fx(mY - 3.6)} 98.5 ${fx(mY - 3.2)}Q100 ${fx(mY - 2.2)} 101.5 ${fx(mY - 3.2)}C103 ${fx(mY - 3.6)} ${fx(r - 1.6)} ${fx(cY - 1.4)} ${r} ${fx(cY)}Q100 ${fx(mY + 0.2)} ${l} ${fx(cY)}Z`, P.mix(lip, '#000000', 0.14))
     + fl(`M${l} ${fx(cY)}Q100 ${fx(mY + 0.2)} ${r} ${fx(cY)}C${fx(r - 0.8)} ${fx(mY + 2)} 102.8 ${fx(mY + 2.8)} 100 ${fx(mY + 2.8)}C97.2 ${fx(mY + 2.8)} ${fx(l + 0.8)} ${fx(mY + 2)} ${l} ${fx(cY)}Z`, lip)
-    + stk(`M${l} ${fx(cY)}Q100 ${fx(mY + 0.4)} ${r} ${fx(cY)}`, lipLine, 0.8)
-    + (look.lips === 'gloss' ? `<ellipse cx="101.8" cy="${fx(mY + 1.6)}" rx="1.7" ry=".6" fill="#FFFFFF" opacity=".75"/>` : '');
-  const ring = (dd, extra = '') => (lip ? `<path d="${dd}" fill="none" stroke="${lip}" stroke-width="1.6" stroke-linejoin="round"${extra}/>` : '');
+    + stk(`M${l} ${fx(cY)}Q100 ${fx(mY + 0.4)} ${r} ${fx(cY)}`, lipLine, 0.85)
+    + `<ellipse cx="101.4" cy="${fx(mY + 1.7)}" rx="${look.lips === 'gloss' ? 1.9 : 1.6}" ry=".6" fill="#FFFFFF" opacity="${look.lips === 'gloss' ? 0.75 : 0.22}"/>`;
+  const ring = dd => `<path d="${dd}" fill="none" stroke="${lip}" stroke-width="${paint ? 1.7 : 1.3}" stroke-linejoin="round"/>`;
+  const dimples = (y, w = 6.8) => [1, -1].map(k => stk(`M${fx(100 + k * w)} ${fx(y - 0.9)}q${fx(k * 0.7)} .6 ${fx(k * 0.5)} 1.5`, shade, 0.65, 0.3)).join('');
+  const teeth = (l, r, y, h) => fl(`M${l} ${fx(y)}Q100 ${fx(y + 1.4)} ${r} ${fx(y)}L${fx(r - 0.9)} ${fx(y + h)}Q100 ${fx(y + h + 1)} ${fx(l + 0.9)} ${fx(y + h)}Z`, '#FFFFFF', ' stroke="#E2DEE6" stroke-width=".35"');
   switch (look.mouth) {
     case 'grand': {
       const o = `M93 ${fx(my - 1.5)}Q100 ${fx(my)} 107 ${fx(my - 1.5)}Q105 ${fx(my + 7)} 100 ${fx(my + 7)}Q95 ${fx(my + 7)} 93 ${fx(my - 1.5)}Z`;
-      s += fl(o, '#6E2633') + fl(`M94.4 ${fx(my - 0.9)}Q100 ${fx(my + 0.4)} 105.6 ${fx(my - 0.9)}L104.6 ${fx(my + 1.6)}Q100 ${fx(my + 2.4)} 95.4 ${fx(my + 1.6)}Z`, '#FFFFFF')
-        + `<ellipse cx="100" cy="${fx(my + 5)}" rx="3" ry="1.5" fill="#E0707A"/>` + ring(o);
+      s += fl(o, '#5E1A26') + teeth(94.4, 105.6, my - 0.9, 2.6) + `<ellipse cx="100" cy="${fx(my + 5)}" rx="3" ry="1.5" fill="#E0707A"/>` + ring(o) + dimples(my - 0.4, 8);
       break;
     }
     case 'eclatant': {
       const o = `M91.5 ${fx(my - 2.5)}Q100 ${fx(my - 1)} 108.5 ${fx(my - 2.5)}Q106.4 ${fx(my + 9)} 100 ${fx(my + 9)}Q93.6 ${fx(my + 9)} 91.5 ${fx(my - 2.5)}Z`;
-      s += fl(o, '#5E1F2B') + fl(`M92.6 ${fx(my - 1.8)}Q100 ${fx(my - 0.4)} 107.4 ${fx(my - 1.8)}L106.6 ${fx(my + 1.4)}Q100 ${fx(my + 2.6)} 93.4 ${fx(my + 1.4)}Z`, '#FFFFFF')
-        + `<ellipse cx="100" cy="${fx(my + 6.4)}" rx="4.2" ry="2.2" fill="#E0707A"/>` + ring(o)
-        + [1, -1].map(k => stk(`M${fx(100 + k * 9.6)} ${fx(my - 4)}q${k * 1.6} 1.6 ${k * 1} 3.4`, shade, 0.9)).join('');
+      s += fl(o, '#5E1A26') + teeth(92.6, 107.4, my - 1.8, 3.2) + `<ellipse cx="100" cy="${fx(my + 6.4)}" rx="4.2" ry="2.2" fill="#E0707A"/>` + ring(o)
+        + [1, -1].map(k => stk(`M${fx(100 + k * 9.8)} ${fx(my - 4)}q${k * 1.6} 1.6 ${k * 1} 3.4`, shade, 0.9, 0.7)).join('');
       break;
     }
-    case 'neutre': s += lip ? lips(my + 0.6, my + 0.8, 95, 105) : stk(`M95.5 ${fx(my + 0.5)}Q100 ${fx(my + 2)} 104.5 ${fx(my + 0.5)}`, lipLine, 1.6); break;
-    case 'timide': s += lip ? lips(my - 0.6, my + 0.6, 96, 104) : fl(`M96.6 ${fx(my - 0.4)}Q100 ${fx(my + 3.2)} 103.4 ${fx(my - 0.4)}Q100 ${fx(my + 1.6)} 96.6 ${fx(my - 0.4)}Z`, lipLine); break;
-    case 'coin': s += stk(`M95 ${fx(my + 0.8)}Q100 ${fx(my + 2.2)} 105.6 ${fx(my - 2.4)}`, lip || lipLine, lip ? 2.4 : 1.7) + stk(`M106.4 ${fx(my - 4)}q1.2 1.4 .4 3.2`, shade, 0.8); break;
+    case 'neutre': s += lips(my + 0.6, my + 0.8, 95, 105); break;
+    case 'timide': s += lips(my - 0.6, my + 0.6, 96, 104); break;
+    case 'coin':
+      s += fl(`M96.5 ${fx(my + 1.4)}Q100 ${fx(my + 4.6)} 104.4 ${fx(my)}Q100 ${fx(my + 2.4)} 96.5 ${fx(my + 1.4)}Z`, lip)
+        + stk(`M95 ${fx(my + 0.8)}Q100 ${fx(my + 2.2)} 105.6 ${fx(my - 2.4)}`, paint ? P.mix(lip, '#000000', 0.2) : lipLine, paint ? 2.2 : 1.5) + stk(`M106.4 ${fx(my - 4)}q1.2 1.4 .4 3.2`, shade, 0.8, 0.6);
+      break;
     case 'bisou':
-      s += `<ellipse cx="100" cy="${fx(my + 0.6)}" rx="3.4" ry="2.9" fill="${lip || P.mix(skin, '#B0404E', 0.55)}"/>` + stk(`M98.4 ${fx(my + 0.6)}h3.2`, lipLine, 0.9)
+      s += `<ellipse cx="100" cy="${fx(my + 0.6)}" rx="3.4" ry="2.9" fill="${lip}"/>` + stk(`M98.4 ${fx(my + 0.6)}h3.2`, lipLine, 0.9)
+        + `<ellipse cx="100.9" cy="${fx(my - 0.6)}" rx="1.1" ry=".5" fill="#FFFFFF" opacity=".35"/>`
         + `<path d="M110.6 ${fx(my - 9)}c-1.6-2.2-4.6-.6-3.4 1.6l3.4 3.4 3.4-3.4c1.2-2.2-1.8-3.8-3.4-1.6z" fill="#FF5C8A"/>`;
       break;
     case 'langue': {
       const o = `M94 ${fx(my - 1.5)}Q100 ${fx(my + 3.5)} 106 ${fx(my - 1.5)}Q100 ${fx(my + 1)} 94 ${fx(my - 1.5)}Z`;
       s += fl(`M97.2 ${fx(my + 0.4)}Q97 ${fx(my + 7)} 100.4 ${fx(my + 7)}Q103.8 ${fx(my + 6.8)} 103.2 ${fx(my + 0.2)}Z`, '#E76B7A') + stk(`M100.2 ${fx(my + 1.6)}V${fx(my + 4.8)}`, '#B8404E', 0.8)
-        + fl(o, '#5E1F2B') + ring(o);
+        + fl(o, '#5E1A26') + ring(o) + dimples(my - 1.2, 7.4);
       break;
     }
-    case 'surpris': s += `<ellipse cx="100" cy="${fx(my + 1)}" rx="3.2" ry="4.2" fill="#5A1E2A"${lip ? ` stroke="${lip}" stroke-width="1.6"` : ''}/><ellipse cx="100" cy="${fx(my + 3.4)}" rx="1.8" ry="1.2" fill="#E0707A"/>`; break;
-    default: s += lip ? lips(my - 1.4, my + 1.6) : fl(`M94 ${fx(my - 1)}Q100 ${fx(my + 5.4)} 106 ${fx(my - 1)}Q100 ${fx(my + 2.4)} 94 ${fx(my - 1)}Z`, lipLine);
+    case 'surpris': s += `<ellipse cx="100" cy="${fx(my + 1)}" rx="3.2" ry="4.2" fill="#5A1E2A" stroke="${lip}" stroke-width="${paint ? 1.7 : 1.3}"/><ellipse cx="100" cy="${fx(my + 3.4)}" rx="1.8" ry="1.2" fill="#E0707A"/>`; break;
+    default: s += lips(my - 1.6, my + 1.2) + dimples(my - 1, 7);
   }
   // moustache (au-dessus de la bouche)
   if (['moustache', 'bouc', 'taillee', 'pleine', 'longue'].includes(beard)) {
@@ -2685,13 +2722,30 @@ function faceSVG(d, look, gender, skin, u) {
   }
   return s;
 }
+/* oreilles avec leur pli intérieur (repère du visage) */
+function earsSVG(fw, attrs, shade) {
+  return [1, -1].map(k => {
+    const W = 24.5 * fw, X = v => fx(100 + k * v);
+    return `<path d="M${X(W - 2.5)} 35.5C${X(W + 4.2)} 32.5 ${X(W + 6.2)} 44 ${X(W + 2.6)} 52.5C${X(W + 1)} 55.6 ${X(W - 2.5)} 54.4 ${X(W - 2.5)} 50Z" ${attrs}/>`
+      + `<path d="M${X(W + 0.4)} 39C${X(W + 3.4)} 38 ${X(W + 3.8)} 45.5 ${X(W + 1.4)} 49.6M${X(W + 1.4)} 42.4q${fx(k * 1.3)} 2.1 0 4.2" fill="none" stroke="${shade}" stroke-width=".9" stroke-linecap="round" opacity=".55"/>`;
+  }).join('');
+}
+/* pouce et séparation des doigts sur les deux mains */
+function fingersSVG(d, attrs, edge) {
+  const hx = armLines(d).wx, hy = d.wrY, k = 1.2;
+  return [1, -1].map(s => {
+    const X = dx => fx(100 + s * (hx + dx * k)), Y = dy => fx(hy + dy * k);
+    return `<path d="M${X(-5.2)} ${Y(7)}Q${X(-9)} ${Y(14)} ${X(-6.4)} ${Y(20.5)}Q${X(-4.4)} ${Y(20.5)} ${X(-3.8)} ${Y(13)}Z" ${attrs}/>`
+      + `<path d="M${X(-1.6)} ${Y(21)}L${X(-2)} ${Y(29)}M${X(1.2)} ${Y(21.5)}L${X(1)} ${Y(31)}M${X(3.8)} ${Y(20)}L${X(3.4)} ${Y(27.5)}" fill="none" stroke="${edge}" stroke-width=".7" stroke-linecap="round" opacity=".6"/>`;
+  }).join('');
+}
 /* boucles d'oreilles, sous le lobe des deux oreilles (repère du visage) */
 function earringsSVG(d, look, fw) {
   const e = look.earrings;
   if (!e || e === 'aucune') return '';
-  const m = hexOf(METALS, look.metal, 'or'), y = (d.top + d.chin) / 2 + 11;
+  const m = hexOf(METALS, look.metal, 'or'), y = (d.top + d.chin) / 2 + 12;
   return [1, -1].map(k => {
-    const x = 100 + k * (24 * fw - 0.5);
+    const x = 100 + k * (24.5 * fw + 1.6);
     switch (e) {
       case 'puces': return `<circle cx="${fx(x)}" cy="${fx(y)}" r="1.5" fill="${m}" stroke="${P.mix(m, '#000000', 0.3)}" stroke-width=".4"/>`;
       case 'perles': return `<circle cx="${fx(x)}" cy="${fx(y + 0.6)}" r="2" fill="#F5F1E6" stroke="#CFC6B2" stroke-width=".4"/><circle cx="${fx(x - 0.6)}" cy="${fx(y)}" r=".6" fill="#FFFFFF"/>`;
@@ -2713,16 +2767,20 @@ function mannequinSVG(gender, sel, mode, bare, opts = {}) {
   const limb = `fill="url(#${u}s)" stroke="${edge}" stroke-width=".6"`, trunk = `fill="url(#${u}t)" stroke="${edge}" stroke-width=".6"`;
   const ref = { ...d, top: 6, chin: 78, hw: 24.5 }, cyA = (d.top + d.chin) / 2;
   const tf = av ? `translate(100 ${fx(cyA)}) scale(${fx(d.f * 100) / 100}) translate(-100 -42)` : '';
-  const fw = av ? optOf(FACES, look.face)[2].w : 1;
+  const fw = av ? faceW(look) : 1, shadeS = P.mix(skin, '#3A1A0E', 0.4);
   const zoom = av && opts.crop && opts.zoom ? ZOOMS[opts.zoom] : null;
   const hair = av ? hairSVG(ref, look, u) : { back: '', front: '', defs: '' };
   const body = `<path d="${B.torso}" ${trunk}/>${B.arms.map(p => `<path d="${p}" ${limb}/>`).join('')}<path d="${B.neck}" ${limb}/>`
     + (av ? `<ellipse clip-path="url(#${u}nk)" cx="100" cy="${fx(d.chin + 1)}" rx="${fx(d.nkB + 5)}" ry="${fx(6 * d.f)}" fill="${P.mix(skin, '#000000', 0.4)}" opacity=".42"/>` : '')
     + `${B.hands.map(p => `<path d="${p}" ${limb}/>`).join('')}${B.feet.map(p => `<path d="${p}" ${limb}/>`).join('')}`
+    + (av ? fingersSVG(d, limb, edge) : '')
     + (av ? '' : `<path d="${bodyLines(d, gender)}" fill="none" stroke="rgba(105,112,135,.32)" stroke-width=".8" stroke-linecap="round"/>`);
   const cy = (d.top + d.chin) / 2;
-  const head = (av ? [1, -1].map(k => `<ellipse cx="${fx(100 + k * (d.hw * fw - 0.5))}" cy="${fx(cy + 4 * d.f)}" rx="${fx(4.4 * d.f)}" ry="${fx(7 * d.f)}" ${limb}/>`).join('') : '')
-    + `<path d="${B.head}" ${trunk}/>` + (av ? `<g transform="${tf}">${faceSVG(ref, look, gender, skin, u)}${hair.front}${earringsSVG(ref, look, fw)}</g>` : '');
+  const head = av
+    ? `<g transform="${tf}">${earsSVG(fw, limb, shadeS)}</g><path d="${B.head}" fill="url(#${u}hd)" stroke="${edge}" stroke-width=".6"/>`
+      + `<g clip-path="url(#${u}hc)"><g transform="${tf} translate(.6 2.4)" opacity=".2">${hairSVG(ref, look, u, P.mix(skin, '#2A1208', 0.6)).front}</g></g>`
+      + `<g transform="${tf}">${faceSVG(ref, look, gender, skin, u)}${hair.front}${earringsSVG(ref, look, fw)}</g>`
+    : `<path d="${B.head}" ${trunk}/>`;
   const layers = [], hats = [];
   let hits = '';
   const dress = !bare && !opts.crop;
@@ -2734,7 +2792,7 @@ function mannequinSVG(gender, sel, mode, bare, opts = {}) {
       + zone('outer', 100 + d.sh - 10, d.shY, 26, d.wrY - d.shY) + zone('outer', 100 - d.sh - 16, d.shY, 26, d.wrY - d.shY);
     const order = !dress ? ['top'] : mode === 'piece' ? ['piece', 'feet', 'outer', 'acc'] : ['bottom', 'top', 'feet', 'outer', 'acc'];
     for (const slot of order) {
-      const it = dress ? itemById(sel[slot]) : TEE;
+      const it = dress ? itemById(sel[slot]) || (opts.basics && BASICS[slot]) : TEE;
       if (!it) continue;
       const hex = colorOf(it.color).hex, L = P.lum(hex);
       const tones = { main: hex, dark: L < 0.06 ? P.mix(hex, '#ffffff', 0.2) : P.mix(hex, '#000000', 0.24), light: L > 0.7 ? P.mix(hex, '#000000', 0.1) : P.mix(hex, '#ffffff', 0.38), white: '#F4F4F1' };
@@ -2755,8 +2813,8 @@ function mannequinSVG(gender, sel, mode, bare, opts = {}) {
     : ['#D3D7E1', '#FFFFFF', '#F1F2F6', '#B9BECB', '#FFFFFF', '#EEF0F5', '#C3C8D4'];
   let vb;
   if (zoom) { const X = 100 + (zoom[0] - 100) * d.f, Y = cyA + (zoom[1] - 42) * d.f, Z = zoom[2] * d.f; vb = [X - Z / 2, Y - Z / 2, Z, Z]; }
-  else if (opts.crop) vb = av ? [31, cyA - 71, 138, 138] : [100 - d.hw - 16, d.top - 14, 2 * d.hw + 32, 2 * d.hw + 32];
-  else vb = av ? [0, -42, 200, 542] : [0, 0, 200, 500];
+  else if (opts.crop) vb = av ? [23, cyA - 73, 154, 154] : [100 - d.hw - 16, d.top - 14, 2 * d.hw + 32, 2 * d.hw + 32];
+  else vb = av ? [0, -66, 200, 566] : [0, 0, 200, 500];
   const view = vb.map(fx).join(' ');
   const bgDef = opts.bg ? optOf(AV_BGS, opts.bgId || look.bg) : null;
   const backdrop = bgDef && bgDef[2] ? `<rect x="${fx(vb[0])}" y="${fx(vb[1])}" width="${fx(vb[2])}" height="${fx(vb[3])}" fill="url(#${u}bg)"/>` : '';
@@ -2775,7 +2833,7 @@ function mannequinSVG(gender, sel, mode, bare, opts = {}) {
     <pattern id="${u}twill" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 5L5 0" stroke="rgba(0,0,0,.11)" stroke-width=".7"/></pattern>
     <filter id="${u}ds" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="1" stdDeviation="1.1" flood-color="#000" flood-opacity=".28"/></filter>
     <filter id="${u}bl" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
-    ${av ? `<clipPath id="${u}nk"><path d="${B.neck}"/></clipPath>` : ''}${hair.defs}${bgDef && bgDef[2] ? `<linearGradient id="${u}bg" x1="0" y1="0" x2=".45" y2="1"><stop offset="0" stop-color="${bgDef[2]}"/><stop offset="1" stop-color="${bgDef[3]}"/></linearGradient>` : ''}</defs>
+    ${av ? `<clipPath id="${u}nk"><path d="${B.neck}"/></clipPath><clipPath id="${u}hc"><path d="${B.head}"/></clipPath><radialGradient id="${u}hd" cx=".4" cy=".4" r=".72"><stop offset="0" stop-color="${P.mix(skin, '#ffffff', 0.12)}"/><stop offset=".55" stop-color="${skin}"/><stop offset="1" stop-color="${P.mix(skin, '#000000', 0.2)}"/></radialGradient>` : ''}${hair.defs}${bgDef && bgDef[2] ? `<linearGradient id="${u}bg" x1="0" y1="0" x2=".45" y2="1"><stop offset="0" stop-color="${bgDef[2]}"/><stop offset="1" stop-color="${bgDef[3]}"/></linearGradient>` : ''}</defs>
     ${backdrop}${floor}${av ? `<g transform="${tf}">${hair.back}</g>` : ''}<g>${zoom ? '' : body}</g>${hits}<g>${layers.join('')}</g><g>${head}</g><g>${hats.join('')}</g></svg>`;
 }
 const avatarHeadSVG = () => mannequinSVG(bodyOf(), {}, 'separates', true, { crop: true, tee: true, bg: true });
@@ -2796,7 +2854,7 @@ function renderLookEditor(preview) {
   const pv = $('#ae-preview');
   pv.classList.toggle('portrait', portrait);
   pv.style.background = bgDef[2] ? `linear-gradient(160deg, ${bgDef[2]}, ${bgDef[3]})` : '';
-  pv.innerHTML = portrait ? mannequinSVG(g, {}, 'separates', true, { look, crop: true, tee: true }) : mannequinSVG(g, sel, st.mode, false, { look });
+  pv.innerHTML = portrait ? mannequinSVG(g, {}, 'separates', true, { look, crop: true, tee: true }) : mannequinSVG(g, sel, st.mode, false, { look, basics: true });
   if (preview) return;
   $('#ae-tools').innerHTML = `<button type="button" class="btn sm" data-look-undo${lookUndo.length ? '' : ' disabled'}>${ICON_UNDO}Annuler</button><button type="button" class="btn sm" data-look-random>${ICON_DICE}Au hasard</button>`;
   $('#ae-view').hidden = !av;
