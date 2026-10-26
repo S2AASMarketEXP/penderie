@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.">
+<meta name="description" content="Des idées de tenues avec les vêtements que tu as déjà, selon ta journée, ton humeur et tes envies.">
 <meta name="theme-color" content="#06070F">
 <meta property="og:type" content="website">
 <meta property="og:title" content="DressIn">
-<meta property="og:description" content="Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.">
-<meta property="og:url" content="https://s2aasmarketexp.github.io/penderie/">
-<meta property="og:image" content="https://s2aasmarketexp.github.io/penderie/og-image.png">
+<meta property="og:description" content="Des idées de tenues avec les vêtements que tu as déjà, selon ta journée, ton humeur et tes envies.">
+<meta property="og:url" content="https://dressin-app.github.io/">
+<meta property="og:image" content="https://dressin-app.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -708,8 +708,43 @@ select.pd-sel { padding: 7px 4px 7px 8px; font-size: 12.5px; border-radius: 10px
   .tab .count { display: none; }
 }
 </style>
+<link rel="canonical" href="https://dressin-app.github.io/">
 </head>
 <body>
+<script>
+/* DressIn a déménagé : sans dressing enregistré ici, on part directement à la nouvelle adresse */
+(function () {
+  var NEW = 'https://dressin-app.github.io/';
+  var known = false;
+  try { for (var i = 0; i < localStorage.length; i++) { if (/^(dressin\.|penderie)/.test(localStorage.key(i))) { known = true; break; } } } catch (e) { /* stockage bloqué */ }
+  if (!known) { location.replace(NEW + location.hash); return; }
+  var bar = document.createElement('div');
+  bar.id = 'moved';
+  bar.setAttribute('role', 'status');
+  bar.innerHTML = '<b>DressIn a une nouvelle adresse : dressin-app.github.io</b>'
+    + '<span>Ton dressing est enregistré sur cette ancienne adresse. Pour le garder : exporte ta sauvegarde ici, puis importe-la sur la nouvelle adresse (Compte, « Importer une sauvegarde »).</span>'
+    + '<span class="mv-act"><button type="button" id="mv-export">Exporter ma sauvegarde</button><a href="' + NEW + '">Aller sur la nouvelle adresse</a></span>'
+    + '<button type="button" id="mv-close" aria-label="Masquer ce message">×</button>';
+  document.body.appendChild(bar);
+  document.getElementById('mv-close').addEventListener('click', function () { bar.remove(); });
+  document.getElementById('mv-export').addEventListener('click', function () {
+    var tab = document.getElementById('tab-compte');
+    if (tab) tab.click();
+    setTimeout(function () { var b = document.querySelector('[data-export]'); if (b) b.click(); }, 300);
+  });
+})();
+</script>
+<style>
+#moved { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 9999; max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px;
+  padding: 14px 16px; border-radius: 16px; position: fixed; background: #121530; color: #E9ECF8; font: 500 14px/1.4 'Plus Jakarta Sans', system-ui, sans-serif; box-shadow: 0 0 0 1px rgba(106, 120, 255, .55), 0 20px 50px -10px rgba(0, 0, 0, .7); }
+#moved b { font-size: 15px; padding-right: 28px; }
+#moved #mv-close { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; padding: 0; border-radius: 50%; background: rgba(255, 255, 255, .08); color: #E9ECF8; font-size: 18px; line-height: 1; }
+#moved span { color: #B9BEDA; }
+#moved .mv-act { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+#moved button, #moved a { appearance: none; border: 0; border-radius: 10px; padding: 9px 13px; font: 700 13.5px 'Plus Jakarta Sans', system-ui, sans-serif; cursor: pointer; text-decoration: none; }
+#moved button { background: #4C5CFF; color: #fff; }
+#moved a { background: rgba(255, 255, 255, .08); color: #E9ECF8; }
+</style>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#atelier" data-goto="atelier" aria-label="DressIn, accueil">

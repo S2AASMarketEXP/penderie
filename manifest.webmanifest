@@ -1,7 +1,7 @@
 {
   "name": "DressIn",
   "short_name": "DressIn",
-  "description": "Compose tes tenues avec les vêtements que tu as déjà : ajoute tes pièces en photo, mélange, garde ce que tu aimes.",
+  "description": "Des idées de tenues avec les vêtements que tu as déjà, selon ta journée, ton humeur et tes envies.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
